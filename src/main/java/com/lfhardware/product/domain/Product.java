@@ -1,4 +1,4 @@
-package com.lf_prototype.lf_prototype.domain;
+package com.lfhardware.product.domain;
 
 
 import lombok.*;

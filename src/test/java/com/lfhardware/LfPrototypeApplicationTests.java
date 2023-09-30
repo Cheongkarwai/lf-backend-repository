@@ -1,4 +1,4 @@
-package com.lf_prototype.lf_prototype;
+package com.lfhardware;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

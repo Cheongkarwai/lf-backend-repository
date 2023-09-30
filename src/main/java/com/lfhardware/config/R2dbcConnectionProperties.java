@@ -1,4 +1,4 @@
-package com.lf_prototype.lf_prototype.config;
+package com.lfhardware.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
