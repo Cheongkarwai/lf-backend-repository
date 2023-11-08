@@ -1,0 +1,33 @@
+server:
+  port: 8081
+
+#omise co
+omise:
+  public-key: pkey_test_5x9z9ovaogftf7hp4nf
+  secret-key: skey_test_5xa1l9s31xhmncsoq1d
+
+
+logging:
+  level:
+    org:
+      springframework:
+                security: DEBUG
+                web: DEBUG
+                mail: DEBUG
+      hibernate: DEBUG
+
+
+#java mail properties
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: cheongkarwai10@gmail.com
+    password: iqjsbvtkuoncabqo
+    properties:
+      mail:
+        debug: true
+        smtp:
+          auth: true
+          starttls:
+              enable: true

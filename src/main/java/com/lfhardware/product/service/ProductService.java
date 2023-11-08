@@ -3,56 +3,66 @@ package com.lfhardware.product.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lfhardware.product.ProductForm;
 import com.lfhardware.product.domain.Product;
-import com.lfhardware.product.repository.ProductRepository;
-import org.apache.commons.beanutils.BeanUtils;
-import org.springframework.data.domain.Pageable;
+import com.lfhardware.product.repository.IProductRepository;
+import com.lfhardware.shared.PageInfo;
+import com.lfhardware.shared.Pageable;
+import jakarta.persistence.Persistence;
+import org.hibernate.reactive.stage.Stage;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.NoSuchElementException;
+import java.util.List;
 
 @Service
-@Transactional
 public class ProductService implements  IProductService{
 
-    private ProductRepository productRepository;
-
     private ObjectMapper objectMapper;
+    private final IProductRepository productRepository;
 
-    public ProductService(ProductRepository productRepository,ObjectMapper objectMapper){
-        this.productRepository = productRepository;
+    private Stage.SessionFactory sessionFactory = Persistence.createEntityManagerFactory("postgres").unwrap(Stage.SessionFactory.class);
+
+    public ProductService(ObjectMapper objectMapper,IProductRepository productRepository){
         this.objectMapper = objectMapper;
+        this.productRepository = productRepository;
     }
 
     @Override
-    public Flux<Product> findAll(Pageable pageable) {
-        return productRepository.findBy(pageable);
+    public Mono<Pageable<Product>> findAll(PageInfo pageInfo) {
+
+       Mono<List<Product>> pageableMono = Mono.fromFuture(sessionFactory.withSession(session->productRepository.findAll(session,pageInfo))
+               .toCompletableFuture());
+
+       Mono<Long> countMono = Mono.fromFuture(sessionFactory.withSession(session -> productRepository.count(session,pageInfo))
+               .toCompletableFuture());
+
+       return Mono.zip(pageableMono,countMono)
+               .flatMap(zip->Mono.just(new Pageable<>(zip.getT1(), pageInfo.getPageSize(),
+                       pageInfo.getPage(),zip.getT2().intValue())));
     }
 
     @Override
     public Mono<Product> findById(Long id){
-        return productRepository.findById(id);
+        return Mono.fromFuture(productRepository.findById(id));
     }
 
     @Override
     public Mono<Product> save(Product product) {
-        return productRepository.save(product);
+        return Mono.empty();
+       // return productRepository.save(product);
     }
 
     @Override
     public Mono<Product> updateById(Long id, ProductForm productForm) {
-        return productRepository.findById(id).switchIfEmpty(Mono.error(new NoSuchElementException("Product not found")))
-                .flatMap(e-> {
-                    try {
-                        BeanUtils.copyProperties(e,productForm);
-                       return productRepository.save(e);
-                    } catch (IllegalAccessException | InvocationTargetException ex) {
-                        return Mono.error(new RuntimeException(ex));
-                    }
-                });
+        return Mono.empty();
+//        return productRepository.findById(id).switchIfEmpty(Mono.error(new NoSuchElementException("Product not found")))
+//                .flatMap(e-> {
+//                    try {
+//                        BeanUtils.copyProperties(e,productForm);
+//                       return productRepository.save(e);
+//                    } catch (IllegalAccessException | InvocationTargetException ex) {
+//                        return Mono.error(new RuntimeException(ex));
+//                    }
+//                });
     }
 
 }

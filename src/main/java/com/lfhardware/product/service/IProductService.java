@@ -2,13 +2,15 @@ package com.lfhardware.product.service;
 
 import com.lfhardware.product.ProductForm;
 import com.lfhardware.product.domain.Product;
-import org.springframework.data.domain.Pageable;
-import reactor.core.publisher.Flux;
+import com.lfhardware.shared.PageInfo;
+import com.lfhardware.shared.Pageable;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 public interface IProductService {
 
-    Flux<Product> findAll(Pageable pageable);
+    Mono<Pageable<Product>> findAll(PageInfo pageInfo);
 
     Mono<Product> findById(Long id);
 

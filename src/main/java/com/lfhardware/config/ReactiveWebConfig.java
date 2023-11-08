@@ -1,10 +1,14 @@
 package com.lfhardware.config;
 
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
+import com.lfhardware.auth.handler.AuthHandler;
+import com.lfhardware.auth.handler.UserHandler;
+import com.lfhardware.cart.handler.CartHandler;
 import com.lfhardware.charges.handler.PaymentHandler;
 import com.lfhardware.product.handler.ProductHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.web.ReactivePageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsWebFilter;
@@ -43,9 +47,41 @@ public class ReactiveWebConfig {
     }
 
     @Bean
-    HandlerMethodArgumentResolver reactivePageableHandlerMethodArgumentResolver() {
-        return new ReactivePageableHandlerMethodArgumentResolver();
+    public RouterFunction<ServerResponse> cartRouter(CartHandler cartHandler){
+        return RouterFunctions.route()
+                .path("/api/v1",
+                        builder -> builder.nest(RequestPredicates.accept(MediaType.APPLICATION_JSON),
+                                route->route.POST("/users/{username}/cart/items",cartHandler::addCartItem)))
+                .build();
     }
+
+    @Bean
+    public RouterFunction<ServerResponse> authRouter(AuthHandler authHandler){
+        return RouterFunctions.route()
+                .path("/api/v1/auth",
+                        builder -> builder.nest(RequestPredicates.accept(MediaType.APPLICATION_JSON),
+                                route->route.POST("/login",authHandler::login)
+                                        .POST("/register",authHandler::register)
+                                        .POST("/account-recovery-email",authHandler::sendAccountRecoveryEmail)
+                                        .POST("/change-password",authHandler::changePassword)))
+                .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> userRouter(UserHandler userHandler){
+        return RouterFunctions.route()
+                .path("/api/v1/users",
+                        builder -> builder.nest(RequestPredicates.accept(MediaType.APPLICATION_JSON),
+                                route->route.GET("/{username}", userHandler::findUser)
+                                        .GET("/{username}/roles",userHandler::findUserRole)))
+
+                .build();
+    }
+
+//    @Bean
+//    HandlerMethodArgumentResolver reactivePageableHandlerMethodArgumentResolver() {
+//        return new ReactivePageableHandlerMethodArgumentResolver();
+//    }
 
     @Bean
     CorsWebFilter corsWebFilter(){
@@ -58,6 +94,11 @@ public class ReactiveWebConfig {
         source.registerCorsConfiguration("/**", configuration);
 
         return new CorsWebFilter(source);
+    }
+
+    @Bean
+    public Module datatypeHibernateModule() {
+        return new Hibernate6Module();
     }
 
 //    @Bean

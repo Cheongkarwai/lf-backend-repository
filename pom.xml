@@ -17,6 +17,8 @@
         <java.version>17</java.version>
         <apache-common-beanutils.version>1.9.4</apache-common-beanutils.version>
         <omise.version>4.7.0</omise.version>
+        <io-vertx.version>4.4.0</io-vertx.version>
+        <hibernate-reactive.version>2.0.0.Final</hibernate-reactive.version>
     </properties>
     <dependencies>
         <dependency>
@@ -39,20 +41,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-r2dbc</artifactId>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.postgresql/r2dbc-postgresql -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>r2dbc-postgresql</artifactId>
-            <version>1.0.2.RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
@@ -69,6 +57,45 @@
             <artifactId>omise-java</artifactId>
             <version>${omise.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-pg-client</artifactId>
+            <version>${io-vertx.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.ongres.scram/client -->
+        <dependency>
+            <groupId>com.ongres.scram</groupId>
+            <artifactId>client</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.reactive</groupId>
+            <artifactId>hibernate-reactive-core</artifactId>
+            <version>${hibernate-reactive.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-hibernate6 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-hibernate6</artifactId>
+            <version>2.15.0-rc3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-mail-client</artifactId>
+            <version>${io-vertx.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -76,6 +103,15 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <outputDirectory>webapps</outputDirectory>
+                    <warName>ROOT</warName>
+                    <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+                </configuration>
             </plugin>
         </plugins>
     </build>
