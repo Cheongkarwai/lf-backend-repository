@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title th:remove="all">Template for HTML email with inline image</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+        /*RESET  -- this may be ignored by some email clients*/
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        img {
+            border: 0 none;
+            height: auto;
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
+        }
+
+        a img {
+            border: 0 none;
+        }
+
+        .imageFix {
+            display: block;
+        }
+
+        table, td {
+            border-collapse: collapse;
+        }
+
+        #bodyTable {
+            height: 100% !important;
+            margin: 0;
+            padding: 0;
+            width: 100% !important;
+        }
+
+        /*END RESET*/
+    </style>
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable">
+    <tr>
+        <td align="center" valign="top">
+            <table border="0" cellpadding="20" cellspacing="0" width="100%" id="emailContainer">
+                <tr>
+                    <td align="center" valign="top" style="padding:0;">
+
+
+                        <!--HEADER BLACK BAR WITH LOGO-->
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" id="emailHeader"
+                               style="background:#666666; color:#ffffff; margin:0;">
+                            <tr>
+                                <td align="center">
+
+                                    <table border="0" cellpadding="0" cellspacing="0" width="600">
+                                        <tr>
+                                            <td align="left" valign="middle">
+                                                <a href="#"><img src="http://placehold.it/50x50" alt=""
+                                                                 style="padding:10px 0 5px;"/></a>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                </td>
+                            </tr>
+                        </table>
+
+
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center" valign="top">
+                        <table border="0" cellpadding="0" cellspacing="0" width="100%" id="emailBody">
+                            <tr>
+                                <td align="center" valign="top">
+
+
+                                    <!--MAIN BANNER IMAGE-->
+                                    <table border="0" cellpadding="0" cellspacing="0" width="600"
+                                           style="background-color:#FFFFFF; margin-bottom:10px;">
+                                        <tr>
+                                            <td>
+                                                <img src="http://placehold.it/600x224" alt=""/>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <!--MAIN CONTENT COPY-->
+                                    <table border="0" cellpadding="0" cellspacing="0" width="600"
+                                           style="text-align:left; background-color:#FFFFFF; margin-bottom:20px;">
+                                        <tr>
+                                            <td>
+                                                <h1 style="text-align:center;margin:0; font-family:Arial, sans-serif; color:#606060; letter-spacing:-1px; font-size:20px; font-weight:bold;">
+                                                    Service Provider Submission</h1>
+
+                                                <p style="margin:0; font-family:Arial, sans-serif; color:#606060; line-height:150%; font-size:16px;">
+                                                    Hi,</p>
+                                                <br />
+                                                <p style="margin:0; font-family:Arial, sans-serif; color:#606060; line-height:150%; font-size:16px;">
+                                                    Your submission has been <span th:text="${status}"></span>.</p>
+                                                <br />
+                                                <p style="margin:0; font-family:Arial, sans-serif; color:#606060; line-height:150%; font-size:16px;">
+                                                    Best regards, <br /> LF Hardware Team.</p>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+
+                                    <!--MAIN CALL TO ACTION BUTTON-->
+                                    <table border="0" cellpadding="0" cellspacing="0"
+                                           style="background-color: #C02425; margin-bottom:20px;">
+                                        <tr>
+                                            <td align="center" valign="middle"
+                                                style="color:#FFFFFF; font-family:Helvetica, Arial, sans-serif; font-size:16px; font-weight:bold; letter-spacing:-.5px; line-height:150%; padding-top:15px; padding-right:30px; padding-bottom:15px; padding-left:30px;">
+                                                <a href="#" target="_blank"
+                                                   style="color:white; text-decoration:none;">Login Now</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center" valign="top" style="padding:0">
+                        <table border="0" cellpadding="20" cellspacing="0" width="100%" id="emailFooter"
+                               style="background:#e8e8e8; border-top:2px solid #000000; margin-bottom:50px;">
+                            <tr>
+                                <td align="center" valign="top">
+
+
+                                    <!--FOOTER TEXT-->
+
+                                    <!--FOOTER SOCIAL LINKS-->
+                                    <table border="0" cellpadding="0" cellspacing="0" width="180"
+                                           style="font-family:Arial, sans-serif; font-size:10px;">
+                                        <tr>
+                                            <td align="center" width="50" valign="top" style="margin-right:10px;">
+                                                <a href="#" style="color:#000000; text-decoration:none;"><img
+                                                        src="http://placehold.it/50x50" alt=""/>Facebook</a>
+                                            </td>
+                                            <td align="center" width="50" valign="top" style="margin-right:10px;">
+                                                <a href="#" style="color:#000000; text-decoration:none;"><img
+                                                        src="http://placehold.it/50x50" alt=""/>Instagram</a>
+                                            </td>
+                                            <td align="center" width="50" valign="top" style="margin-right:10px;">
+                                                <a href="#" style="color:#000000; text-decoration:none;"><img
+                                                        src="http://placehold.it/50x50" alt=""/>Whatsapp</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+                                    <table border="0" cellpadding="0" cellspacing="0" width="600"
+                                           style="margin-bottom:20px;margin-top:40px;">
+                                        <tr>
+                                            <td align="center" valign="top"
+                                                style="font-family:Arial, sans-serif; color:#606060; font-size:11px; line-height:150%;">
+
+
+                                                Copyright © 2024 LF Hardware Company, All rights reserved.<br/>
+                                                <!--                                                Your Company - Doing things your company does.<br/><br/>-->
+                                                <!--                                                <strong>Our Mailing Address is:</strong><br/>-->
+                                                <!--                                                <em>123 That Street, Townsville, XX 12345</em>-->
+
+
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

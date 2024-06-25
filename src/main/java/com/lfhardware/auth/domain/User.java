@@ -5,7 +5,9 @@ import com.lfhardware.shared.CommonConstant;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,7 +36,13 @@ public class User {
     @Id
     private String username;
 
-    private String password;
+//    private String password;
+
+    @Column(name = "mfa_enabled")
+    private boolean mfaEnabled;
+
+    @Column(name = "stripe_id")
+    private String stripeId;
 
     @Embedded
     @AttributeOverrides({
@@ -46,8 +54,12 @@ public class User {
     private Profile profile;
 
     @Singular
-    @OneToMany(mappedBy = "user",cascade = {CascadeType.ALL},orphanRemoval = true)
+    @OneToMany(mappedBy = "user",cascade = {CascadeType.ALL}, orphanRemoval = true)
     private Set<UserRole> userRoles = new HashSet<>();
+
+    @Column(name = "created_at")
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     public void addUserRole(UserRole userRole){
         //userRole.setUser(this);

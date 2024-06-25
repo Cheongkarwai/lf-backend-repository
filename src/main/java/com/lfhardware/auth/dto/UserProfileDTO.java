@@ -15,7 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 public class UserProfileDTO extends UserDTO{
 
-    @JsonProperty("profile")
-    @Valid
-    private ProfileDTO profileDTO;
+//    @Valid
+    protected ProfileDTO profile;
 }

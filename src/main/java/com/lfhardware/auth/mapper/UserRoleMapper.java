@@ -16,12 +16,12 @@ public class UserRoleMapper {
                 .profileDTO(ProfileDTO.builder().emailAddress(user.getProfile().getEmailAddress())
                         .phoneNumber(user.getProfile().getPhoneNumber())
                         .build())
-                .roleDTOs(user.getUserRoles().stream()
-                                            .map(userRole-> RoleDTO.builder()
-                                                    .id(userRole.getRole().getId())
-                                                    .name(userRole.getRole().getName())
-                                                    .build())
-                                            .collect(Collectors.toSet()))
+//                .roleDTOs(user.getUserRoles().stream()
+//                                            .map(userRole-> RoleDTO.builder()
+//                                                    .id(userRole.getRole().getId())
+//                                                    .name(userRole.getRole().getName())
+//                                                    .build())
+//                                            .collect(Collectors.toSet()))
                 .build();
     }
 }

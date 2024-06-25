@@ -1,5 +1,6 @@
 package com.lfhardware.auth.domain;
 
+import com.lfhardware.shared.BaseAddress;
 import com.lfhardware.shared.CommonConstant;
 import com.lfhardware.auth.dto.ProfileDTO;
 import jakarta.persistence.*;

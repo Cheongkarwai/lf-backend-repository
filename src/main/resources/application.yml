@@ -1,5 +1,8 @@
 server:
-  port: 8081
+#  port: 8081
+  error:
+    include-stacktrace: always
+    include-exception: true
 
 #omise co
 omise:
@@ -9,25 +12,49 @@ omise:
 
 logging:
   level:
+    reactor:
+      core:
+        publisher: DEBUG
     org:
+      hibernate:
+          type:
+            descriptor:
+              sql:
+                BasicBinder: TRACE
       springframework:
                 security: DEBUG
                 web: DEBUG
-                mail: DEBUG
-      hibernate: DEBUG
+                cache: DEBUG
+    com:
+      github:
+        benmanes:
+          caffeine: DEBUG
+#                mail: DEBUG
+#      hibernate: DEBUG
 
 
 #java mail properties
+#spring:
+#  mail:
+#    host: smtp.gmail.com
+#    port: 587
+#    username: cheongkarwai5@gmail.com
+#    password: lnmq wuql snfq yvis
+#    properties:
+#      mail:
+#        debug: true
+#        smtp:
+#          auth: true
+#          starttls:
+#              enable: true
 spring:
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: cheongkarwai10@gmail.com
-    password: iqjsbvtkuoncabqo
-    properties:
-      mail:
-        debug: true
-        smtp:
-          auth: true
-          starttls:
-              enable: true
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          jwk-set-uri: https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com
+#          issuer-uri: https://securetoken.google.com/spring-boot-auth-service
+  profiles:
+    active: test
+  session:
+    timeout: 10m

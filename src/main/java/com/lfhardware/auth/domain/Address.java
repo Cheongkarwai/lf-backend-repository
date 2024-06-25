@@ -1,24 +1,15 @@
 package com.lfhardware.auth.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.lfhardware.shared.BaseAddress;
 import jakarta.persistence.Embeddable;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Embeddable
-public class Address{
-
-    private String addressLine1;
-
-    private String addressLine2;
-
-    private String state;
-
-    private String city;
-
-    private String zipcode;
+public class Address extends BaseAddress{
 
 }

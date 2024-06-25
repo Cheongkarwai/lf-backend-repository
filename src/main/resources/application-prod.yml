@@ -1,0 +1,45 @@
+server:
+  port: 8081
+  error:
+    include-stacktrace: always
+    include-exception: true
+
+#omise co
+omise:
+  public-key: pkey_test_5x9z9ovaogftf7hp4nf
+  secret-key: skey_test_5xa1l9s31xhmncsoq1d
+
+
+
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+        web: DEBUG
+#                mail: DEBUG
+#      hibernate: DEBUG
+
+
+#java mail properties
+#spring:
+#  mail:
+#    host: smtp.gmail.com
+#    port: 587
+#    username: cheongkarwai5@gmail.com
+#    password: lnmq wuql snfq yvis
+#    properties:
+#      mail:
+#        debug: true
+#        smtp:
+#          auth: true
+#          starttls:
+#              enable: true
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com
+          issuer-uri: https://securetoken.google.com/spring-boot-auth-service

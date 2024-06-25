@@ -6,15 +6,62 @@
         <provider>org.hibernate.reactive.provider.ReactivePersistenceProvider</provider>
 
         <!--Classes-->
+        <!--Product-->
+        <class>com.lfhardware.product.domain.ProductImage</class>
         <class>com.lfhardware.product.domain.Product</class>
+        <class>com.lfhardware.product.domain.Category</class>
+        <class>com.lfhardware.product.domain.Brand</class>
+        <class>com.lfhardware.stock.domain.Stock</class>
+
+        <class>com.lfhardware.order.domain.Order</class>
+        <class>com.lfhardware.order.domain.OrderDetails</class>
+        <class>com.lfhardware.shipment.domain.ShippingDetails</class>
+        <class>com.lfhardware.customer.domain.Customer</class>
+
+        <class>com.lfhardware.provider.domain.ServiceProviderReview</class>
+        <class>com.lfhardware.review.domain.Review</class>
+
+        <!--Cart-->
+        <class>com.lfhardware.cart.domain.Cart</class>
+        <class>com.lfhardware.cart.domain.CartDetails</class>
+
+
         <class>com.lfhardware.auth.domain.User</class>
         <class>com.lfhardware.auth.domain.Role</class>
+
+        <!--Service Provider Domain-->
+        <class>com.lfhardware.provider.domain.ServiceProvider</class>
+        <class>com.lfhardware.appointment.domain.Appointment</class>
+        <class>com.lfhardware.appointment.domain.AppointmentImage</class>
+        <class>com.lfhardware.shared.BasicNamedAttribute</class>
+        <class>com.lfhardware.provider.domain.Album</class>
+        <class>com.lfhardware.provider.domain.Bank</class>
+        <class>com.lfhardware.provider.domain.BankingDetails</class>
+        <class>com.lfhardware.city.domain.City</class>
+        <class>com.lfhardware.country.domain.Country</class>
+<!--        <class>com.lfhardware.provider.domain.Coverage</class>-->
+        <class>com.lfhardware.provider_business.domain.Service</class>
+        <class>com.lfhardware.provider_business.domain.ServiceCategory</class>
+        <class>com.lfhardware.provider.domain.ServiceDetails</class>
+        <class>com.lfhardware.provider.domain.SocialMediaLink</class>
+        <class>com.lfhardware.state.domain.State</class>
+
+        <class>com.lfhardware.form.domain.Form</class>
+        <class>com.lfhardware.form.domain.FormId</class>
+        <!--Id-->
+        <class>com.lfhardware.provider.domain.BankDetailsId</class>
+
+        <!--ACL-->
+        <class>com.lfhardware.faq.domain.Faq</class>
+
+        <!--Notification-->
+        <class>com.lfhardware.notification.domain.Notification</class>
 
         <properties>
 
             <!-- PostgreSQL -->
             <property name="jakarta.persistence.jdbc.url"
-                      value="jdbc:postgresql://localhost:5432/testdb"/>
+                      value="jdbc:postgresql://localhost:5432/lf_hardware"/>
 
             <!-- Credentials -->
             <property name="jakarta.persistence.jdbc.user"
@@ -26,9 +73,9 @@
             <property name="hibernate.connection.pool_size"
                       value="10"/>
 
-            <!-- Automatic schema export -->
+<!--             Automatic schema export-->
 <!--            <property name="jakarta.persistence.schema-generation.database.action"-->
-<!--                      value="drop-and-create"/>-->
+<!--                      value="update" />-->
 
             <!-- SQL statement logging -->
             <property name="hibernate.show_sql" value="true"/>

@@ -1,21 +1,41 @@
 package com.lfhardware.cart.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Entity
+@Table(name = "tbl_cart")
+@NamedQueries({
+        @NamedQuery(name = "Cart.findByUsername", query = "SELECT u FROM Cart u WHERE u.username = :username")
+})
+@NamedEntityGraphs({
+        @NamedEntityGraph(
+                name = "CartItem",
+                attributeNodes = {
+                @NamedAttributeNode(value="cartDetails",subgraph = "cartDetails-stock")
+        },
+                subgraphs = {
+                @NamedSubgraph(name = "cartDetails-stock", attributeNodes = {@NamedAttributeNode(value="stock",subgraph = "stock-product")}),
+                @NamedSubgraph(name = "stock-product",attributeNodes = {@NamedAttributeNode("product")})
+        })
+})
 public class Cart {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public String username;
+    private String username;
+
+    @OneToMany(mappedBy = "cart")
+    public Set<CartDetails> cartDetails = new HashSet<>();
 }

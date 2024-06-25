@@ -15,6 +15,10 @@ import java.util.Set;
 @Builder
 @Entity
 @Table(name= CommonConstant.TBL_ROLE)
+@NamedQueries({
+        @NamedQuery(name = "Role.findByName",query = "FROM Role r WHERE r.name = :name"),
+        @NamedQuery(name = "Role.findAll", query = "FROM Role")
+})
 public class Role {
 
     @Id
