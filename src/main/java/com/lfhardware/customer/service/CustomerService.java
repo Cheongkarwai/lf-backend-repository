@@ -3,6 +3,7 @@ package com.lfhardware.customer.service;
 import com.lfhardware.appointment.domain.AppointmentId;
 import com.lfhardware.appointment.dto.AppointmentDTO;
 import com.lfhardware.auth.domain.Address;
+import com.lfhardware.auth.dto.Role;
 import com.lfhardware.auth.service.IUserService;
 import com.lfhardware.auth.service.RoleService;
 import com.lfhardware.customer.dto.CustomerCountGroupByDayDTO;
@@ -20,10 +21,12 @@ import com.lfhardware.shared.CacheService;
 import com.lfhardware.shared.PageInfo;
 import com.lfhardware.shared.Pageable;
 import org.hibernate.reactive.stage.Stage;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.cache.CacheManager;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
@@ -113,9 +116,9 @@ public class CustomerService implements ICustomerService {
                         })
                         .flatMap(customer -> Mono.fromCompletionStage(sessionFactory.withTransaction(session ->
                                 customerRepository.save(session, customer))))
-                        .then(roleService.findByName("customer")
+                        .then(roleService.findByName(Role.customer.name())
                                 .flatMap(roleRepresentations -> userService.updateUserRoleById(authentication.getName(), roleRepresentations))
-                                .then(notificationService.send(authentication.getName(), "You have updated your account information"))));
+                                .then(notificationService.sendProfileUpdatedNotification(authentication.getName()))));
     }
 
     @Override
@@ -154,15 +157,33 @@ public class CustomerService implements ICustomerService {
     public Mono<Pageable<CustomerDTO>> findAll(PageInfo pageRequest) {
         return customerCacheService.getCachedPageable(pageRequest)
                 .switchIfEmpty(Mono.defer(() -> Mono.fromCompletionStage(sessionFactory.withSession(session -> customerRepository.findAll(session, pageRequest)
-                                .thenApply(customers -> customers.stream()
-                                        .map(customerMapper::mapToCustomerDTO)
-                                        .collect(Collectors.toList())))
-                        .thenCombine(sessionFactory.withSession(session -> customerRepository.count(session, pageRequest)),
-                                (customers, totalElements) -> new Pageable<>(customers,
-                                        pageRequest.getPageSize(),
-                                        pageRequest.getPage(),
-                                        totalElements.intValue())))))
-                .flatMap(customerDTOPageable -> customerCacheService.updateCachedPageable(pageRequest, customerDTOPageable));
+                                .thenApply(customers -> {
+                                    return customers.stream()
+                                            .map(customerMapper::mapToCustomerDTO)
+                                            .collect(Collectors.toList());
+                                })))
+                        .flatMapIterable(customerDTOS -> customerDTOS)
+                        .flatMap(customerDTO -> {
+                            return userService.findById(customerDTO.getId())
+                                    .map(user -> {
+                                        customerDTO.setFirstName(user.getFirstName());
+                                        customerDTO.setLastName(user.getLastName());
+                                        return customerDTO;
+                                    });
+                        })
+                        .collectList()
+                        .flatMap(customerDTOS -> {
+                            return Mono.fromCompletionStage(sessionFactory.withSession(session -> {
+                                return customerRepository.count(session, pageRequest)
+                                        .thenApply(totalElements -> {
+                                            return new Pageable<>(customerDTOS,
+                                                    pageRequest.getPageSize(),
+                                                    pageRequest.getPage(),
+                                                    totalElements.intValue());
+                                        });
+                            }));
+                        })
+                        .flatMap(customerDTOPageable -> customerCacheService.updateCachedPageable(pageRequest, customerDTOPageable))));
     }
 
     @Override
