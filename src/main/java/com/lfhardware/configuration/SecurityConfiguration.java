@@ -44,7 +44,8 @@ import java.util.stream.Collectors;
 @EnableReactiveMethodSecurity(useAuthorizationManager=true)
 public class SecurityConfiguration {
 
-    private String[] allowedPaths = {"/", "/api/v1/payments/webhook", "/api/v1/services", "/api/v1/service-providers"};
+    private String[] allowedPaths = {"/", "/api/v1/payments/webhook", "/api/v1/services", "/api/v1/service-providers" ,
+            "/api/v1/service-providers/details/{id}", "/api/v1/service-providers/{id}/reviews", "/api/v1/users/me/username"};
 
     @Bean
     SecurityWebFilterChain securityFilterChain(ServerHttpSecurity httpSecurity){
