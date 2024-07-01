@@ -7,6 +7,8 @@ import com.lfhardware.transaction.dto.TransactionDTO;
 
 import com.lfhardware.transaction.dto.TransactionDetailsDTO;
 import com.lfhardware.transaction.mapper.TransactionMapper;
+import com.stripe.StripeClient;
+import com.stripe.model.Charge;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -22,10 +24,16 @@ public class TransactionService implements ITransactionService {
 
     private final TransactionMapper transactionMapper;
 
-    public TransactionService(Stage.SessionFactory sessionFactory, ITransactionRepository transactionRepository, TransactionMapper transactionMapper) {
+    private final StripeClient stripeClient;
+
+    public TransactionService(Stage.SessionFactory sessionFactory,
+                              ITransactionRepository transactionRepository,
+                              TransactionMapper transactionMapper,
+                              StripeClient stripeClient) {
         this.sessionFactory = sessionFactory;
         this.transactionRepository = transactionRepository;
         this.transactionMapper = transactionMapper;
+        this.stripeClient = stripeClient;
     }
 
     @Override
@@ -48,5 +56,6 @@ public class TransactionService implements ITransactionService {
     public Mono<Long> count() {
         return Mono.fromCompletionStage(sessionFactory.withSession(session -> transactionRepository.count(session, new PageInfo())));
     }
+
 
 }
