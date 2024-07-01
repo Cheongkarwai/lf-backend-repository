@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -185,5 +187,16 @@ public class UserApi {
                 .onErrorResume(throwable -> ServerResponse.badRequest()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(new ErrorResponse(throwable.getMessage(), serverRequest.path())));
+    }
+
+    public Mono<ServerResponse> findLoggedInUsername(ServerRequest serverRequest) {
+        return ReactiveSecurityContextHolder.getContext()
+                .map(SecurityContext::getAuthentication)
+                .map(authentication -> {
+                    System.out.println(authentication.getName());
+                    return authentication.getName();
+                })
+                .flatMap(name -> ServerResponse.ok()
+                        .bodyValue(name));
     }
 }
