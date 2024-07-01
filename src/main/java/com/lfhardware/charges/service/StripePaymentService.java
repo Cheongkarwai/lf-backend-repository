@@ -5,16 +5,15 @@ import co.omise.ClientException;
 import co.omise.models.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lfhardware.charges.dto.*;
-import com.lfhardware.transaction.dto.TransactionDTO;
 import com.lfhardware.charges.repository.ITransactionRepository;
 import com.lfhardware.shared.Currency;
-import com.lfhardware.shared.PageInfo;
-import com.lfhardware.shared.Pageable;
 import com.lfhardware.shared.PaymentMethod;
 import com.stripe.StripeClient;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Charge;
 import com.stripe.model.PaymentIntent;
 import com.stripe.model.Product;
+import com.stripe.model.Transfer;
 import com.stripe.param.*;
 import com.stripe.param.checkout.SessionCreateParams;
 import org.hibernate.reactive.stage.Stage;
@@ -27,10 +26,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
-public class OmisePaymentService implements IPaymentService {
+public class StripePaymentService implements IPaymentService {
 
     private final OmiseProperties omiseProperties;
 
@@ -42,10 +40,10 @@ public class OmisePaymentService implements IPaymentService {
 
     private final Stage.SessionFactory sessionFactory;
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(OmisePaymentService.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(StripePaymentService.class);
 
-    public OmisePaymentService(OmiseProperties omiseProperties, StripeClient stripeClient, ObjectMapper objectMapper,
-                               ITransactionRepository transactionRepository, Stage.SessionFactory sessionFactory) {
+    public StripePaymentService(OmiseProperties omiseProperties, StripeClient stripeClient, ObjectMapper objectMapper,
+                                ITransactionRepository transactionRepository, Stage.SessionFactory sessionFactory) {
         this.omiseProperties = omiseProperties;
         this.stripeClient = stripeClient;
         this.objectMapper = objectMapper;
@@ -236,6 +234,7 @@ public class OmisePaymentService implements IPaymentService {
         return Mono.empty();
     }
 
+
     public Mono<String> createCheckoutSession() {
 
         ProductCreateParams productCreateParams = ProductCreateParams.builder()
@@ -280,5 +279,35 @@ public class OmisePaymentService implements IPaymentService {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Override
+    public Mono<Void> transferFunds(Currency currency, Long amount,String transferGroup, String connectedAccountId){
+        return Mono.fromCallable(()->{
+            TransferCreateParams params =
+                    TransferCreateParams.builder()
+                            .setAmount(amount)
+                            .setCurrency(currency.name())
+                            .setDestination(connectedAccountId)
+                            .setTransferGroup(transferGroup)
+                            .build();
+
+            Transfer transfer = stripeClient.transfers().create(params);
+            System.out.println(transfer.getId());
+            return Mono.empty();
+        }).then();
+    }
+
+    @Override
+    public Mono<Charge> findChargeByPaymentIntent(String paymentIntentId){
+        return Mono.fromCallable(()->{
+            System.out.println(paymentIntentId);
+            System.out.println("Payment Intent" + stripeClient.paymentIntents().retrieve(paymentIntentId));
+            String chargeId = stripeClient.paymentIntents().retrieve(paymentIntentId)
+                    .getLatestCharge();
+
+            return stripeClient.charges().retrieve(chargeId);
+
+        });
     }
 }
