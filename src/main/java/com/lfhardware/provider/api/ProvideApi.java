@@ -1,5 +1,6 @@
 package com.lfhardware.provider.api;
 
+import com.lfhardware.appointment.domain.AppointmentId;
 import com.lfhardware.appointment.domain.AppointmentStatus;
 import com.lfhardware.form.domain.FormId;
 import com.lfhardware.form.dto.FormDTO;
@@ -9,6 +10,7 @@ import com.lfhardware.provider.domain.Status;
 import com.lfhardware.provider.dto.*;
 import com.lfhardware.provider.service.IProviderService;
 import com.lfhardware.provider_business.dto.ServiceDTO;
+import com.lfhardware.review.domain.ReviewInput;
 import com.lfhardware.shared.*;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
@@ -18,6 +20,7 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -177,7 +180,8 @@ public class ProvideApi {
     public Mono<ServerResponse> findServiceProviderReviewsById(ServerRequest serverRequest) {
 
         PageInfo pageRequest = PageQueryParameterBuilder.buildPageRequest(serverRequest);
-        String rating = serverRequest.queryParam("rating").orElse(null);
+        String rating = serverRequest.queryParam("rating")
+                .orElse(null);
         return ServerResponse.ok()
                 .body(providerService.findAllServiceProviderReviewsById(serverRequest.pathVariable("id"),
                                 pageRequest,
@@ -190,14 +194,16 @@ public class ProvideApi {
                 .body(providerService.countServiceProviderReviewsById(serverRequest.pathVariable("id")), Long.class);
     }
 
-    public Mono<ServerResponse> countCurrentServiceProviderReviews(ServerRequest serverRequest){
+    public Mono<ServerResponse> countCurrentServiceProviderReviews(ServerRequest serverRequest) {
         return ServerResponse.ok()
                 .body(providerService.countCurrentServiceProviderReviews(), List.class);
     }
 
-    public Mono<ServerResponse> countCurrentServiceProviderAppointment(ServerRequest serverRequest){
-        String status = serverRequest.queryParam("status").orElse(null);
-        String day = serverRequest.queryParam("day").orElse(null);
+    public Mono<ServerResponse> countCurrentServiceProviderAppointment(ServerRequest serverRequest) {
+        String status = serverRequest.queryParam("status")
+                .orElse(null);
+        String day = serverRequest.queryParam("day")
+                .orElse(null);
 
         return ServerResponse.ok()
                 .body(providerService.countCurrentServiceProviderAppointments(
@@ -205,8 +211,9 @@ public class ProvideApi {
                         Objects.nonNull(day) ? Integer.valueOf(day) : null), List.class);
     }
 
-    public Mono<ServerResponse> countServiceProvider(ServerRequest serverRequest){
-        String day = serverRequest.queryParam("day").orElse(null);
+    public Mono<ServerResponse> countServiceProvider(ServerRequest serverRequest) {
+        String day = serverRequest.queryParam("day")
+                .orElse(null);
 
         return ServerResponse.ok()
                 .body(providerService.countServiceProviders(Objects.nonNull(day) ? Integer.valueOf(day) : null), List.class);
@@ -234,5 +241,17 @@ public class ProvideApi {
         return providerService.createPaymentDetails()
                 .flatMap(link -> ServerResponse.ok()
                         .bodyValue(link));
+    }
+
+    public Mono<ServerResponse> saveServiceProviderReview(ServerRequest serverRequest) {
+        String serviceProviderId = serverRequest.pathVariable("serviceProviderId");
+        Long serviceId = Long.parseLong(serverRequest.pathVariable("serviceId"));
+        String customerId = serverRequest.pathVariable("customerId");
+        LocalDateTime createdAt = LocalDateTime.parse(serverRequest.pathVariable("createdAt"));
+        return serverRequest.bodyToMono(ServiceProviderReviewInput.class)
+                .flatMap(serviceProviderReviewInput -> providerService.saveServiceProviderReview(serverRequest.pathVariable("id"),
+                        new AppointmentId(serviceId, serviceProviderId, customerId, createdAt), serviceProviderReviewInput))
+                .then(Mono.defer(() -> ServerResponse.ok()
+                        .build()));
     }
 }
