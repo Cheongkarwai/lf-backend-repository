@@ -207,6 +207,7 @@ public class RouteConfiguration {
                                 route -> route
                                         .GET("/account/me", userHandler::findCurrentlyLoggedInUser)
                                         .GET("/roles/me", userHandler::findCurrentlyLoggedInUserRoles)
+                                        .GET("/me/username", userHandler::findLoggedInUsername)
                                         .GET("/phone-number/{phoneNumber}", userHandler::findUserByPhoneNumber)
                                         .GET("/{username}/account", userHandler::findUserAccountByUsername)
                                         .GET("/{username}/roles", userHandler::findUserRole)
@@ -257,9 +258,11 @@ public class RouteConfiguration {
                 .path("/api/v1/appointments",
                         builder -> builder.nest(RequestPredicates.accept(MediaType.APPLICATION_JSON),
                                 route -> route
+                                        .GET("/{serviceId}/{serviceProviderId}/{customerId}/{createdAt}/receipt", appointmentApi::findAppointmentReceipt)
                                         .GET("/{serviceId}/{serviceProviderId}/{customerId}/{createdAt}", appointmentApi::findById)
                                         .GET("/count", appointmentApi::count)
                                         .GET(appointmentApi::findAll)
+                                        .POST("/{serviceId}/{serviceProviderId}/{customerId}/{createdAt}/funds/transfer", appointmentApi::transferAppointmentFunds)
                                         .POST("/{serviceId}/{serviceProviderId}/{customerId}/{createdAt}/fees", appointmentApi::payAppointmentFees)
                                         .POST(appointmentApi::createAppointment)
                                         .PUT("/status", appointmentApi::updateAppointmentStatus)))
@@ -287,6 +290,7 @@ public class RouteConfiguration {
                                         .GET("/services", providerHandler::findCurrentProviderBusinesses)
                                         .GET("/count", providerHandler::countServiceProvider)
                                         .GET(providerHandler::findAll)
+                                        .POST("/{id}/appointments/{serviceId}/{serviceProviderId}/{customerId}/{createdAt}/reviews", providerHandler::saveServiceProviderReview)
                                         .POST("/{service-provider}/services/{service}/forms", providerHandler::createForm)
                                         .POST("/me/payment-accounts", providerHandler::createPaymentDetails)
                                         .POST(providerHandler::save)
