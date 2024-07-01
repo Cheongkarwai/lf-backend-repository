@@ -1,6 +1,8 @@
-package com.lfhardware.provider.dto;
+package com.lfhardware.provider.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,15 +12,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ContactInfoDTO {
+@Embeddable
+public class ContactInfo {
 
-    @JsonProperty("email_address")
     private String emailAddress;
 
-    @JsonProperty("phone_number")
     private String phoneNumber;
-
-    @JsonProperty("fax_number")
-    private String faxNo;
-
 }
