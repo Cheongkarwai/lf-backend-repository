@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.lfhardware.appointment.domain.AppointmentId;
 import com.lfhardware.appointment.repository.IAppointmentRepository;
+import com.lfhardware.appointment.service.IAppointmentService;
 import com.lfhardware.auth.repository.IUserRepository;
+import com.lfhardware.checkout.service.ICheckoutService;
+import com.lfhardware.notification.service.INotificationService;
 import com.lfhardware.order.domain.PaymentStatus;
 import com.lfhardware.order.repository.IOrderRepository;
 import com.lfhardware.order.service.IOrderService;
@@ -26,6 +29,8 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @Slf4j
@@ -44,7 +49,13 @@ public class EventService {
 
     private final IProviderRepository providerRepository;
 
+    private final IAppointmentService appointmentService;
+
+    private final ICheckoutService checkoutService;
+
     private final IAppointmentRepository appointmentRepository;
+
+    private final INotificationService notificationService;
     public EventService(
             Stage.SessionFactory sessionFactory,
             IProductRepository productRepository,
@@ -53,7 +64,10 @@ public class EventService {
             IOrderRepository orderRepository,
             IUserRepository userRepository,
             IProviderRepository providerRepository,
-            IAppointmentRepository appointmentRepository) {
+            IAppointmentRepository appointmentRepository,
+            IAppointmentService appointmentService,
+            ICheckoutService checkoutService,
+            INotificationService notificationService) {
         this.sessionFactory = sessionFactory;
         this.productRepository = productRepository;
         this.stripeClient = stripeClient;
@@ -62,6 +76,9 @@ public class EventService {
         this.userRepository = userRepository;
         this.providerRepository = providerRepository;
         this.appointmentRepository = appointmentRepository;
+        this.appointmentService = appointmentService;
+        this.checkoutService = checkoutService;
+        this.notificationService = notificationService;
     }
 
     public Mono<Void> handleWebhookEvent(Event event) {
@@ -83,27 +100,14 @@ public class EventService {
 
         }
         if(event.getType().equals("checkout.session.completed")){
-            Session session = (Session) event.getData().getObject();
-            System.out.println("Payment Intent" +session.getPaymentIntent());
-            return Mono.fromCompletionStage(sessionFactory.withTransaction(session1 -> {
-                AppointmentId appointmentId = new AppointmentId();
 
-                String serviceId = session.getMetadata().get("service_id");
-                String dateId = session.getMetadata().get("current_datetime");
-                String customerId = session.getMetadata().get("customer_id");
-                String serviceProviderId = session.getMetadata().get("service_provider_id");
 
-                appointmentId.setServiceId(Long.valueOf(serviceId));
-                appointmentId.setCreatedAt(LocalDateTime.parse(dateId));
-                appointmentId.setCustomerId(customerId);
-                appointmentId.setServiceProviderId(serviceProviderId);
-                return appointmentRepository.findById(session1, appointmentId)
-                        .thenCompose(appointment->{
-                            appointment.setPaid(true);
-                            return appointmentRepository.save(session1, appointment);
+            System.out.println("Version :" + event.getApiVersion());
+                Session sessionEvent = (Session) event.getData().getObject();
+                return checkoutService.findById(sessionEvent.getId())
+                        .flatMap(session -> {
+                            return appointmentService.fulfillAppointment(session.getId(), sessionEvent.getPaymentIntent());
                         });
-            }));
-
         }
         if(event.getType().equals("payment_intent.created")){
 
@@ -170,14 +174,15 @@ public class EventService {
 //                                    return orderRepository.save(session, order);
 //                                })))
 //                        .then();
-                PaymentIntent paymentIntent = (PaymentIntent) event.getData().getObject();
-                yield Mono.fromCompletionStage(sessionFactory.withTransaction((session, transaction) -> orderRepository.findById(session, Long.valueOf(paymentIntent.getMetadata().get("order_id")))
-                        .thenCompose(order -> {
-                            log.info("Order Status : {}", order.getPaymentStatus());
-                            order.setPaymentStatus(PaymentStatus.PAID);
-                            return orderRepository.save(session, order);
-                        }))
-                ).then();
+                yield Mono.empty();
+//                PaymentIntent paymentIntent = (PaymentIntent) event.getData().getObject();
+//                yield Mono.fromCompletionStage(sessionFactory.withTransaction((session, transaction) -> orderRepository.findById(session, Long.valueOf(paymentIntent.getMetadata().get("order_id")))
+//                        .thenCompose(order -> {
+//                            log.info("Order Status : {}", order.getPaymentStatus());
+//                            order.setPaymentStatus(PaymentStatus.PAID);
+//                            return orderRepository.save(session, order);
+//                        }))
+//                ).then();
             }
             case "charge.succeeded" -> {
                 yield Mono.empty();
