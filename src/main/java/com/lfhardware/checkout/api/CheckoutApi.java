@@ -18,7 +18,7 @@ public class CheckoutApi {
 
     public Mono<ServerResponse> createCheckoutSession(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(CheckoutInput.class)
-                .flatMap(checkoutInput -> checkoutService.createCheckoutSession(checkoutInput)
+                .flatMap(checkoutInput -> checkoutService.createCheckoutSession(null,checkoutInput)
                         .flatMap(checkoutUrl -> ServerResponse.ok()
                                 .bodyValue(checkoutUrl)));
     }
