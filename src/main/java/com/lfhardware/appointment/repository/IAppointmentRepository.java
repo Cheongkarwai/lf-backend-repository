@@ -1,7 +1,7 @@
 package com.lfhardware.appointment.repository;
 
 import com.lfhardware.appointment.domain.Appointment;
-import com.lfhardware.appointment.domain.AppointmentCountGroupByDayDTO;
+import com.lfhardware.appointment.dto.AppointmentCountGroupByDayDTO;
 import com.lfhardware.appointment.domain.AppointmentId;
 import com.lfhardware.appointment.domain.AppointmentStatus;
 import com.lfhardware.provider.dto.ServiceProviderAppointmentCountGroupByDayDTO;
@@ -34,4 +34,6 @@ public interface IAppointmentRepository extends CrudRepository<Appointment, Appo
                                                                                                                        Integer day);
 
     CompletionStage<List<AppointmentCountGroupByDayDTO>> countAppointmentsGroupByDay(Stage.Session session, AppointmentStatus appointmentStatus,Integer day);
+
+    CompletionStage<Appointment> findByCheckoutSessionId(Stage.Session session, String checkoutSessionId);
 }
