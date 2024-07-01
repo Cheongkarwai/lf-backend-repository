@@ -18,6 +18,8 @@ import java.util.List;
 @AllArgsConstructor
 public class CheckoutInput {
 
+    private String customerId;
+
     private List<ServiceItemInput> items = new ArrayList<>();
 
     @JsonProperty("service_provider_id")
