@@ -1,6 +1,7 @@
 package com.lfhardware.provider.service;
 
 import com.lfhardware.account.service.IAccountService;
+import com.lfhardware.appointment.domain.AppointmentId;
 import com.lfhardware.appointment.domain.AppointmentStatus;
 import com.lfhardware.appointment.dto.AppointmentDTO;
 import com.lfhardware.appointment.mapper.AppointmentMapper;
@@ -11,6 +12,7 @@ import com.lfhardware.auth.dto.Role;
 import com.lfhardware.auth.service.RoleService;
 import com.lfhardware.customer.domain.Customer;
 import com.lfhardware.customer.dto.CustomerDTO;
+import com.lfhardware.customer.repository.ICustomerRepository;
 import com.lfhardware.provider.cache.ServiceProviderCacheKey;
 import com.lfhardware.provider.repository.IServiceDetailsRepository;
 import com.lfhardware.shared.CacheService;
@@ -69,6 +71,8 @@ public class ProviderService implements IProviderService {
 
     private final IServiceProviderReviewRepository serviceProviderReviewRepository;
 
+    private final ICustomerRepository customerRepository;
+
     private final ServiceDetailsMapper serviceDetailsMapper;
     private final ServiceProviderMapper serviceProviderMapper;
 
@@ -102,6 +106,7 @@ public class ProviderService implements IProviderService {
                            IServiceProviderReviewRepository serviceProviderReviewRepository,
                            IServiceDetailsRepository serviceDetailsRepository,
                            IAppointmentRepository appointmentRepository,
+                           ICustomerRepository customerRepository,
                            ServiceProviderMapper serviceProviderMapper,
                            ServiceDetailsMapper serviceDetailsMapper,
                            ServiceProviderReviewMapper serviceProviderReviewMapper,
@@ -128,6 +133,7 @@ public class ProviderService implements IProviderService {
         this.appointmentRepository = appointmentRepository;
         this.serviceDetailsRepository = serviceDetailsRepository;
         this.serviceProviderReviewRepository = serviceProviderReviewRepository;
+        this.customerRepository = customerRepository;
         //Mapper
         this.serviceProviderMapper = serviceProviderMapper;
         this.serviceDetailsMapper = serviceDetailsMapper;
@@ -156,7 +162,15 @@ public class ProviderService implements IProviderService {
                 .switchIfEmpty(Mono.defer(() -> Mono.fromCompletionStage(sessionFactory.withSession(session -> providerRepository.findAll(session, pageRequest, status,
                                                 states, rating, serviceName)
                                         .thenApply(serviceProviders -> serviceProviders.stream()
-                                                .map(serviceProviderMapper::mapToServiceProviderDTO)
+                                                .map(serviceProvider -> {
+                                                    ServiceProviderDTO serviceProviderDTO = serviceProviderMapper.mapToServiceProviderDTO(serviceProvider);
+                                                    ContactInfoDTO contactInfo = new ContactInfoDTO();
+                                                    contactInfo.setEmailAddress(serviceProvider.getEmailAddress());
+                                                    contactInfo.setPhoneNumber(serviceProvider.getPhoneNumber());
+                                                    contactInfo.setFaxNo(serviceProvider.getFaxNo());
+                                                    serviceProviderDTO.setContactInfo(contactInfo);
+                                                    return serviceProviderDTO;
+                                                })
                                                 .collect(Collectors.toList())))
                                 .thenCombine(sessionFactory.withSession(session ->
                                         providerRepository.count(session, pageRequest, status,
@@ -171,7 +185,15 @@ public class ProviderService implements IProviderService {
                         providerRepository.findAll(session, serviceProviderRequest, List.of(), List.of(), null, null))
                 .thenCombine(sessionFactory.withSession(session -> providerRepository.count(session, serviceProviderRequest, List.of(), List.of(),
                         null, null)), ((serviceProviders, totalElements) -> new Pageable<>(serviceProviders.stream()
-                        .map(serviceProviderMapper::mapToServiceProviderDetailsDTO)
+                        .map(serviceProvider ->{
+                            ServiceProviderDetailsDTO serviceProviderDTO = serviceProviderMapper.mapToServiceProviderDetailsDTO(serviceProvider);
+                            ContactInfoDTO contactInfo = new ContactInfoDTO();
+                            contactInfo.setEmailAddress(serviceProvider.getEmailAddress());
+                            contactInfo.setPhoneNumber(serviceProvider.getPhoneNumber());
+                            contactInfo.setFaxNo(serviceProvider.getFaxNo());
+                            serviceProviderDTO.setContactInfo(contactInfo);
+                            return serviceProviderDTO;
+                        })
                         .collect(Collectors.toList()), serviceProviderRequest.getPageSize(), serviceProviderRequest.getPage(), totalElements.intValue()))));
     }
 
@@ -332,7 +354,7 @@ public class ProviderService implements IProviderService {
     }
 
     @Override
-    public Mono<List<ServiceProviderAppointmentCountGroupByDayDTO>> countCurrentServiceProviderAppointments(AppointmentStatus status, Integer day){
+    public Mono<List<ServiceProviderAppointmentCountGroupByDayDTO>> countCurrentServiceProviderAppointments(AppointmentStatus status, Integer day) {
         return ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)
                 .flatMap(authentication -> Mono.fromCompletionStage(sessionFactory.withSession(session -> {
@@ -341,7 +363,7 @@ public class ProviderService implements IProviderService {
     }
 
     @Override
-    public  Mono<List<ServiceProviderCountGroupByDayDTO>> countServiceProviders(Integer day){
+    public Mono<List<ServiceProviderCountGroupByDayDTO>> countServiceProviders(Integer day) {
         return Mono.fromCompletionStage(sessionFactory.withSession(session -> providerRepository.countServiceProvidersGroupByDay(session, day)));
 
     }
@@ -367,6 +389,7 @@ public class ProviderService implements IProviderService {
                         .map(SecurityContext::getAuthentication)
                         .flatMap(authentication -> {
                             serviceProvider.setId(authentication.getName());
+                            serviceProvider.setStatus(Status.PENDING);
                             return Mono.fromCompletionStage(sessionFactory.withTransaction((session, transaction) -> {
                                         return providerRepository.save(session, serviceProvider)
                                                 .thenCompose(v -> providerBusinessRepository.findAllByIds(session, serviceProviderInput.getBasicInformation()
@@ -403,10 +426,10 @@ public class ProviderService implements IProviderService {
                                                     }
                                                     serviceProvider.addStateCoverages(stateCoverages);
                                                     return providerRepository.merge(session, serviceProvider);
-                                                });
+                                                }).thenAccept(v-> serviceProviderCacheService.removeAll());
                                     }))
-                                    .flatMap(v -> roleService.findByName(Role.service_provider.name())
-                                            .flatMap(roleRepresentations -> accountService.updateAccountRoleById(authentication.getName(), roleRepresentations)))
+                                    .then(Mono.defer(() -> roleService.findByName(Role.service_provider.name())
+                                            .flatMap(roleRepresentations -> accountService.updateAccountRoleById(authentication.getName(), roleRepresentations))))
                                     .then();
                         }));
     }
@@ -418,9 +441,9 @@ public class ProviderService implements IProviderService {
                             provider.setName(serviceProviderDetailsInput.getName());
                             provider.setVerified(serviceProviderDetailsInput.isVerified());
                             provider.setPhoneNumber(serviceProviderDetailsInput.getContactInfo()
-                                    .phoneNumber());
+                                    .getPhoneNumber());
                             provider.setEmailAddress(serviceProviderDetailsInput.getContactInfo()
-                                    .emailAddress());
+                                    .getEmailAddress());
                             provider.setOverview(serviceProviderDetailsInput.getOverview());
                             Address address = new Address();
                             address.setAddressLine1(serviceProviderDetailsInput.getAddress()
@@ -516,12 +539,53 @@ public class ProviderService implements IProviderService {
     public Mono<Boolean> findPaymentAccountStatus() {
         return ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)
-                .flatMap(authentication -> Mono.fromCompletionStage(sessionFactory.withSession(session -> providerRepository.findDetailsById(session, authentication.getName())
-                                .thenApply(ServiceProvider::getStripeAccountId)))
-                        .flatMap(accountService::findStripeAccount)
-                        .map(Account::getDetailsSubmitted)
+                .flatMap(authentication -> {
+                            return Mono.fromCompletionStage(sessionFactory.withSession(session -> providerRepository.findDetailsById(session, authentication.getName())
+                                            .thenApply(serviceProvider -> {
+                                                if (Objects.nonNull(serviceProvider)) {
+                                                    return serviceProvider.getStripeAccountId();
+                                                }
+                                                return null;
+                                            })))
+                                    .flatMap(accountId->{
+                                        return accountService.findStripeAccount(accountId);
+                                    })
+                                    .map(account -> {
+                                        if (Objects.nonNull(account)) {
+                                            return account.getDetailsSubmitted();
+                                        }
+                                        return false;
+                                    });
+                        }
                 )
                 .switchIfEmpty(Mono.defer(() -> Mono.just(false)));
 
+    }
+
+    @Override
+    public Mono<Void> saveServiceProviderReview(String id, AppointmentId appointmentId, ServiceProviderReviewInput serviceProviderReviewInput) {
+        return ReactiveSecurityContextHolder.getContext()
+                .map(SecurityContext::getAuthentication)
+                .flatMap(authentication -> {
+                    ServiceProviderReview serviceProviderReview = serviceProviderReviewMapper.mapToServiceProviderReview(serviceProviderReviewInput);
+                    return Mono.fromCompletionStage(sessionFactory.withSession(session -> {
+                        return customerRepository.findById(session, authentication.getName())
+                                .thenAccept(serviceProviderReview::setCustomer)
+                                .thenCompose(v -> providerRepository.findDetailsById(session, id)
+                                        .thenAccept(serviceProviderReview::setServiceProvider))
+                                .thenCompose(v -> sessionFactory.withTransaction((session1, transaction) ->
+                                        serviceProviderReviewRepository.save(session, serviceProviderReview)
+                                                .thenCompose(z -> appointmentRepository.findById(session, appointmentId))
+                                                .thenCompose(appointment -> {
+                                                    appointment.setHasReview(true);
+                                                    return appointmentRepository.save(session, appointment);
+                                                })
+                                                .thenAccept(z -> {
+                                                    serviceProviderReviewCacheService.removeAll();
+                                                    appointmentCacheService.removeAll();
+                                                })
+                                ));
+                    }));
+                });
     }
 }
