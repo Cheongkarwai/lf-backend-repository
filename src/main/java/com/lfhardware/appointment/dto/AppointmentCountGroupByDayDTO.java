@@ -1,4 +1,4 @@
-package com.lfhardware.appointment.domain;
+package com.lfhardware.appointment.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

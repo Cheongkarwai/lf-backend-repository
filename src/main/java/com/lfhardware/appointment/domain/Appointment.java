@@ -1,5 +1,6 @@
 package com.lfhardware.appointment.domain;
 
+import com.lfhardware.auth.domain.Address;
 import com.lfhardware.customer.domain.Customer;
 import com.lfhardware.provider.domain.ServiceProvider;
 import com.lfhardware.provider_business.domain.Service;
@@ -49,7 +50,6 @@ public class Appointment {
     @JoinColumn(name = "service_id")
     private Service service;
 
-
     @Column(name = "booking_datetime")
     @CreationTimestamp
     private LocalDateTime bookingDatetime;
@@ -82,6 +82,30 @@ public class Appointment {
     @Column(name = "review_datetime")
     private LocalDateTime reviewDatetime;
 
+    @Column(name = "checkout_session_id")
+    private String checkoutSessionId;
+
+    @Column(name = "payment_intent_id")
+    private String paymentIntentId;
+
+    @Column(name = "checkout_url")
+    private String checkoutUrl;
+
+    @Column(name = "transfer_group")
+    private String transferGroup;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "addressLine1", column = @Column(name = "address_line_1")),
+            @AttributeOverride(name = "addressLine2", column = @Column(name = "address_line_2")),
+    })
+    private Address address;
+
+    @Column(name = "has_review")
+    private boolean hasReview;
+
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, mappedBy = "appointment")
     private List<AppointmentImage> appointmentImages = new ArrayList<>();
+
+
 }

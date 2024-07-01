@@ -64,6 +64,13 @@ public class AppointmentApi {
                         .bodyValue(e));
     }
 
+    public Mono<ServerResponse> transferAppointmentFunds(ServerRequest serverRequest) {
+        return appointmentService.transferAppointmentFunds(Long.valueOf(serverRequest.pathVariable("serviceId")),
+                        serverRequest.pathVariable("serviceProviderId"), serverRequest.pathVariable("customerId"),
+                        LocalDateTime.parse(serverRequest.pathVariable("createdAt")))
+                .then(Mono.defer(()->ServerResponse.ok().build()));
+    }
+
     public Mono<ServerResponse> findById(ServerRequest serverRequest) {
 
         String serviceProviderId = serverRequest.pathVariable("serviceProviderId");
@@ -87,4 +94,14 @@ public class AppointmentApi {
                         Objects.nonNull(day) ? Integer.valueOf(day) : null), List.class);
     }
 
+    public Mono<ServerResponse> findAppointmentReceipt(ServerRequest serverRequest){
+        String serviceProviderId = serverRequest.pathVariable("serviceProviderId");
+        String serviceId = serverRequest.pathVariable("serviceId");
+        String customerId = serverRequest.pathVariable("customerId");
+        String createdAt = serverRequest.pathVariable("createdAt");
+
+        return appointmentService.findReceiptById(new AppointmentId(Long.valueOf(serviceId), serviceProviderId, customerId, LocalDateTime.parse(createdAt)))
+                .flatMap(receiptUrl -> ServerResponse.ok()
+                        .bodyValue(receiptUrl));
+    }
 }

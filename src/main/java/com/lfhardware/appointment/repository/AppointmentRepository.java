@@ -1,19 +1,11 @@
 package com.lfhardware.appointment.repository;
 
 import com.lfhardware.appointment.domain.*;
+import com.lfhardware.appointment.dto.AppointmentCountGroupByDayDTO;
 import com.lfhardware.appointment.repository.predicate.AppointmentPredicateBuilder;
-import com.lfhardware.auth.domain.User;
-import com.lfhardware.auth.domain.User_;
-import com.lfhardware.auth.dto.DailyUserStat;
-import com.lfhardware.customer.domain.Customer_;
 import com.lfhardware.provider.dto.ServiceProviderAppointmentCountGroupByDayDTO;
-import com.lfhardware.provider.dto.ServiceProviderCountGroupByDayDTO;
 import com.lfhardware.shared.PageInfo;
 import com.lfhardware.shared.PageRepository;
-import com.lfhardware.shared.PageRequestPredicateBuilder;
-import com.lfhardware.shared.SortOrder;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityGraph;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -21,7 +13,6 @@ import org.hibernate.reactive.stage.Stage;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -369,6 +360,18 @@ public class AppointmentRepository extends PageRepository implements IAppointmen
                     }
                     return appointmentCountList;
                 });
+    }
+
+    @Override
+    public CompletionStage<Appointment> findByCheckoutSessionId(Stage.Session session, String checkoutSessionId){
+        CriteriaBuilder cb = sessionFactory.getCriteriaBuilder();
+        CriteriaQuery<Appointment> cq = cb.createQuery(Appointment.class);
+        Root<Appointment> root = cq.from(Appointment.class);
+
+        cq.select(root).where(cb.equal(root.get(Appointment_.CHECKOUT_SESSION_ID), checkoutSessionId));
+
+        return session.createQuery(cq)
+                .getSingleResultOrNull();
     }
 
 }

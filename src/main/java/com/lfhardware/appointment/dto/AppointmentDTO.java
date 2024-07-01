@@ -2,6 +2,7 @@ package com.lfhardware.appointment.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lfhardware.appointment.domain.AppointmentStatus;
+import com.lfhardware.auth.dto.AddressDTO;
 import com.lfhardware.customer.dto.CustomerDTO;
 import com.lfhardware.provider.dto.ServiceProviderDTO;
 import jakarta.persistence.Column;
@@ -61,6 +62,12 @@ public class AppointmentDTO {
 
     @JsonProperty("review_datetime")
     private LocalDateTime reviewDatetime;
+
+    @JsonProperty
+    private AddressDTO address;
+
+    @JsonProperty("has_review")
+    private boolean hasReview;
 
     @JsonProperty("appointment_completion_images")
     private List<AppointmentImageDTO> appointmentImages;

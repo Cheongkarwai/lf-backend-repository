@@ -1,5 +1,6 @@
 package com.lfhardware.appointment.mapper;
 
+import com.lfhardware.address.mapper.AddressMapper;
 import com.lfhardware.appointment.dto.AppointmentDTO;
 import com.lfhardware.appointment.domain.Appointment;
 import com.lfhardware.appointment.dto.AppointmentInput;
@@ -10,7 +11,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.Mappings;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {ServiceProviderMapper.class, CustomerMapper.class, AppointmentImageMapper.class})
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {ServiceProviderMapper.class, CustomerMapper.class, AppointmentImageMapper.class,
+        AddressMapper.class})
 public interface AppointmentMapper {
 
     @Mappings({
@@ -29,6 +31,8 @@ public interface AppointmentMapper {
             @Mapping(target = "jobStartedDatetime", source = "jobStartedDatetime"),
             @Mapping(target = "jobCompletionDatetime", source = "jobCompletionDatetime"),
             @Mapping(target = "reviewDatetime", source = "reviewDatetime"),
+            @Mapping(target = "hasReview", source = "hasReview"),
+            @Mapping(target = "address", source = "address"),
             @Mapping(target = "appointmentImages", source = "appointmentImages")
     })
     AppointmentDTO mapToAppointmentDTO(Appointment appointment);
