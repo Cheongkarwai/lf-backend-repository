@@ -49,7 +49,7 @@ public class ServiceProviderReviewRepository extends PageRepository implements I
 
     @Override
     public CompletionStage<Void> save(Stage.Session session, ServiceProviderReview obj) {
-        return null;
+        return session.persist(obj);
     }
 
     @Override
@@ -105,7 +105,21 @@ public class ServiceProviderReviewRepository extends PageRepository implements I
                     .get(ServiceProvider_.ID), id));
         }
         if (Objects.nonNull(rating)) {
-            predicates.add(criteriaBuilder.equal(root.get(ServiceProviderReview_.RATING), rating));
+            if(rating.equals(1.0)){
+                predicates.add(criteriaBuilder.and(criteriaBuilder.lt(root.get(ServiceProvider_.RATING), rating), criteriaBuilder.greaterThanOrEqualTo(root.get(ServiceProvider_.RATING), 0)));
+            }
+            else if(rating.equals(2.0)){
+                predicates.add(criteriaBuilder.and(criteriaBuilder.lt(root.get(ServiceProvider_.RATING), rating), criteriaBuilder.greaterThanOrEqualTo(root.get(ServiceProvider_.RATING), 1)));
+            }
+            else if(rating.equals(3.0)){
+                predicates.add(criteriaBuilder.and(criteriaBuilder.lt(root.get(ServiceProvider_.RATING), rating), criteriaBuilder.greaterThanOrEqualTo(root.get(ServiceProvider_.RATING), 2)));
+            }
+            else if(rating.equals(4.0)){
+                predicates.add(criteriaBuilder.and(criteriaBuilder.lt(root.get(ServiceProvider_.RATING), rating), criteriaBuilder.greaterThanOrEqualTo(root.get(ServiceProvider_.RATING), 3)));
+            }
+            else if(rating.equals(5.0)){
+                predicates.add(criteriaBuilder.and(criteriaBuilder.lt(root.get(ServiceProvider_.RATING), rating), criteriaBuilder.greaterThanOrEqualTo(root.get(ServiceProvider_.RATING), 4)));
+            }
         }
 
         cq.where(predicates.toArray(Predicate[]::new));
@@ -127,9 +141,25 @@ public class ServiceProviderReviewRepository extends PageRepository implements I
             predicates.add(criteriaBuilder.equal(root.get(ServiceProviderReview_.SERVICE_PROVIDER)
                     .get(ServiceProvider_.ID), id));
         }
+
         if (Objects.nonNull(rating)) {
-            predicates.add(criteriaBuilder.equal(root.get(ServiceProviderReview_.RATING), rating));
+            if(rating.equals(1.0)){
+                predicates.add(criteriaBuilder.and(criteriaBuilder.lt(root.get(ServiceProvider_.RATING), rating), criteriaBuilder.greaterThanOrEqualTo(root.get(ServiceProvider_.RATING), 0)));
+            }
+            else if(rating.equals(2.0)){
+                predicates.add(criteriaBuilder.and(criteriaBuilder.lt(root.get(ServiceProvider_.RATING), rating), criteriaBuilder.greaterThanOrEqualTo(root.get(ServiceProvider_.RATING), 1)));
+            }
+            else if(rating.equals(3.0)){
+                predicates.add(criteriaBuilder.and(criteriaBuilder.lt(root.get(ServiceProvider_.RATING), rating), criteriaBuilder.greaterThanOrEqualTo(root.get(ServiceProvider_.RATING), 2)));
+            }
+            else if(rating.equals(4.0)){
+                predicates.add(criteriaBuilder.and(criteriaBuilder.lt(root.get(ServiceProvider_.RATING), rating), criteriaBuilder.greaterThanOrEqualTo(root.get(ServiceProvider_.RATING), 3)));
+            }
+            else if(rating.equals(5.0)){
+                predicates.add(criteriaBuilder.and(criteriaBuilder.lt(root.get(ServiceProvider_.RATING), rating), criteriaBuilder.greaterThanOrEqualTo(root.get(ServiceProvider_.RATING), 4)));
+            }
         }
+
         cq.where(predicates.toArray(Predicate[]::new));
         cq.select(criteriaBuilder.count(root));
 
