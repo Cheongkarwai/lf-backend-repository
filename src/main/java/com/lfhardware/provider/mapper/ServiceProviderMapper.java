@@ -36,6 +36,7 @@ public interface ServiceProviderMapper {
             @Mapping(target = "phoneNumber", source = "basicInformation.businessDetails.phoneNumber"),
             @Mapping(target = "faxNo", source = "basicInformation.businessDetails.faxNo"),
             @Mapping(target = "location", source = "basicInformation.businessDetails.location"),
+            @Mapping(target = "socialMediaLink", source = "basicInformation.socialMediaLink")
     })
     ServiceProvider mapToServiceProviderEntity(ServiceProviderOnboardInput serviceProviderInput);
 
@@ -43,13 +44,14 @@ public interface ServiceProviderMapper {
             @Mapping(target = "id", source = "id"),
             @Mapping(target = "name",source = "name"),
             @Mapping(target = "contactInfo.emailAddress", source = "emailAddress"),
-            @Mapping(target = "isVerified", source = "verified"),
+            @Mapping(target = "verified", source = "verified"),
             @Mapping(target = "rating", source = "rating"),
             @Mapping(target = "backIdentityCard", source = "backIdentityCard"),
             @Mapping(target = "frontIdentityCard", source = "frontIdentityCard"),
             @Mapping(target = "ssm", source = "ssm"),
             @Mapping(target = "status", source = "status"),
             @Mapping(target = "businessProfileImage", source = "businessProfileImage"),
+            @Mapping(target = "socialMedia", source = "socialMediaLink"),
 //            @Mapping(target = "businessDescription",source = "description"),
 //            @Mapping(target = "businessAddress",source = "address"),
 //            @Mapping(target = "businessEmailAddress",source = "contactInfo.emailAddress"),
@@ -61,7 +63,7 @@ public interface ServiceProviderMapper {
             @Mapping(target = "name",source = "name"),
             @Mapping(target = "contactInfo.emailAddress", source = "emailAddress"),
             @Mapping(target = "contactInfo.phoneNumber", source = "phoneNumber"),
-            @Mapping(target = "isVerified", source = "verified"),
+            @Mapping(target = "verified", source = "verified"),
             @Mapping(target = "rating", source = "rating"),
             @Mapping(target = "overview", source = "overview"),
             @Mapping(target = "createdAt", source = "createdAt"),
