@@ -13,7 +13,8 @@ public interface SocialMediaLinkMapper {
     @Mappings({
             @Mapping(target = "facebook",source = "facebook"),
             @Mapping(target = "instagram",source = "instagram"),
-            @Mapping(target = "tiktok",source = "tiktok")
+            @Mapping(target = "twitter",source = "twitter"),
+            @Mapping(target = "whatsapp", source = "whatsapp")
     })
     SocialMediaLink mapToSocialMediaLinkEntity(SocialMediaLinkDTO socialMediaLinkDTO);
 }

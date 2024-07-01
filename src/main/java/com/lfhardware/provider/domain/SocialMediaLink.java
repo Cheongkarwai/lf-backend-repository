@@ -15,11 +15,14 @@ import lombok.Setter;
 public class SocialMediaLink {
 
     @Column(name = "facebook_link")
-    private String facebook;
+    protected String facebook;
 
     @Column(name = "instagram_link")
-    private String instagram;
+    protected String instagram;
 
-    @Column(name = "tiktok_link")
-    private String tiktok;
+    @Column(name = "twitter_link")
+    private String twitter;
+
+    @Column(name = "whatsapp_link")
+    private String whatsapp;
 }
