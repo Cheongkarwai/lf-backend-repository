@@ -18,7 +18,7 @@ public class ServiceItemInput {
     @JsonProperty("service_name")
     private String serviceName;
 
-    private BigDecimal price;
+    private Long price;
 
     private Currency currency;
 
