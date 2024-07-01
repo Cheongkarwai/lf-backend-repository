@@ -175,11 +175,12 @@ public class ImageService implements FileService<Mono<MultiValueMap<String, Part
                                                         .getContentType()
                                                         .toString())
                                                 .bucket(bucket)
+                                                .acl(ObjectCannedACL.PUBLIC_READ)
                                                 .contentLength(Long.valueOf(totalBytes))
                                                 .key(path.toString())
                                                 .build(), AsyncRequestBody.fromPublisher(filePart.content()
                                                 .map(DataBuffer::asByteBuffer)))))
-                                        .map(e -> new ImageDTO("https://" + bucket + "." + region + "." + "digitaloceanspaces.com/" + path.toString(), "back_identity_card"));
+                                        .map(e -> new ImageDTO("https://" + bucket + "." + region + "." + "digitaloceanspaces.com/" + path, "back_identity_card"));
 
                             });
 
@@ -194,15 +195,36 @@ public class ImageService implements FileService<Mono<MultiValueMap<String, Part
                                         .reduce(Integer::sum)
                                         .flatMap(totalBytes -> Mono.fromFuture(s3AsyncClient.putObject(PutObjectRequest.builder()
                                                 .bucket(bucket)
+                                                .acl(ObjectCannedACL.PUBLIC_READ)
                                                 .contentLength(Long.valueOf(totalBytes))
                                                 .key(path.toString())
                                                 .build(), AsyncRequestBody.fromPublisher(filePart.content()
                                                 .map(DataBuffer::asByteBuffer)))))
-                                        .map(e -> new ImageDTO("https://" + bucket + "." + region + "." + "digitaloceanspaces.com/" + path.toString(), "ssm"));
+                                        .map(e -> new ImageDTO("https://" + bucket + "." + region + "." + "digitaloceanspaces.com/" + path, "ssm"));
 
                             });
 
-                    return Flux.concat(frontIdentityCardFlux, backIdentityCardFlux, ssmFlux)
+                    Flux<ImageDTO> businessProfileFlux = formData.map(map -> map.get("business_profile_image"))
+                            .flatMapMany(Flux::fromIterable)
+                            .flatMap(filePart -> {
+
+                                StringBuffer path = new StringBuffer("service_provider/" + serviceProviderId + "/business_profile");
+
+                                return filePart.content()
+                                        .map(DataBuffer::readableByteCount)
+                                        .reduce(Integer::sum)
+                                        .flatMap(totalBytes -> Mono.fromFuture(s3AsyncClient.putObject(PutObjectRequest.builder()
+                                                .bucket(bucket)
+                                                .acl(ObjectCannedACL.PUBLIC_READ)
+                                                .contentLength(Long.valueOf(totalBytes))
+                                                .key(path.toString())
+                                                .build(), AsyncRequestBody.fromPublisher(filePart.content()
+                                                .map(DataBuffer::asByteBuffer)))))
+                                        .map(e -> new ImageDTO("https://" + bucket + "." + region + "." + "digitaloceanspaces.com/" + path, "business_profile"));
+
+                            });
+
+                    return Flux.concat(frontIdentityCardFlux, backIdentityCardFlux, ssmFlux, businessProfileFlux)
                             .flatMap(imageDTO->{
                                 if(imageDTO.getType().equals("ssm")){
                                     System.out.println(serviceProviderId);
@@ -228,6 +250,14 @@ public class ImageService implements FileService<Mono<MultiValueMap<String, Part
                                                 return providerRepository.save(session, serviceProvider);
                                             })));
                                 }
+                                if(imageDTO.getType().equals("business_profile")){
+                                    return Mono.fromCompletionStage(sessionFactory.withTransaction(session -> providerRepository.findDetailsById(session, serviceProviderId)
+                                            .thenCompose(serviceProvider -> {
+                                                serviceProvider.setBusinessProfileImage(imageDTO.getPath());
+                                                return providerRepository.save(session, serviceProvider);
+                                            })));
+                                }
+
                                 return Flux.empty()
                                         .then();
                             });
