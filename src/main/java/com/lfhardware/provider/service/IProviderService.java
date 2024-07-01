@@ -1,5 +1,6 @@
 package com.lfhardware.provider.service;
 
+import com.lfhardware.appointment.domain.AppointmentId;
 import com.lfhardware.appointment.domain.AppointmentStatus;
 import com.lfhardware.appointment.dto.AppointmentDTO;
 import com.lfhardware.form.dto.FormDTO;
@@ -61,4 +62,6 @@ public interface IProviderService {
                                                                                                      Integer day);
 
     Mono<List<ServiceProviderCountGroupByDayDTO>> countServiceProviders(Integer day);
+
+    Mono<Void> saveServiceProviderReview(String id, AppointmentId appointmentId, ServiceProviderReviewInput serviceProviderReviewInput);
 }
