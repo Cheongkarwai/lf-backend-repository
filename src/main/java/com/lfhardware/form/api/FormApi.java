@@ -43,7 +43,7 @@ public class FormApi {
     }
     public Mono<ServerResponse> save(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(FormInput.class)
-                .flatMap(formService::save)
+                .flatMap(formInput -> formService.save(formInput.getServiceId(), formInput))
                 .onErrorResume(e -> ServerResponse.badRequest().build().then())
                 .then(Mono.defer(() -> ServerResponse.noContent().build()));
     }
@@ -53,7 +53,7 @@ public class FormApi {
         String serviceProviderId = serverRequest.pathVariable("service_provider_id");
         Long serviceId = Long.valueOf(serverRequest.pathVariable("service_id"));
 
-        return formService.findById(new FormId(serviceProviderId, serviceId))
+        return formService.findById(serviceId)
                 .flatMap(form -> ServerResponse.ok().bodyValue(form))
                 .switchIfEmpty(ServerResponse.notFound().build());
     }

@@ -22,21 +22,32 @@ import java.util.Objects;
 @Table(name = "tbl_form")
 public class Form {
 
+    @Id
+    private Long id;
 
-    @EmbeddedId
-    private FormId formId = new FormId();
-
-//    @ManyToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "service_provider_id")
-//    @MapsId("serviceProviderId")
-//    private ServiceProvider serviceProvider;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "service_id")
-    @MapsId("serviceId")
+    @OneToOne(cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn(name = "id", referencedColumnName = "id")
     private Service service;
+
+
+//    @EmbeddedId
+//    private FormId formId = new FormId();
+//
+////    @ManyToOne(cascade = CascadeType.ALL)
+////    @JoinColumn(name = "service_provider_id")
+////    @MapsId("serviceProviderId")
+////    private ServiceProvider serviceProvider;
+//
+//    @ManyToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "service_id")
+//    @MapsId("serviceId")
+//    private Service service;
 
     @JdbcTypeCode(SqlTypes.JSON)
     private Map<String, Object> configuration;
+
+    public void setService(Service service){
+        this.service = service;
+    }
 
 }

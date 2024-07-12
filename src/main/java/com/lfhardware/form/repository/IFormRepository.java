@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
-public interface IFormRepository extends CrudRepository<Form, FormId> {
+public interface IFormRepository extends CrudRepository<Form, Long> {
 
-    CompletionStage<List<Form>> findAll(Stage.Session session, FormPageRequest pageInfo, List<FormId> formIds);
+    CompletionStage<List<Form>> findAll(Stage.Session session, FormPageRequest pageInfo, List<Long> formIds);
 
     CompletionStage<Long> count(Stage.Session session);
 
-    CompletionStage<Long> countInIds(Stage.Session session, List<FormId> formIds);
+    CompletionStage<Long> countInIds(Stage.Session session, List<Long> formIds);
 }

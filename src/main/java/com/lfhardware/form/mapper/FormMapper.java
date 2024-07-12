@@ -19,8 +19,8 @@ public interface FormMapper {
 
     @Mappings({
             @Mapping(target = "configuration", source = "configuration"),
-            @Mapping(target = "serviceId", source = "formId.serviceId"),
-            @Mapping(target = "serviceProviderId", source = "formId.serviceProviderId")
+//            @Mapping(target = "serviceId", source = "formId.serviceId"),
+//            @Mapping(target = "serviceProviderId", source = "formId.serviceProviderId")
     })
     FormDTO mapToFormDTO(Form form);
 

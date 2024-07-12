@@ -248,10 +248,10 @@ public class ProviderService implements IProviderService {
                 .map(SecurityContext::getAuthentication)
                 .flatMap(authentication ->
                         Mono.fromCompletionStage(sessionFactory.withSession(session -> {
-                            FormId formId = new FormId();
-                            formId.setServiceId(serviceId);
-                            formId.setServiceProviderId(authentication.getName());
-                            return formRepository.findById(session, formId)
+//                            FormId formId = new FormId();
+//                            formId.setServiceId(serviceId);
+//                            formId.setServiceProviderId(authentication.getName());
+                            return formRepository.findById(session, serviceId)
                                     .thenApply(formMapper::mapToFormDTO);
                         })));
     }

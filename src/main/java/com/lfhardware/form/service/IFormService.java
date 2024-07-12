@@ -15,7 +15,7 @@ public interface IFormService {
 
     Flux<Pageable<FormDTO>>  findAll(FormPageRequest pageRequest);
 
-    Mono<Void> save(FormInput formInput);
+    Mono<Void> save(Long serviceId, FormInput formInput);
 
-    Mono<FormDTO> findById(FormId formId);
+    Mono<FormDTO> findById(Long id);
 }

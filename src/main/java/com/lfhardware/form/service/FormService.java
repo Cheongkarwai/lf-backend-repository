@@ -66,12 +66,15 @@ public class FormService implements IFormService {
         this.permissionManager = permissionManager;
     }
 
-    private Mono<List<FormId>> findPermission(String userId, String action) {
+    private Mono<List<Long>> findPermission(String userId, String action) {
         return Mono.fromCallable(() -> enforcer.getFilteredNamedPolicy("p", 0, userId, "", action)
-                .stream().map(policies -> {
-                    String[] ids = policies.get(1).split(",");
-                    return new FormId(userId, Long.valueOf(ids[1]));
-                }).toList());
+                .stream()
+                .map(policies -> {
+                    String[] ids = policies.get(1)
+                            .split(",");
+                    return Long.valueOf(ids[1]);
+                })
+                .toList());
     }
 
     @Override
@@ -88,7 +91,7 @@ public class FormService implements IFormService {
                     countTotalElements.set(tuple.getT3());
                     return Flux.defer(() -> Mono.fromCompletionStage(sessionFactory.withSession(session -> formRepository.findAll(session, pageRequest, tuple.getT2())
                             .thenApply(forms -> forms.stream()
-                                    .filter(form -> enforcer.enforce(tuple.getT1(), form.getFormId().getServiceProviderId() + "," + form.getFormId().getServiceId(), Scope.FORM_READ.getScope()))
+                                    .filter(form -> enforcer.enforce(tuple.getT1(), form.getService(), Scope.FORM_READ.getScope()))
                                     .map(formMapper::mapToFormDTO)
                                     .collect(Collectors.toList())))));
                 })
@@ -102,30 +105,26 @@ public class FormService implements IFormService {
     }
 
 
-//    @PreAuthorize("@formAuthorization.authorizeGetForm(#formId)")
+    //    @PreAuthorize("@formAuthorization.authorizeGetForm(#formId)")
     @Override
-    public Mono<FormDTO> findById(FormId formId) {
-        return Mono.fromCompletionStage(sessionFactory.withSession(session -> formRepository.findById(session, formId)
+    public Mono<FormDTO> findById(Long id) {
+        return Mono.fromCompletionStage(sessionFactory.withSession(session -> formRepository.findById(session, id)
                 .thenApply(formMapper::mapToFormDTO)));
     }
 
     @Override
-    public Mono<Void> save(FormInput formInput) {
+    public Mono<Void> save(Long serviceId, FormInput formInput) {
 
-        return ReactiveSecurityContextHolder.getContext().map(SecurityContext::getAuthentication)
-                .map(Principal::getName).flatMap(userId ->{
-                    return Mono.fromCompletionStage(sessionFactory.withTransaction((session, transaction) -> providerBusinessRepository.findById(session, formInput.getServiceId())
-                            .thenCompose(business -> {
-                                Form form = new Form();
-                                FormId formId = new FormId();
-                                formId.setServiceId(formInput.getServiceId());
-                                formId.setServiceProviderId(userId);
-                                form.setService(business);
-                                form.setFormId(formId);
-                                form.setConfiguration(formInput.getForm());
-                                return formRepository.merge(session, form);
-                            })));
-                }).then();
+        return Mono.fromCompletionStage(sessionFactory.withTransaction((session, transaction) -> providerBusinessRepository.findById(session, serviceId)
+                .thenCompose(business -> {
+                    Form form = new Form();
+                    //form.setService(business);
+                    form.setId(serviceId);
+                    form.setService(business);
+                    form.setConfiguration(formInput.getForm());
+                    return formRepository.merge(session, form);
+                }))).then();
+    }
 //                    Form form = new Form();
 //                    FormId formId = new FormId();
 //                    formId.setServiceId(formInput.getServiceId());
@@ -173,5 +172,5 @@ public class FormService implements IFormService {
 //                    }
 //                    return Mono.empty();
 //                })).then();
-    }
+
 }

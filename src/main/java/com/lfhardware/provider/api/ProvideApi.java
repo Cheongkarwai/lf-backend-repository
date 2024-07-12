@@ -126,19 +126,19 @@ public class ProvideApi {
                         .build()));
     }
 
-    public Mono<ServerResponse> createForm(ServerRequest serverRequest) {
-        return serverRequest.bodyToMono(FormInput.class)
-                .flatMap(formService::save)
-                .then(Mono.defer(() -> ServerResponse.noContent()
-                        .build()));
+//    public Mono<ServerResponse> createForm(ServerRequest serverRequest) {
+//        return serverRequest.bodyToMono(FormInput.class)
+//                .flatMap(e-> formService(e.getServiceId(), e))
+//                .then(Mono.defer(() -> ServerResponse.noContent()
+//                        .build()));
+//
+//    }
 
-    }
-
-    public Mono<ServerResponse> findProviderFormsByServiceId(ServerRequest serverRequest) {
-        return ServerResponse.ok()
-                .body(formService.findById(new FormId(serverRequest.pathVariable("serviceProviderId"), Long.valueOf(serverRequest.pathVariable("serviceId")))),
-                        FormDTO.class);
-    }
+//    public Mono<ServerResponse> findProviderFormsByServiceId(ServerRequest serverRequest) {
+//        return ServerResponse.ok()
+//                .body(formService.findById(Long.valueOf(serverRequest.pathVariable("serviceId"))),
+//                        FormDTO.class);
+//    }
 
     public Mono<ServerResponse> findCurrentProviderBusinesses(ServerRequest serverRequest) {
         return ServerResponse.ok()
