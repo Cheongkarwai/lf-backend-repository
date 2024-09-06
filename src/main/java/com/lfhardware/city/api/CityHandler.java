@@ -10,10 +10,16 @@ import reactor.core.publisher.Mono;
 @Component
 public class CityHandler {
 
-    private CityService cityService;
+    private final CityService cityService;
     public CityHandler(CityService cityService){
         this.cityService = cityService;
     }
+
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findAll(ServerRequest serverRequest){
         return ServerResponse.ok().body(cityService.findAll(),City.class).log();
     }

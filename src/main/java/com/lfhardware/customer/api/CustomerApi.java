@@ -25,6 +25,11 @@ public class CustomerApi {
         this.customerService = customerService;
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findById(ServerRequest serverRequest) {
         return ServerResponse.ok()
                 .body(customerService.findById(serverRequest.pathVariable("id")), CustomerDTO.class);

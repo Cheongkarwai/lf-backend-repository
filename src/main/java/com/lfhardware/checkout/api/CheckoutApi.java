@@ -16,6 +16,11 @@ public class CheckoutApi {
         this.checkoutService = checkoutService;
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> createCheckoutSession(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(CheckoutInput.class)
                 .flatMap(checkoutInput -> checkoutService.createCheckoutSession(null,checkoutInput)
