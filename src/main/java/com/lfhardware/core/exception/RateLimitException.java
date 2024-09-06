@@ -1,6 +1,5 @@
-package com.lfhardware.exception;
+package com.lfhardware.core.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
