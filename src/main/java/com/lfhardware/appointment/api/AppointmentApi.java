@@ -20,6 +20,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Appointment API
+ * /api/appointments
+ */
 @Component
 public class AppointmentApi {
 
@@ -29,6 +33,11 @@ public class AppointmentApi {
         this.appointmentService = appointmentService;
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findAll(ServerRequest serverRequest) {
 
         PageInfo pageRequest = PageQueryParameterBuilder.buildPageRequest(serverRequest);
@@ -41,6 +50,11 @@ public class AppointmentApi {
 
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> createAppointment(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(AppointmentInput.class)
                 .flatMap(appointmentService::create)
@@ -48,6 +62,11 @@ public class AppointmentApi {
                         .bodyValue(url));
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> updateAppointmentStatus(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(AppointmentStatusInput.class)
                 .flatMap(appointmentService::updateStatus)
@@ -55,6 +74,11 @@ public class AppointmentApi {
                         .build()));
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> payAppointmentFees(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(AppointmentFeesInput.class)
                 .flatMap(appointment -> appointmentService.payAppointment(appointment, serverRequest.pathVariable("serviceId"),
@@ -64,6 +88,11 @@ public class AppointmentApi {
                         .bodyValue(e));
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> transferAppointmentFunds(ServerRequest serverRequest) {
         return appointmentService.transferAppointmentFunds(Long.valueOf(serverRequest.pathVariable("serviceId")),
                         serverRequest.pathVariable("serviceProviderId"), serverRequest.pathVariable("customerId"),
@@ -71,6 +100,11 @@ public class AppointmentApi {
                 .then(Mono.defer(()->ServerResponse.ok().build()));
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findById(ServerRequest serverRequest) {
 
         String serviceProviderId = serverRequest.pathVariable("serviceProviderId");
@@ -83,6 +117,11 @@ public class AppointmentApi {
                         .bodyValue(appointmentDTO));
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> count(ServerRequest serverRequest){
 
         String status = serverRequest.queryParam("status").orElse(null);
@@ -94,6 +133,11 @@ public class AppointmentApi {
                         Objects.nonNull(day) ? Integer.valueOf(day) : null), List.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findAppointmentReceipt(ServerRequest serverRequest){
         String serviceProviderId = serverRequest.pathVariable("serviceProviderId");
         String serviceId = serverRequest.pathVariable("serviceId");
