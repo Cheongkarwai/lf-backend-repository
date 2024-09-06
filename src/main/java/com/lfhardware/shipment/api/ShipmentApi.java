@@ -23,6 +23,11 @@ public class ShipmentApi {
         return null;
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> getAllAvailableShipments(ServerRequest serverRequest){
         return serverRequest.bodyToMono(RateCheckingInput.class)
                 .flatMap(shipmentService::findAllRates)
@@ -30,6 +35,11 @@ public class ShipmentApi {
                 .onErrorResume(e-> ServerResponse.status(HttpStatusCode.valueOf(503)).build());
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> createOrder(ServerRequest serverRequest){
         return serverRequest.bodyToMono(OrderInput.class)
                 .flatMap(shipmentService::create)

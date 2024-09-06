@@ -32,11 +32,17 @@ public class PaymentHandler {
     private final EventService eventService;
 
 
+
     public PaymentHandler(IPaymentService paymentService, EventService eventService) {
         this.paymentService = paymentService;
         this.eventService = eventService;
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> charge(ServerRequest serverRequest) {
         return ServerResponse.ok().body(serverRequest.bodyToMono(Order.class)
                 .flatMap(e -> {
@@ -48,20 +54,40 @@ public class PaymentHandler {
                 }), ChargeResponse.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findAllPaymentMethods(ServerRequest serverRequest) {
         return ServerResponse.ok().body(Mono.just(PaymentMethod.values()), PaymentMethod.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findAllAvailableBank(ServerRequest serverRequest) {
         return ServerResponse.ok().body(paymentService.findAllAvailableBank(SourceType.valueOf(serverRequest.pathVariable("paymentMethod"))), List.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> createPaymentIntent(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(PaymentIntentInput.class)
                 .flatMap(paymentService::createPaymentIntent)
                 .flatMap(e -> ServerResponse.ok().bodyValue(e));
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> addPaymentIntentMetadata(ServerRequest serverRequest){
         String id = serverRequest.pathVariable("id");
         return serverRequest.bodyToMono(new ParameterizedTypeReference<Map<String,String>>() {})
@@ -69,12 +95,22 @@ public class PaymentHandler {
                 .then(Mono.defer(() -> ServerResponse.ok().build()));
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> createCheckoutSession(ServerRequest serverRequest) {
         return paymentService.createCheckoutSession()
                 .flatMap(e -> ServerResponse.ok().bodyValue(e));
     }
 
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> stripeWebhook(ServerRequest serverRequest) {
         String signatureHeader = serverRequest.headers().firstHeader("Stripe-Signature");
         // Deserialize the nested object inside the event

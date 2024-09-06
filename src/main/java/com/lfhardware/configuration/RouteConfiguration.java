@@ -172,7 +172,6 @@ public class RouteConfiguration {
                         builder -> builder.nest(RequestPredicates.accept(MediaType.APPLICATION_JSON),
                                 route -> route
                                         .PUT("/reset-password", accountApi::resetPassword)
-                                        .GET("/test", accountApi::test)
                                         .GET("/me", accountApi::findCurrentlyLoggedInUserAccount)
                                         .GET("/otp/qr-code", accountApi::generateOtpQrCode)
                                         .GET("/credentials", accountApi::findAllUserCredentials)

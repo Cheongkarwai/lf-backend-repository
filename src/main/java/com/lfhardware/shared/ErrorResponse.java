@@ -20,13 +20,19 @@ public class ErrorResponse {
 
     private String message;
 
-//    @JsonProperty("request_id")
-//    private String requestId;
+    private String code;
 
-    public ErrorResponse(String message,String path){
+    public ErrorResponse(String message, String path){
         this.message = message;
         this.timestamp = LocalDateTime.now();
         this.path = path;
+    }
+
+    public ErrorResponse(String message,String path, String code){
+        this.message = message;
+        this.timestamp = LocalDateTime.now();
+        this.path = path;
+        this.code = code;
     }
 
 }

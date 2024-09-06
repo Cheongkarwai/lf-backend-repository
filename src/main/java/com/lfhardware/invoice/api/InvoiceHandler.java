@@ -15,6 +15,12 @@ public class InvoiceHandler {
     public InvoiceHandler(InvoiceService invoiceService){
         this.invoiceService = invoiceService;
     }
+
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> createInvoice(ServerRequest serverRequest){
         return serverRequest.bodyToMono(InvoiceInput.class)
                 .flatMap(invoiceInput -> invoiceService.createInvoice(invoiceInput))

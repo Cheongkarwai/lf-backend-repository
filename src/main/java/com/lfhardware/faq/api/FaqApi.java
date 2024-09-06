@@ -16,6 +16,11 @@ public class FaqApi {
         this.faqService = faqService;
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> save(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(FaqDTO.class)
                 .flatMap(faqService::save)

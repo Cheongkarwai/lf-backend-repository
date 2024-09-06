@@ -1,9 +1,12 @@
 package com.lfhardware.configuration;
 
+import com.lfhardware.auth.dto.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -44,8 +47,15 @@ import java.util.stream.Collectors;
 @EnableReactiveMethodSecurity(useAuthorizationManager=true)
 public class SecurityConfiguration {
 
-    private String[] allowedPaths = {"/", "/api/v1/payments/webhook", "/api/v1/services", "/api/v1/service-providers" ,
+    private static final String [] PUBLIC_ROUTE = {"/", "/api/v1/payments/webhook", "/api/v1/services", "/api/v1/service-providers" ,
             "/api/v1/service-providers/details/{id}", "/api/v1/service-providers/{id}/reviews", "/api/v1/users/me/username"};
+
+    private static final Map<HttpMethod, String[]> ADMIN_ROUTE =
+            Map.of(HttpMethod.POST, new String[]
+                    {"/api/v1/service-providers/{id}/status"});
+
+    private static final Map<HttpMethod, String[]> SERVICE_PROVIDER_ROUTE =
+            Map.of(HttpMethod.POST, new String[] {});
 
     @Bean
     SecurityWebFilterChain securityFilterChain(ServerHttpSecurity httpSecurity){
@@ -65,8 +75,13 @@ public class SecurityConfiguration {
                 .requestCache(requestCacheSpec -> requestCacheSpec.requestCache(NoOpServerRequestCache.getInstance()))
                 //.cors(cors-> cors.configurationSource(corsConfigurationSource()))
                 .authorizeExchange(authorizeExchangeSpec -> authorizeExchangeSpec
-                        .pathMatchers(allowedPaths).permitAll()
-                        .anyExchange().authenticated())
+                        .pathMatchers(PUBLIC_ROUTE).permitAll()
+                        .pathMatchers(HttpMethod.POST, ADMIN_ROUTE.get(HttpMethod.POST))
+                        .hasRole(Role.administrator.name())
+                        .pathMatchers(HttpMethod.POST)
+                        .hasAnyRole(Role.administrator.name(), Role.service_provider.name())
+                        .anyExchange()
+                        .authenticated())
 //                .oauth2Login()
 //
 //                .and()

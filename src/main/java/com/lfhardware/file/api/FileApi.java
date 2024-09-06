@@ -25,6 +25,11 @@ public class FileApi {
         this.fileService = fileService;
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> uploadProductFile(ServerRequest serverRequest){
         return ServerResponse.ok().body(fileService.upload(serverRequest.multipartData()), ImageDTO.class);
     }

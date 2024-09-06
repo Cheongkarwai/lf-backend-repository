@@ -39,6 +39,11 @@ public class ProvideApi {
         this.formService = formService;
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findAll(ServerRequest serverRequest) {
 
         PageInfo pageRequest = PageQueryParameterBuilder.buildPageRequest(serverRequest);
@@ -61,6 +66,11 @@ public class ProvideApi {
                         .bodyValue(serviceProvider));
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findAllDetails(ServerRequest request) {
 
         Search search = null;
@@ -102,6 +112,11 @@ public class ProvideApi {
                         .bodyValue(serviceProvider));
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findById(ServerRequest serverRequest) {
         return ServerResponse.ok()
                 .body(providerService.findDetailsById(serverRequest.pathVariable("id")), ServiceProviderDetailsDTO.class)
@@ -118,6 +133,11 @@ public class ProvideApi {
                         .build()));
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> updateStatus(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(new ParameterizedTypeReference<Map<String, Status>>() {
                 })
@@ -140,17 +160,32 @@ public class ProvideApi {
 //                        FormDTO.class);
 //    }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findCurrentProviderBusinesses(ServerRequest serverRequest) {
         return ServerResponse.ok()
                 .body(providerService.findAllCurrentProviderServices(), ServiceDTO.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findCurrentProviderForm(ServerRequest serverRequest) {
         return ServerResponse.ok()
                 .body(providerService.findCurrentProviderForm(Long.valueOf(serverRequest.pathVariable("serviceId")))
                         , FormDTO.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findCurrentProviderAppointments(ServerRequest serverRequest) {
 
         //Handle Page
@@ -161,6 +196,11 @@ public class ProvideApi {
                         .get("status")), Pageable.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> save(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(ServiceProviderOnboardInput.class)
                 .flatMap(providerService::save)
@@ -170,6 +210,11 @@ public class ProvideApi {
 
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findServiceProviderByCurrentUser(ServerRequest serverRequest) {
         return providerService.findCurrentServiceProviderByUserId()
                 .flatMap(serviceProvider -> ServerResponse.ok()
@@ -177,6 +222,11 @@ public class ProvideApi {
                 .log();
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findServiceProviderReviewsById(ServerRequest serverRequest) {
 
         PageInfo pageRequest = PageQueryParameterBuilder.buildPageRequest(serverRequest);
@@ -189,16 +239,31 @@ public class ProvideApi {
                         Pageable.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> countServiceProviderReviewsById(ServerRequest serverRequest) {
         return ServerResponse.ok()
                 .body(providerService.countServiceProviderReviewsById(serverRequest.pathVariable("id")), Long.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> countCurrentServiceProviderReviews(ServerRequest serverRequest) {
         return ServerResponse.ok()
                 .body(providerService.countCurrentServiceProviderReviews(), List.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> countCurrentServiceProviderAppointment(ServerRequest serverRequest) {
         String status = serverRequest.queryParam("status")
                 .orElse(null);
@@ -211,6 +276,11 @@ public class ProvideApi {
                         Objects.nonNull(day) ? Integer.valueOf(day) : null), List.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> countServiceProvider(ServerRequest serverRequest) {
         String day = serverRequest.queryParam("day")
                 .orElse(null);
@@ -219,16 +289,31 @@ public class ProvideApi {
                 .body(providerService.countServiceProviders(Objects.nonNull(day) ? Integer.valueOf(day) : null), List.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findServiceProviderServicesById(ServerRequest serverRequest) {
         return ServerResponse.ok()
                 .body(providerService.findAllProviderServicesById(serverRequest.pathVariable("serviceProviderId")), ServiceDTO.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findPaymentAccountStatus(ServerRequest serverRequest) {
         return ServerResponse.ok()
                 .body(providerService.findPaymentAccountStatus(), Boolean.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> updateById(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(ServiceProviderDetailsInput.class)
                 .flatMap(serviceProviderDetailsInput ->
@@ -237,12 +322,22 @@ public class ProvideApi {
                         .build());
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> createPaymentDetails(ServerRequest serverRequest) {
         return providerService.createPaymentDetails()
                 .flatMap(link -> ServerResponse.ok()
                         .bodyValue(link));
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> saveServiceProviderReview(ServerRequest serverRequest) {
         String serviceProviderId = serverRequest.pathVariable("serviceProviderId");
         Long serviceId = Long.parseLong(serverRequest.pathVariable("serviceId"));

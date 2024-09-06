@@ -29,9 +29,6 @@ public class PageRepository {
                 .getOrder()) && StringUtils.hasText(pageRequest.getSort()
                 .getName())) {
 
-            System.out.println("Sorting");
-            System.out.println(pageRequest.getSort().getOrder().name());
-
             cq.orderBy(PageRequestPredicateBuilder.hasOrder(pageRequest.getSort()
                     .getOrder(), cb, root, pageRequest.getSort()
                     .getName()));

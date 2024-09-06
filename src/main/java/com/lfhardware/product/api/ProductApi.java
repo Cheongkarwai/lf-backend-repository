@@ -27,6 +27,11 @@ public class ProductApi {
         this.fileService = fileService;
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findAll(ServerRequest request) {
 
         Search search = null;
@@ -58,39 +63,73 @@ public class ProductApi {
                 .body(productService.findAll(productPageRequest), Product.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findById(ServerRequest request) {
         return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(productService.findById(Long.valueOf(request.pathVariable("id"))), Product.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findByName(ServerRequest serverRequest) {
         return productService.findByName(serverRequest.pathVariable("name"))
                 .flatMap(productDTO -> ServerResponse.ok().bodyValue(productDTO))
                 .switchIfEmpty(ServerResponse.notFound().build());
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> save(ServerRequest request) {
         return request.bodyToMono(ProductInput.class).flatMap(productService::save)
                 .then(ServerResponse.ok().build());
     }
 
-
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> updateById(ServerRequest request) {
         return request.bodyToMono(ProductInput.class).flatMap(product->productService.updateById(Long.valueOf(request.pathVariable("id")),product)
                 .then(ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).build()));
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findAllProductCategory(ServerRequest serverRequest) {
         return ServerResponse.ok()
                 .body(productService.findAllProductCategory(), CategoryDTO.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findAllProductBrand(ServerRequest serverRequest) {
         return ServerResponse.ok()
                 .body(productService.findAllProductBrand(), BrandDTO.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> deleteById(ServerRequest serverRequest) {
         return productService.deleteById(Long.valueOf(serverRequest.pathVariable("id")))
                 .then(ServerResponse.ok().build());

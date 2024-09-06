@@ -55,6 +55,6 @@ spring:
 #          jwk-set-uri: https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com
 #          issuer-uri: https://securetoken.google.com/spring-boot-auth-service
   profiles:
-    active: test
+    active: dev
   session:
     timeout: 10m

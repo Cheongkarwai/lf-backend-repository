@@ -1,0 +1,111 @@
+server:
+  port: 8081
+  error:
+    include-stacktrace: always
+    include-exception: true
+
+#management.endpoint.health.probes.enabled: true
+#management.endpoint.health.show-details: always
+#
+## Resilience4J properties
+## #Enable circuit breaker health status
+#management.health.circuitbreakers.enabled: true
+#omise co
+omise:
+  public-key: pkey_test_5x9z9ovaogftf7hp4nf
+  secret-key: skey_test_5xa1l9s31xhmncsoq1d
+
+easy-parcel:
+  url: https://demo.connect.easyparcel.my
+  api-key: EP-rQ0BZ2mDJ
+
+logging:
+  level:
+    software:
+      amazon.awssdk: DEBUG
+    org:
+      springframework:
+        security: DEBUG
+        web: DEBUG
+        webflux:
+          webclient: DEBUG
+    com:
+      google:
+        firebase: DEBUG
+    io:
+      vertx:
+        ext:
+          mail: INFO
+      github:
+        resilience4j: DEBUG
+#                mail: DEBUG
+#      hibernate: DEBUG
+
+#resilience4j:
+#  circuitbreaker:
+#    circuitBreakerAspectOrder: 1
+#    instances:
+#      testService:
+#        registerHealthIndicator: true
+#        slidingWindowSize: 10
+#        minimumNumberOfCalls: 4
+#        failureRateThreshold: 5
+#        waitDurationInOpenState: 60s
+#        permittedNumberOfCallsInHalfOpenState: 2
+#        automaticTransitionFromOpenToHalfOpenEnabled: true
+#        recordFailurePredicate: com.lfhardware.exception.RecordFailurePredicate
+#  ratelimiter:
+#    instances:
+#      testService:
+#        limit-refresh-period: 60s
+#        limit-for-period: 10
+
+
+#java mail properties
+#spring:
+#  mail:
+#    host: smtp.gmail.com
+#    port: 587
+#    username: cheongkarwai5@gmail.com
+#    password: lnmq wuql snfq yvis
+#    properties:
+#      mail:
+#        debug: true
+#        smtp:
+#          auth: true
+#          starttls:
+#              enable: true
+keycloak:
+  admin:
+    server-url: http://localhost:8080
+    client-id: lfhardware
+    client-secret: sjZNs8sUg71NllmslJGHz346X9RHUcFX
+    grant-type: password
+    realm: LFHardware
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${keycloak.admin.server-url}/realms/LFHardware/protocol/openid-connect/certs
+          issuer-uri: ${keycloak.admin.server-url}/realms/LFHardware
+totp:
+  issuer:
+  secret-key: TEZIQVJEV0FSRTIx
+
+stripe:
+  endpoint-secret: whsec_8945bcd9bcfc90d87474c336848944ae9557e38981df90c8c24b02d8b86520a3
+  api-key: sk_test_51LjgWNEBRksaPF5n0eyjTAkTvjwEflk392ZDndPZgKbyLtrQbrOFxX1U8uOvzSTw8TmM9YxWdnZO6oMf0ZnAvKXE00vuAtjdnz
+digitalocean:
+  bucket: lfhardware
+  endpoint: https://sgp1.digitaloceanspaces.com
+  region: sgp1
+  credentials:
+    access-key-id: DO00JKDJC8EENXKRQX8G
+    secret-access-key: I2zX0ooYOH+WwE5eOQ7kVW+LSbV2jylC2a5/gCxAOgA
+
+casbin:
+  store-type: jdbc
+  model: classpath:casbin/model.conf
+  table-name: tbl_acl
+  use-synced-enforcer: true

@@ -25,14 +25,29 @@ public class ProviderBusinessHandler {
         this.formService = formService;
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findAllServices(ServerRequest serverRequest){
         return ServerResponse.ok().body(providerBusinessService.findAllServiceDetails(), ServiceGroupByCategoryDTO.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findDetailsById(ServerRequest serverRequest){
         return ServerResponse.ok().body(providerBusinessService.findDetailsById(Long.valueOf(serverRequest.pathVariable("id"))), ServiceDetailsDTO.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findFormById(ServerRequest serverRequest){
         return ServerResponse.ok()
 
@@ -40,6 +55,11 @@ public class ProviderBusinessHandler {
                         FormDTO.class);
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> saveForm(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(FormInput.class)
                 .flatMap(formInput -> formService.save(Long.parseLong(serverRequest.pathVariable("id")), formInput))

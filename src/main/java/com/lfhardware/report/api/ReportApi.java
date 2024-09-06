@@ -13,12 +13,17 @@ import java.util.List;
 @Component
 public class ReportApi {
 
-    private ISalesService salesService;
+    private final ISalesService salesService;
 
     public ReportApi(ISalesService salesService){
         this.salesService = salesService;
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findSales(ServerRequest serverRequest){
         return ServerResponse.ok()
                 .body(salesService.getFullYearSales(), new ParameterizedTypeReference<List<MonthlySalesStat>>() {});

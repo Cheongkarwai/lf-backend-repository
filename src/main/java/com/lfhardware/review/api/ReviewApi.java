@@ -22,6 +22,11 @@ public class ReviewApi {
         this.reviewService = reviewService;
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> findAll(ServerRequest serverRequest) {
 
         Search search = null;
@@ -39,6 +44,11 @@ public class ReviewApi {
         return ServerResponse.ok().bodyValue(reviewService.findAll(pageInfo));
     }
 
+    /**
+     * @param serverRequest - request object
+     * @return Mono<ServerResponse>
+     *
+     */
     public Mono<ServerResponse> save(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(ReviewInput.class)
                 .flatMap(reviewService::save)
