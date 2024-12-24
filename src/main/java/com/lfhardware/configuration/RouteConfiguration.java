@@ -3,14 +3,14 @@ package com.lfhardware.configuration;
 import com.lfhardware.account.api.AccountApi;
 import com.lfhardware.appointment.api.AppointmentApi;
 import com.lfhardware.auth.api.AuthHandler;
-import com.lfhardware.customer.api.CustomerApi;
 import com.lfhardware.auth.api.PermissionApi;
 import com.lfhardware.auth.api.UserApi;
 import com.lfhardware.cart.api.CartHandler;
 import com.lfhardware.charges.api.PaymentHandler;
 import com.lfhardware.checkout.api.CheckoutApi;
-import com.lfhardware.city.api.CityHandler;
-import com.lfhardware.country.api.CountryHandler;
+import com.lfhardware.city.api.CityApi;
+import com.lfhardware.country.api.CountryApi;
+import com.lfhardware.customer.api.CustomerApi;
 import com.lfhardware.faq.api.FaqApi;
 import com.lfhardware.file.api.FileApi;
 import com.lfhardware.form.api.FormApi;
@@ -22,7 +22,7 @@ import com.lfhardware.provider.api.ProvideApi;
 import com.lfhardware.provider_business.api.ProviderBusinessHandler;
 import com.lfhardware.report.api.ReportApi;
 import com.lfhardware.shipment.api.ShipmentApi;
-import com.lfhardware.state.api.StateHandler;
+import com.lfhardware.state.api.StateApi;
 import com.lfhardware.transaction.api.TransactionApi;
 import com.lfhardware.transfer.api.TransferApi;
 import org.springframework.context.annotation.Bean;
@@ -132,33 +132,33 @@ public class RouteConfiguration {
     }
 
     @Bean
-    public RouterFunction<ServerResponse> cityRouter(CityHandler cityHandler) {
+    public RouterFunction<ServerResponse> cityRouter(CityApi cityApi) {
         return RouterFunctions.route()
                 .path("/api/v1/cities",
                         builder -> builder.nest(RequestPredicates.accept(MediaType.APPLICATION_JSON),
-                                route -> route.GET(cityHandler::findAll)
+                                route -> route.GET(cityApi::findAll)
                         ))
 
                 .build();
     }
 
     @Bean
-    public RouterFunction<ServerResponse> countryRouter(CountryHandler countryHandler) {
+    public RouterFunction<ServerResponse> countryRouter(CountryApi countryApi) {
         return RouterFunctions.route()
                 .path("/api/v1/countries",
                         builder -> builder.nest(RequestPredicates.accept(MediaType.APPLICATION_JSON),
-                                route -> route.GET(countryHandler::findAll)
+                                route -> route.GET(countryApi::findAll)
                         ))
 
                 .build();
     }
 
     @Bean
-    public RouterFunction<ServerResponse> stateRouter(StateHandler stateHandler) {
+    public RouterFunction<ServerResponse> stateRouter(StateApi stateApi) {
         return RouterFunctions.route()
                 .path("/api/v1/states",
                         builder -> builder.nest(RequestPredicates.accept(MediaType.APPLICATION_JSON),
-                                route -> route.GET(stateHandler::findAll)
+                                route -> route.GET(stateApi::findAll)
                         ))
 
                 .build();

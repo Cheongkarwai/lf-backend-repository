@@ -1,6 +1,7 @@
 package com.lfhardware.state.service;
 
 import com.lfhardware.city.dto.CityDTO;
+import com.lfhardware.configuration.CacheConfiguration;
 import com.lfhardware.state.dto.StateDTO;
 import com.lfhardware.state.mapper.StateMapper;
 import com.lfhardware.state.repository.IStateRepository;
@@ -9,7 +10,9 @@ import jakarta.persistence.Persistence;
 import org.hibernate.Cache;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -24,23 +27,19 @@ public class StateService {
 
     private final StateMapper stateMapper;
 
-    private Stage.SessionFactory sessionFactory;
+    private final Stage.SessionFactory sessionFactory;
 
-    private final CacheManager cacheManager;
-
-    public StateService(IStateRepository stateRepository, StateMapper stateMapper, CacheManager cacheManager) {
+    public StateService(IStateRepository stateRepository, StateMapper stateMapper, Stage.SessionFactory sessionFactory) {
         this.stateRepository = stateRepository;
         this.stateMapper = stateMapper;
-        this.cacheManager = cacheManager;
+        this.sessionFactory = sessionFactory;
     }
 
-    public Mono<List<StateDTO>> findAll() {
-        return Mono.justOrEmpty(cacheManager.getCache("stateCache").get("states", (Callable<List<StateDTO>>) ArrayList::new))
-                .flatMap(states -> states.isEmpty() ? Mono.empty() :Mono.just(states)).switchIfEmpty(Mono.defer(()->Mono.fromCompletionStage(sessionFactory.withSession(session -> stateRepository.findAll(session)
-                        .thenApply(states -> {
-                            List<StateDTO> stateDTOS = states.stream().map(stateMapper::mapToStateDTO).collect(Collectors.toList());
-                            cacheManager.getCache("stateCache").put("states", stateDTOS);
-                            return stateDTOS;
-                        })))));
+    @Cacheable(CacheConfiguration.statesCache)
+    public Flux<StateDTO> findAll() {
+       return Mono.fromCompletionStage(sessionFactory.withSession(stateRepository::findAll))
+               .flatMapMany(Flux::fromIterable)
+               .switchIfEmpty(Flux.empty())
+               .map(stateMapper::mapToStateDTO);
     }
 }

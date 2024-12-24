@@ -8,18 +8,19 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 @Component
-public class StateHandler {
+public class StateApi {
 
     private final StateService stateService;
-    public StateHandler(StateService stateService){
+
+    public StateApi(StateService stateService) {
         this.stateService = stateService;
     }
+
     /**
      * @param serverRequest - request object
      * @return Mono<ServerResponse>
-     *
      */
-    public Mono<ServerResponse> findAll(ServerRequest serverRequest){
-        return ServerResponse.ok().body(stateService.findAll(),City.class).log();
+    public Mono<ServerResponse> findAll(ServerRequest serverRequest) {
+        return ServerResponse.ok().body(stateService.findAll(), City.class).log();
     }
 }

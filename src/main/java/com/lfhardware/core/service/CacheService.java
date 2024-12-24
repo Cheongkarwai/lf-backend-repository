@@ -1,6 +1,6 @@
-package com.lfhardware.shared;
+package com.lfhardware.core.service;
 
-import com.lfhardware.shared.Pageable;
+import com.lfhardware.core.dto.Pageable;
 import reactor.core.publisher.Mono;
 
 import java.util.List;

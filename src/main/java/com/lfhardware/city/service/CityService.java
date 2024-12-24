@@ -5,7 +5,6 @@ import com.lfhardware.city.mapper.CityMapper;
 import com.lfhardware.city.repository.ICityRepository;
 import com.lfhardware.configuration.CacheConfiguration;
 import org.hibernate.reactive.stage.Stage;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -20,12 +19,11 @@ public class CityService {
 
     private final Stage.SessionFactory sessionFactory;
 
-    private final CacheManager cacheManager;
-
-    public CityService(ICityRepository cityRepository, CityMapper cityMapper, CacheManager cacheManager, Stage.SessionFactory sessionFactory) {
+    public CityService(ICityRepository cityRepository,
+                       CityMapper cityMapper,
+                       Stage.SessionFactory sessionFactory) {
         this.cityRepository = cityRepository;
         this.cityMapper = cityMapper;
-        this.cacheManager = cacheManager;
         this.sessionFactory = sessionFactory;
     }
 
@@ -34,6 +32,6 @@ public class CityService {
         return Mono.fromCompletionStage(sessionFactory.withSession(cityRepository::findAll))
                 .flatMapMany(Flux::fromIterable)
                 .switchIfEmpty(Flux.empty())
-                .flatMap(city -> Mono.just(cityMapper.mapToCityDTO(city)));
+                .map(cityMapper::mapToCityDTO);
     }
 }

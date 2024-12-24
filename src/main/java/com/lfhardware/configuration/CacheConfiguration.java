@@ -2,6 +2,7 @@ package com.lfhardware.configuration;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,14 +11,16 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
+@EnableCaching
 public class CacheConfiguration {
 
-    public static final String cityCache = "cityCache";
+    public static final String citiesCache = "cities";
+
     public static final String appointmentCache = "appointmentCache";
 
-    public static final String stateCache = "stateCache";
+    public static final String statesCache = "states";
 
-    public static final String countryCache = "countryCache";
+    public static final String countriesCache = "countries";
 
     public static final String serviceCache = "serviceCache";
 
@@ -48,10 +51,11 @@ public class CacheConfiguration {
     @Bean
     public CacheManager cacheManager(){
         CaffeineCacheManager cacheManager = new CaffeineCacheManager();
-        cacheManager.setCacheNames(List.of(cityCache,stateCache,countryCache,
-                serviceCache,productCache,categoryCache,brandCache,cartCache, "rateLimitCache", serviceProviderReviewCache, faqCache, customerCache,
+        cacheManager.setCacheNames(List.of(citiesCache,statesCache,countriesCache,
+                serviceCache,productCache,categoryCache,brandCache,cartCache, serviceProviderReviewCache, faqCache, customerCache,
                 customerAppointmentCache, serviceProviderCache, serviceProviderDetailsCache, reviewCache, appointmentCache, providerServiceCache));
         cacheManager.setCaffeine(caffeineCache());
+        cacheManager.setAsyncCacheMode(true);
         return cacheManager;
     }
 
