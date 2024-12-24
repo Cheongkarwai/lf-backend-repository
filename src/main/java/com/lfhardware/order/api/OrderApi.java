@@ -3,14 +3,15 @@ package com.lfhardware.order.api;
 import com.lfhardware.order.domain.DeliveryStatus;
 import com.lfhardware.order.dto.*;
 import com.lfhardware.order.service.IOrderService;
-import com.lfhardware.shared.Search;
-import com.lfhardware.shared.Sort;
+import com.lfhardware.core.repository.Search;
+import com.lfhardware.core.repository.Sort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.server.HandlerFunction;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -143,7 +144,16 @@ public class OrderApi {
      *
      */
     public Mono<ServerResponse> count(ServerRequest serverRequest) {
-        return ServerResponse.ok().body(orderService.count(), Long.class);
+        return ReactiveSecurityContextHolder.getContext()
+                .flatMap(context-> {
+                    System.out.println("Token" +((Jwt)context.getAuthentication().getCredentials()).getTokenValue());
+                    return Mono.just(context.getAuthentication().getCredentials());
+                })
+                .flatMap(
+                 context-> {
+                     return ServerResponse.ok().body(orderService.count(), Long.class);
+                 }
+                );
     }
 
     /**

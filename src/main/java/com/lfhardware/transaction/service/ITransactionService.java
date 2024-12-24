@@ -1,9 +1,8 @@
 package com.lfhardware.transaction.service;
 
-import com.lfhardware.shared.PageInfo;
-import com.lfhardware.shared.Pageable;
+import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.Pageable;
 import com.lfhardware.transaction.dto.TransactionDTO;
-import com.lfhardware.transaction.dto.TransactionDetailsDTO;
 import reactor.core.publisher.Mono;
 
 public interface ITransactionService {

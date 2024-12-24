@@ -1,10 +1,13 @@
 package com.lfhardware.customer.api;
 
 import com.lfhardware.appointment.dto.AppointmentDTO;
+import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.repository.PageQueryParameterBuilder;
+import com.lfhardware.core.repository.Sort;
 import com.lfhardware.customer.dto.CustomerDTO;
 import com.lfhardware.customer.dto.CustomerInfoInput;
 import com.lfhardware.customer.service.ICustomerService;
-import com.lfhardware.shared.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;

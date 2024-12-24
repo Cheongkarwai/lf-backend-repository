@@ -1,8 +1,8 @@
-package com.lfhardware.shared;
+package com.lfhardware.core.repository;
 
+import com.lfhardware.core.dto.PageInfo;
 import org.springframework.web.reactive.function.server.ServerRequest;
 
-import java.util.List;
 import java.util.Optional;
 
 public class PageQueryParameterBuilder {

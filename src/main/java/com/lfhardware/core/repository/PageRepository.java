@@ -1,5 +1,6 @@
-package com.lfhardware.shared;
+package com.lfhardware.core.repository;
 
+import com.lfhardware.core.dto.PageInfo;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;

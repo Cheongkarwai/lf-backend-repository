@@ -1,9 +1,9 @@
 package com.lfhardware.order.dto;
 
 import com.lfhardware.order.domain.DeliveryStatus;
-import com.lfhardware.shared.PageInfo;
-import com.lfhardware.shared.Search;
-import com.lfhardware.shared.Sort;
+import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.repository.Search;
+import com.lfhardware.core.repository.Sort;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

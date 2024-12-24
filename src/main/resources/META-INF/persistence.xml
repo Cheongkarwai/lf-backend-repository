@@ -33,7 +33,7 @@
         <class>com.lfhardware.provider.domain.ServiceProvider</class>
         <class>com.lfhardware.appointment.domain.Appointment</class>
         <class>com.lfhardware.appointment.domain.AppointmentImage</class>
-        <class>com.lfhardware.shared.BasicNamedAttribute</class>
+        <class>com.lfhardware.core.entity.BasicNamedAttribute</class>
         <class>com.lfhardware.provider.domain.Album</class>
         <class>com.lfhardware.provider.domain.Bank</class>
         <class>com.lfhardware.provider.domain.BankingDetails</class>
@@ -61,13 +61,13 @@
 
             <!-- PostgreSQL -->
             <property name="jakarta.persistence.jdbc.url"
-                      value="jdbc:postgresql://localhost:5432/lf_hardware"/>
+                      value="je"/>
 
             <!-- Credentials -->
             <property name="jakarta.persistence.jdbc.user"
-                      value="postgres"/>
+                      value="ps"/>
             <property name="jakarta.persistence.jdbc.password"
-                      value="root"/>
+                      value="r"/>
 
             <!-- The Vert.x SQL Client connection pool size -->
             <property name="hibernate.connection.pool_size"

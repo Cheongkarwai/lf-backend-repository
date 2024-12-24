@@ -2,8 +2,8 @@ package com.lfhardware.provider.repository;
 
 import com.lfhardware.provider.domain.ServiceProviderReview;
 import com.lfhardware.provider.dto.ServiceProviderReviewCountGroupByRatingDTO;
-import com.lfhardware.shared.CrudRepository;
-import com.lfhardware.shared.PageInfo;
+import com.lfhardware.core.repository.CrudRepository;
+import com.lfhardware.core.dto.PageInfo;
 import org.hibernate.reactive.stage.Stage;
 
 import java.util.List;

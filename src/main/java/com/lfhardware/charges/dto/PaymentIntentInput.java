@@ -1,6 +1,6 @@
 package com.lfhardware.charges.dto;
 
-import com.lfhardware.shared.Currency;
+import com.lfhardware.core.dto.Currency;
 
 import java.math.BigDecimal;
 import java.util.Map;

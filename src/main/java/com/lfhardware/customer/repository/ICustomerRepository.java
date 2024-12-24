@@ -2,8 +2,8 @@ package com.lfhardware.customer.repository;
 
 import com.lfhardware.customer.domain.Customer;
 import com.lfhardware.customer.dto.CustomerCountGroupByDayDTO;
-import com.lfhardware.shared.CrudRepository;
-import com.lfhardware.shared.PageInfo;
+import com.lfhardware.core.repository.CrudRepository;
+import com.lfhardware.core.dto.PageInfo;
 import org.hibernate.reactive.stage.Stage;
 
 import java.util.List;

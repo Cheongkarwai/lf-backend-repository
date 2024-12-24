@@ -1,7 +1,7 @@
 package com.lfhardware.charges.repository;
 
 import com.lfhardware.transaction.domain.Transaction;
-import com.lfhardware.shared.PageInfo;
+import com.lfhardware.core.dto.PageInfo;
 import com.lfhardware.transaction.domain.Transaction_;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -9,7 +9,6 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;

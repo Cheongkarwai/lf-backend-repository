@@ -1,6 +1,6 @@
 package com.lfhardware.provider_business.domain;
 
-import com.lfhardware.shared.BasicNamedAttribute;
+import com.lfhardware.core.entity.BasicNamedAttribute;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

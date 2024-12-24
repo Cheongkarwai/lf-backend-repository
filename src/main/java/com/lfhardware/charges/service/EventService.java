@@ -1,36 +1,23 @@
 package com.lfhardware.charges.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.lfhardware.appointment.domain.AppointmentId;
 import com.lfhardware.appointment.repository.IAppointmentRepository;
 import com.lfhardware.appointment.service.IAppointmentService;
 import com.lfhardware.auth.repository.IUserRepository;
 import com.lfhardware.checkout.service.ICheckoutService;
 import com.lfhardware.notification.service.INotificationService;
-import com.lfhardware.order.domain.PaymentStatus;
 import com.lfhardware.order.repository.IOrderRepository;
-import com.lfhardware.order.service.IOrderService;
 import com.lfhardware.product.repository.IProductRepository;
-import com.lfhardware.product.repository.ProductRepository;
 import com.lfhardware.provider.repository.IProviderRepository;
 import com.stripe.StripeClient;
-import com.stripe.exception.StripeException;
-import com.stripe.model.*;
+import com.stripe.model.Account;
+import com.stripe.model.Event;
+import com.stripe.model.Invoice;
 import com.stripe.model.checkout.Session;
-import com.stripe.param.PriceCreateParams;
-import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.SessionFactory;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @Slf4j

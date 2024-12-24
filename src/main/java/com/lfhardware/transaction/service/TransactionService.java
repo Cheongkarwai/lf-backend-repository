@@ -1,11 +1,10 @@
 package com.lfhardware.transaction.service;
 
 import com.lfhardware.charges.repository.ITransactionRepository;
-import com.lfhardware.shared.PageInfo;
-import com.lfhardware.shared.Pageable;
+import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.Pageable;
 import com.lfhardware.transaction.dto.TransactionDTO;
 
-import com.lfhardware.transaction.dto.TransactionDetailsDTO;
 import com.lfhardware.transaction.mapper.TransactionMapper;
 import com.stripe.StripeClient;
 import com.stripe.model.Charge;

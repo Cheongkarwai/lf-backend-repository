@@ -1,14 +1,11 @@
 package com.lfhardware.form.repository;
 
 import com.lfhardware.form.domain.Form;
-import com.lfhardware.form.domain.FormId;
 import com.lfhardware.form.dto.FormPageRequest;
-import com.lfhardware.shared.CrudRepository;
-import com.lfhardware.shared.PageInfo;
+import com.lfhardware.core.repository.CrudRepository;
 import org.hibernate.reactive.stage.Stage;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 public interface IFormRepository extends CrudRepository<Form, Long> {

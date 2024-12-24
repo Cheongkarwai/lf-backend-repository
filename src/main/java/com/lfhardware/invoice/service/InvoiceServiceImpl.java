@@ -1,25 +1,21 @@
 package com.lfhardware.invoice.service;
 
 import com.lfhardware.cart.dto.ItemDTO;
-import com.lfhardware.cart.service.CartService;
 import com.lfhardware.cart.service.ICartService;
 import com.lfhardware.invoice.dto.InvoiceInput;
 import com.lfhardware.sales.util.CurrencySmallestUnitConverter;
-import com.lfhardware.shared.Currency;
+import com.lfhardware.core.dto.Currency;
 import com.stripe.StripeClient;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Invoice;
-import com.stripe.model.InvoiceItem;
 import com.stripe.model.PaymentIntent;
 import com.stripe.param.InvoiceCreateParams;
 import com.stripe.param.InvoiceFinalizeInvoiceParams;
 import com.stripe.param.InvoiceItemCreateParams;
-import com.stripe.param.PaymentIntentCreateParams;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 

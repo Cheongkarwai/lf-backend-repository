@@ -3,7 +3,7 @@ package com.lfhardware.product.repository;
 
 import com.lfhardware.product.domain.*;
 import com.lfhardware.product.dto.ProductPageRequest;
-import com.lfhardware.shared.SortOrder;
+import com.lfhardware.core.repository.SortOrder;
 import com.lfhardware.stock.domain.Stock;
 import com.lfhardware.stock.domain.Stock_;
 import jakarta.persistence.criteria.*;

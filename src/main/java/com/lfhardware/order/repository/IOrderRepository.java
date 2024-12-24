@@ -5,7 +5,7 @@ import com.lfhardware.order.domain.PaymentStatus;
 import com.lfhardware.order.dto.DailyOrderStat;
 import com.lfhardware.order.dto.OrderPageRequest;
 import com.lfhardware.report.dto.MonthlySalesStat;
-import com.lfhardware.shared.CrudRepository;
+import com.lfhardware.core.repository.CrudRepository;
 import org.hibernate.reactive.stage.Stage;
 
 import java.util.List;

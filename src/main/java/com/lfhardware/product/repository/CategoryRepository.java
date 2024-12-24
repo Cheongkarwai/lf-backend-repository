@@ -11,7 +11,7 @@ import java.util.concurrent.CompletionStage;
 @Repository
 public class CategoryRepository implements ICategoryRepository{
 
-    private Stage.SessionFactory sessionFactory;
+    private final Stage.SessionFactory sessionFactory;
 
     public CategoryRepository(Stage.SessionFactory sessionFactory){
         this.sessionFactory = sessionFactory;

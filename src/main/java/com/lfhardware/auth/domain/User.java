@@ -1,25 +1,22 @@
 package com.lfhardware.auth.domain;
 
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.lfhardware.shared.CommonConstant;
+import com.lfhardware.core.dto.CommonConstant;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
 @NamedEntityGraph(
-        name="user-role-graph",
+        name = "user-role-graph",
         attributeNodes = {
-                @NamedAttributeNode(value="userRoles",subgraph = "roles-subgraph")
+                @NamedAttributeNode(value = "userRoles", subgraph = "roles-subgraph")
         },
         subgraphs = {
-                @NamedSubgraph(name="roles-subgraph",attributeNodes = {
+                @NamedSubgraph(name = "roles-subgraph", attributeNodes = {
                         @NamedAttributeNode("role")
                 })
         }
@@ -30,13 +27,11 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name= CommonConstant.TBL_USER)
+@Table(name = CommonConstant.TBL_USER)
 public class User {
 
     @Id
     private String username;
-
-//    private String password;
 
     @Column(name = "mfa_enabled")
     private boolean mfaEnabled;
@@ -46,23 +41,22 @@ public class User {
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name="emailAddress",
-                    column=@Column(name=CommonConstant.COL_EMAIL_ADDRESS,unique = true)),
-            @AttributeOverride(name="phoneNumber",
-                    column=@Column(name=CommonConstant.COL_PHONE_NUMBER,unique = true))
+            @AttributeOverride(name = "emailAddress",
+                    column = @Column(name = "email_address", unique = true)),
+            @AttributeOverride(name = "phoneNumber",
+                    column = @Column(name = "phone_number", unique = true))
     })
     private Profile profile;
 
     @Singular
-    @OneToMany(mappedBy = "user",cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.ALL}, orphanRemoval = true)
     private Set<UserRole> userRoles = new HashSet<>();
 
     @Column(name = "created_at")
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    public void addUserRole(UserRole userRole){
-        //userRole.setUser(this);
+    public void addUserRole(UserRole userRole) {
         userRoles.add(userRole);
     }
 

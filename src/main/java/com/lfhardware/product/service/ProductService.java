@@ -12,7 +12,7 @@ import com.lfhardware.product.mapper.StockMapper;
 import com.lfhardware.product.repository.IBrandRepository;
 import com.lfhardware.product.repository.ICategoryRepository;
 import com.lfhardware.product.repository.IProductRepository;
-import com.lfhardware.shared.Pageable;
+import com.lfhardware.core.dto.Pageable;
 import com.lfhardware.stock.domain.Stock;
 import com.lfhardware.stock.repository.IStockRepository;
 import lombok.extern.slf4j.Slf4j;

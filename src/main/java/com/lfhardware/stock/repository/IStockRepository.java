@@ -1,10 +1,9 @@
 package com.lfhardware.stock.repository;
 
-import com.lfhardware.shared.CrudRepository;
+import com.lfhardware.core.repository.CrudRepository;
 import com.lfhardware.stock.domain.Size;
 import com.lfhardware.stock.domain.Stock;
 import org.hibernate.reactive.stage.Stage;
-import reactor.core.publisher.Mono;
 
 import java.util.concurrent.CompletionStage;
 

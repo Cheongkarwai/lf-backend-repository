@@ -1,9 +1,8 @@
-package com.lfhardware.shared;
+package com.lfhardware.core.repository;
 
 import lombok.*;
 
 import java.util.Objects;
-import java.util.Optional;
 
 @Getter
 @Setter
@@ -17,7 +16,7 @@ public class Sort{
     private SortOrder order;
 
     public Sort(String sort){
-        if(sort.indexOf(",") != -1){
+        if(sort.contains(",")){
             String [] sortArr = sort.split(",");
             name = sortArr[0];
             order = sortArr[1].equals("DESC") ? SortOrder.DESC : SortOrder.ASC;

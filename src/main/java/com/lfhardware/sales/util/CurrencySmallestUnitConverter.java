@@ -1,6 +1,6 @@
 package com.lfhardware.sales.util;
 
-import com.lfhardware.shared.Currency;
+import com.lfhardware.core.dto.Currency;
 
 import java.math.BigDecimal;
 

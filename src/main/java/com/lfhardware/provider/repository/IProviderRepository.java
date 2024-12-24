@@ -3,12 +3,10 @@ package com.lfhardware.provider.repository;
 import com.lfhardware.provider.domain.ServiceProvider;
 import com.lfhardware.provider.domain.Status;
 import com.lfhardware.provider.dto.ServiceProviderCountGroupByDayDTO;
-import com.lfhardware.provider.dto.ServiceProviderPageRequest;
-import com.lfhardware.shared.CrudRepository;
-import com.lfhardware.shared.PageInfo;
+import com.lfhardware.core.repository.CrudRepository;
+import com.lfhardware.core.dto.PageInfo;
 import org.hibernate.reactive.stage.Stage;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 

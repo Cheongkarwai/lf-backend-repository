@@ -1,7 +1,6 @@
-package com.lfhardware.shared;
+package com.lfhardware.core.repository;
 
-import com.lfhardware.order.domain.Order;
-import com.lfhardware.order.dto.OrderPageRequest;
+import com.lfhardware.core.dto.PageInfo;
 import org.hibernate.reactive.stage.Stage;
 
 import java.util.List;

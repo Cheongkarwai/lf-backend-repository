@@ -1,9 +1,7 @@
 package com.lfhardware.auth.dto;
 
-import com.lfhardware.shared.PageInfo;
-import lombok.AllArgsConstructor;
+import com.lfhardware.core.dto.PageInfo;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter

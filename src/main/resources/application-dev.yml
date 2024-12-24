@@ -83,6 +83,10 @@ keycloak:
     grant-type: password
     realm: LFHardware
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/lf_hardware
+    username: postgres
+    password: root
   security:
     oauth2:
       resourceserver:

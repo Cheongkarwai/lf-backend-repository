@@ -2,7 +2,7 @@ package com.lfhardware.cart.repository;
 
 
 import com.lfhardware.cart.domain.Cart;
-import com.lfhardware.shared.CrudRepository;
+import com.lfhardware.core.repository.CrudRepository;
 import org.hibernate.reactive.stage.Stage;
 
 import java.util.concurrent.CompletionStage;

@@ -1,7 +1,7 @@
 package com.lfhardware.invoice.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.lfhardware.shared.Currency;
+import com.lfhardware.core.dto.Currency;
 
 import java.util.List;
 

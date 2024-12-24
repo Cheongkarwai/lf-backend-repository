@@ -1,9 +1,7 @@
 package com.lfhardware.auth.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.lfhardware.shared.BaseAddress;
+import com.lfhardware.core.dto.BaseAddress;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter

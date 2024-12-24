@@ -9,6 +9,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.SessionFactory;
+import org.hibernate.reactive.mutiny.Mutiny;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.stereotype.Repository;
 
@@ -22,7 +23,7 @@ public class FaqRepository implements IFaqRepository {
 
     private final Stage.SessionFactory sessionFactory;
 
-    public FaqRepository(Stage.SessionFactory sessionFactory, EntityManager em) {
+    public FaqRepository(Stage.SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 

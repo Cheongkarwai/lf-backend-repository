@@ -1,25 +1,22 @@
-package com.lfhardware.transaction.handler;
+package com.lfhardware.transaction.api;
 
-import com.lfhardware.shared.PageInfo;
-import com.lfhardware.shared.Pageable;
-import com.lfhardware.shared.Search;
-import com.lfhardware.shared.Sort;
+import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.repository.Search;
+import com.lfhardware.core.repository.Sort;
 import com.lfhardware.transaction.dto.TransactionDTO;
-import com.lfhardware.transaction.dto.TransactionDetailsDTO;
 import com.lfhardware.transaction.service.ITransactionService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
-import java.util.Objects;
-
 @Component
-public class TransactionHandler {
+public class TransactionApi {
 
     private final ITransactionService transactionService;
 
-    public TransactionHandler(ITransactionService transactionService){
+    public TransactionApi(ITransactionService transactionService){
         this.transactionService = transactionService;
     }
 

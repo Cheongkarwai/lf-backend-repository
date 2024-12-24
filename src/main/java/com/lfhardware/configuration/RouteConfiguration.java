@@ -23,9 +23,8 @@ import com.lfhardware.provider_business.api.ProviderBusinessHandler;
 import com.lfhardware.report.api.ReportApi;
 import com.lfhardware.shipment.api.ShipmentApi;
 import com.lfhardware.state.api.StateHandler;
-import com.lfhardware.transaction.handler.TransactionHandler;
+import com.lfhardware.transaction.api.TransactionApi;
 import com.lfhardware.transfer.api.TransferApi;
-import com.sun.nio.sctp.NotificationHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -90,7 +89,7 @@ public class RouteConfiguration {
     }
 
     @Bean
-    public RouterFunction<ServerResponse> transactionRouter(TransactionHandler transactionHandler) {
+    public RouterFunction<ServerResponse> transactionRouter(TransactionApi transactionHandler) {
         return RouterFunctions.route()
                 .path("/api/v1/transactions",
                         builder -> builder.nest(RequestPredicates.accept(MediaType.APPLICATION_JSON),
@@ -212,7 +211,7 @@ public class RouteConfiguration {
                                         .GET("/{username}/roles", userHandler::findUserRole)
                                         .GET("/daily-user-count", userHandler::findDailyUserCount)
                                         .GET("/count", userHandler::count)
-                                        .GET("/{username}", userHandler::findUser)
+                                        .GET("/{username}", userHandler::findByUsername)
                                         .GET(userHandler::findAll)
                                         .POST("/verify-email", userHandler::verifyEmail)
                                         .POST("/account-recovery-email", userHandler::sendAccountRecoveryEmail)

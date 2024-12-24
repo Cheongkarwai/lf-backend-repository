@@ -14,13 +14,6 @@ import java.util.concurrent.CompletionStage;
 @Repository
 public class RoleRepository implements  IRoleRepository{
 
-    private Stage.SessionFactory stagedSessionFactory;
-
-    @PostConstruct
-    public void init(){
-        stagedSessionFactory = Persistence.createEntityManagerFactory("postgres").unwrap(Stage.SessionFactory.class);
-    }
-
     @Override
     public CompletableFuture<Role> findById(Long id, CompletionStage<Stage.Session> session) {
         return null;

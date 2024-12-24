@@ -2,12 +2,8 @@ package com.lfhardware.provider.repository;
 
 import com.lfhardware.provider.domain.*;
 import com.lfhardware.provider.dto.ServiceProviderReviewCountGroupByRatingDTO;
-import com.lfhardware.provider.dto.ServiceProviderReviewDTO;
-import com.lfhardware.provider_business.domain.Service_;
-import com.lfhardware.shared.PageInfo;
-import com.lfhardware.shared.PageRepository;
-import com.lfhardware.shared.SortOrder;
-import com.lfhardware.state.domain.State_;
+import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.repository.PageRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -15,8 +11,6 @@ import jakarta.persistence.criteria.Root;
 import org.hibernate.query.Query;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
-import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -24,7 +18,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletionStage;
-import java.util.stream.Collectors;
 
 @Repository
 public class ServiceProviderReviewRepository extends PageRepository implements IServiceProviderReviewRepository {

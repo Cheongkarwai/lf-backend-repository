@@ -1,43 +1,23 @@
 package com.lfhardware.provider.repository;
 
-import com.lfhardware.auth.domain.User;
-import com.lfhardware.auth.domain.User_;
-import com.lfhardware.product.domain.Brand_;
-import com.lfhardware.product.domain.Category_;
-import com.lfhardware.product.domain.Product;
-import com.lfhardware.product.domain.Product_;
 import com.lfhardware.provider.domain.*;
-import com.lfhardware.provider.dto.ServiceProviderAppointmentCountGroupByDayDTO;
 import com.lfhardware.provider.dto.ServiceProviderCountGroupByDayDTO;
-import com.lfhardware.provider.dto.ServiceProviderPageRequest;
 import com.lfhardware.provider.repository.predicate.ProviderPredicateBuilder;
-import com.lfhardware.provider.service.ProviderService;
-import com.lfhardware.provider_business.domain.Service;
-import com.lfhardware.provider_business.domain.ServiceCategory;
-import com.lfhardware.provider_business.domain.ServiceCategory_;
-import com.lfhardware.provider_business.domain.Service_;
-import com.lfhardware.shared.PageInfo;
-import com.lfhardware.shared.PageRepository;
-import com.lfhardware.shared.PageRequestPredicateBuilder;
-import com.lfhardware.shared.SortOrder;
-import com.lfhardware.state.domain.State_;
-import com.lfhardware.stock.domain.Stock;
-import com.lfhardware.stock.domain.Stock_;
-import jakarta.persistence.NamedQuery;
+import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.repository.PageRepository;
 import jakarta.persistence.criteria.*;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.reactive.mutiny.Mutiny;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CompletionStage;
 
 @Repository

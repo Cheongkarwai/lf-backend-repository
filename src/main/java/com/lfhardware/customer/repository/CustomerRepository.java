@@ -2,23 +2,18 @@ package com.lfhardware.customer.repository;
 
 import com.lfhardware.customer.domain.Customer;
 import com.lfhardware.customer.dto.CustomerCountGroupByDayDTO;
-import com.lfhardware.provider.dto.ServiceProviderCountGroupByDayDTO;
-import com.lfhardware.shared.PageInfo;
-import com.lfhardware.shared.PageRepository;
-import com.lfhardware.shared.PageRequestPredicateBuilder;
-import com.lfhardware.shared.SortOrder;
+import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.repository.PageRepository;
 import jakarta.persistence.criteria.*;
-import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.reactive.mutiny.Mutiny;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CompletionStage;
 
 @Repository

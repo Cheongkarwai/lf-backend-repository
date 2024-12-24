@@ -1,8 +1,7 @@
 package com.lfhardware.city.repository;
 
 import com.lfhardware.city.domain.City;
-import com.lfhardware.shared.CrudRepository;
-import com.lfhardware.state.domain.State;
+import com.lfhardware.core.repository.CrudRepository;
 import org.hibernate.reactive.stage.Stage;
 
 import java.util.List;

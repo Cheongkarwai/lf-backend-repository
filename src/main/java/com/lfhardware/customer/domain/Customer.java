@@ -1,10 +1,7 @@
 package com.lfhardware.customer.domain;
 
-import com.lfhardware.appointment.domain.Appointment;
-import com.lfhardware.appointment.domain.AppointmentId;
 import com.lfhardware.auth.domain.Address;
 import com.lfhardware.provider.domain.ServiceProviderReview;
-import com.lfhardware.shared.CommonConstant;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

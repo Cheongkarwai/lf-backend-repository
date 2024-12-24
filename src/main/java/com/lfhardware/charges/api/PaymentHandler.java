@@ -6,7 +6,7 @@ import co.omise.models.SourceType;
 import com.lfhardware.charges.dto.*;
 import com.lfhardware.charges.service.EventService;
 import com.lfhardware.charges.service.IPaymentService;
-import com.lfhardware.shared.PaymentMethod;
+import com.lfhardware.core.dto.PaymentMethod;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
 import com.stripe.net.Webhook;

@@ -2,7 +2,7 @@ package com.lfhardware.auth.service;
 
 import com.lfhardware.auth.domain.User;
 import com.lfhardware.auth.dto.*;
-import com.lfhardware.shared.Pageable;
+import com.lfhardware.core.dto.Pageable;
 import io.vertx.ext.mail.MailResult;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;

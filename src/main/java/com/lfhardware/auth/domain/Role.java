@@ -1,9 +1,7 @@
 package com.lfhardware.auth.domain;
 
-import com.lfhardware.shared.CommonConstant;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,7 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name= CommonConstant.TBL_ROLE)
+@Table(name= "tbl_role")
 @NamedQueries({
         @NamedQuery(name = "Role.findByName",query = "FROM Role r WHERE r.name = :name"),
         @NamedQuery(name = "Role.findAll", query = "FROM Role")

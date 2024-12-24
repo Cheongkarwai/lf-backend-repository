@@ -1,12 +1,11 @@
-package com.lfhardware.shared;
+package com.lfhardware.core.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.criteria.Order;
-import jakarta.persistence.criteria.Root;
+import com.lfhardware.core.repository.Search;
+import com.lfhardware.core.repository.Sort;
 import lombok.*;
 
-import java.util.List;
 import java.util.Objects;
 
 @Getter

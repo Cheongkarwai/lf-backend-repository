@@ -7,13 +7,12 @@ import com.lfhardware.appointment.dto.AppointmentDTO;
 import com.lfhardware.appointment.dto.AppointmentFeesInput;
 import com.lfhardware.appointment.dto.AppointmentInput;
 import com.lfhardware.appointment.dto.AppointmentStatusInput;
-import com.lfhardware.shared.PageInfo;
-import com.lfhardware.shared.Pageable;
+import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.Pageable;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public interface IAppointmentService {
 

@@ -2,10 +2,9 @@ package com.lfhardware.configuration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lfhardware.core.exception.CustomException;
 import com.lfhardware.core.exception.RateLimitException;
 import com.lfhardware.core.exception.ServiceNotFoundException;
-import com.lfhardware.shared.ErrorResponse;
+import com.lfhardware.core.dto.ErrorResponse;
 import io.github.bucket4j.Bucket;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
@@ -18,7 +17,6 @@ import reactor.core.publisher.Mono;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
 
 @Component
 @Slf4j

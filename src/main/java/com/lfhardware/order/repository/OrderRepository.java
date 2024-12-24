@@ -9,7 +9,6 @@ import com.lfhardware.order.dto.DailyOrderStat;
 import com.lfhardware.order.dto.OrderPageRequest;
 import com.lfhardware.report.dto.MonthlySalesStat;
 import com.lfhardware.stock.domain.Stock_;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.*;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.stereotype.Repository;
@@ -28,11 +27,8 @@ public class OrderRepository implements IOrderRepository {
 
     private final Stage.SessionFactory sessionFactory;
 
-    private final EntityManager entityManager;
-
-    public OrderRepository(Stage.SessionFactory sessionFactory, EntityManager entityManager) {
+    public OrderRepository(Stage.SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
-        this.entityManager = entityManager;
     }
 
     @Override

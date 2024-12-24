@@ -1,6 +1,7 @@
 package com.lfhardware.country.repository;
 
 import com.lfhardware.country.domain.Country;
+import org.hibernate.reactive.mutiny.Mutiny;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.stereotype.Repository;
 
@@ -10,11 +11,6 @@ import java.util.concurrent.CompletionStage;
 
 @Repository
 public class CountryRepository implements ICountryRepository {
-
-    private Stage.SessionFactory sessionFactory;
-    public CountryRepository(Stage.SessionFactory sessionFactory){
-        this.sessionFactory = sessionFactory;
-    }
 
     @Override
     public CompletionStage<List<Country>> findAll(Stage.Session session) {

@@ -1,6 +1,6 @@
 package com.lfhardware.provider.dto;
 
-import com.lfhardware.shared.PageInfo;
+import com.lfhardware.core.dto.PageInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

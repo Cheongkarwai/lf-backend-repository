@@ -2,14 +2,12 @@ package com.lfhardware.appointment.api;
 
 import com.lfhardware.appointment.domain.AppointmentId;
 import com.lfhardware.appointment.domain.AppointmentStatus;
-import com.lfhardware.appointment.dto.AppointmentDTO;
 import com.lfhardware.appointment.dto.AppointmentFeesInput;
 import com.lfhardware.appointment.dto.AppointmentInput;
 import com.lfhardware.appointment.dto.AppointmentStatusInput;
 import com.lfhardware.appointment.service.IAppointmentService;
-import com.lfhardware.shared.PageInfo;
-import com.lfhardware.shared.PageQueryParameterBuilder;
-import com.lfhardware.shared.Sort;
+import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.repository.PageQueryParameterBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
@@ -18,7 +16,6 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Appointment API

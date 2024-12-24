@@ -11,10 +11,6 @@ import java.util.concurrent.CompletionStage;
 @Repository
 public class AppointmentImageRepository implements IAppointmentImageRepository{
 
-    private final Stage.SessionFactory sessionFactory;
-    public AppointmentImageRepository(Stage.SessionFactory sessionFactory){
-        this.sessionFactory = sessionFactory;
-    }
     @Override
     public CompletionStage<List<AppointmentImage>> findAll(Stage.Session session) {
         return null;

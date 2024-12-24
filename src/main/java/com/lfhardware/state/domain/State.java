@@ -1,6 +1,6 @@
 package com.lfhardware.state.domain;
 
-import com.lfhardware.shared.BasicNamedAttribute;
+import com.lfhardware.core.entity.BasicNamedAttribute;
 import jakarta.persistence.Entity;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;

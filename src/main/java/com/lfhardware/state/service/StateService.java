@@ -28,11 +28,6 @@ public class StateService {
 
     private final CacheManager cacheManager;
 
-    @PostConstruct
-    public void init() {
-        this.sessionFactory = Persistence.createEntityManagerFactory("postgres").unwrap(Stage.SessionFactory.class);
-    }
-
     public StateService(IStateRepository stateRepository, StateMapper stateMapper, CacheManager cacheManager) {
         this.stateRepository = stateRepository;
         this.stateMapper = stateMapper;

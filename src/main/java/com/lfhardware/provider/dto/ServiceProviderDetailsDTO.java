@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lfhardware.auth.dto.AddressDTO;
 import com.lfhardware.provider.domain.Status;
 import com.lfhardware.provider_business.dto.ServiceDTO;
-import com.lfhardware.shared.BaseAddress;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

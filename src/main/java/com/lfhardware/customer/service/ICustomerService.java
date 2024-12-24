@@ -4,10 +4,8 @@ import com.lfhardware.appointment.dto.AppointmentDTO;
 import com.lfhardware.customer.dto.CustomerCountGroupByDayDTO;
 import com.lfhardware.customer.dto.CustomerDTO;
 import com.lfhardware.customer.dto.CustomerInfoInput;
-import com.lfhardware.shared.PageInfo;
-import com.lfhardware.shared.Pageable;
-import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.web.reactive.function.BodyInserter;
+import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.Pageable;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;

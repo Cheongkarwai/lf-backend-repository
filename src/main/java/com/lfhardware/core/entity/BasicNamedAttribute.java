@@ -1,4 +1,4 @@
-package com.lfhardware.shared;
+package com.lfhardware.core.entity;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

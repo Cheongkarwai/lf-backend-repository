@@ -1,6 +1,5 @@
 package com.lfhardware.auth.domain;
 
-import com.lfhardware.shared.CommonConstant;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name=CommonConstant.TBL_USER_ROLE)
+@Table(name="tbl_user_role")
 public class UserRole {
 
     @Id
@@ -18,10 +17,10 @@ public class UserRole {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = CommonConstant.COL_USERNAME)
+    @JoinColumn(name = "username")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = CommonConstant.COL_ROLE_ID)
+    @JoinColumn(name = "role_id")
     private Role role;
 }

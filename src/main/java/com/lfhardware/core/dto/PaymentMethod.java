@@ -1,4 +1,4 @@
-package com.lfhardware.shared;
+package com.lfhardware.core.dto;
 
 public enum PaymentMethod {
 

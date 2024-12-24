@@ -1,10 +1,8 @@
 package com.lfhardware.auth.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.lfhardware.shared.BaseAddress;
+import com.lfhardware.core.dto.BaseAddress;
 import jakarta.persistence.Embeddable;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter

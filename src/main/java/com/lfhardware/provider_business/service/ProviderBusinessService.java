@@ -2,7 +2,6 @@ package com.lfhardware.provider_business.service;
 
 import com.lfhardware.core.exception.ServiceNotFoundException;
 import com.lfhardware.provider_business.cache.BusinessServiceCacheService;
-import com.lfhardware.provider_business.domain.ServiceCategory;
 import com.lfhardware.provider_business.dto.ServiceDTO;
 import com.lfhardware.provider_business.dto.ServiceDetailsDTO;
 import com.lfhardware.provider_business.dto.ServiceGroupByCategoryDTO;
@@ -10,21 +9,14 @@ import com.lfhardware.provider_business.mapper.ServiceCategoryMapper;
 import com.lfhardware.provider_business.mapper.ServiceDetailsMapper;
 import com.lfhardware.provider_business.repository.IProviderBusinessCategoryRepository;
 import com.lfhardware.provider_business.repository.IProviderBusinessRepository;
-import com.lfhardware.shared.CacheService;
-import jakarta.annotation.PostConstruct;
-import jakarta.persistence.Persistence;
+import com.lfhardware.core.service.CacheService;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.reactive.mutiny.Mutiny;
 import org.hibernate.reactive.stage.Stage;
-import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j

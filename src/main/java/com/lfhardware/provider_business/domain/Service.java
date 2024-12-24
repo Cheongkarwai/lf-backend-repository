@@ -1,9 +1,8 @@
 package com.lfhardware.provider_business.domain;
 
 import com.lfhardware.appointment.domain.Appointment;
-import com.lfhardware.form.domain.Form;
 import com.lfhardware.provider.domain.ServiceDetails;
-import com.lfhardware.shared.BasicNamedAttribute;
+import com.lfhardware.core.entity.BasicNamedAttribute;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +11,6 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 @Getter

@@ -1,13 +1,11 @@
 package com.lfhardware.checkout.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.lfhardware.shared.Currency;
+import com.lfhardware.core.dto.Currency;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.math.BigDecimal;
 
 @Getter
 @Setter

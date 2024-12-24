@@ -1,12 +1,10 @@
 package com.lfhardware.provider.cache;
 
-import com.lfhardware.shared.PageInfo;
+import com.lfhardware.core.dto.PageInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Objects;
 

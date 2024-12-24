@@ -2,8 +2,8 @@ package com.lfhardware.appointment.cache;
 
 import com.lfhardware.appointment.dto.AppointmentDTO;
 import com.lfhardware.configuration.CacheConfiguration;
-import com.lfhardware.shared.CacheService;
-import com.lfhardware.shared.Pageable;
+import com.lfhardware.core.service.CacheService;
+import com.lfhardware.core.dto.Pageable;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;

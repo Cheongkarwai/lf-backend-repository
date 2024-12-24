@@ -1,9 +1,7 @@
 package com.lfhardware.review.repository;
 
-import com.lfhardware.order.domain.Order;
-import com.lfhardware.order.domain.Order_;
 import com.lfhardware.review.domain.Review;
-import com.lfhardware.shared.PageInfo;
+import com.lfhardware.core.dto.PageInfo;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -11,7 +9,6 @@ import jakarta.persistence.criteria.Root;
 import org.hibernate.SessionFactory;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;

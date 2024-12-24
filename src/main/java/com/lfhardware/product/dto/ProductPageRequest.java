@@ -1,13 +1,12 @@
 package com.lfhardware.product.dto;
 
-import com.lfhardware.shared.PageInfo;
-import com.lfhardware.shared.Search;
-import com.lfhardware.shared.Sort;
+import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.repository.Search;
+import com.lfhardware.core.repository.Sort;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 import java.util.*;
 

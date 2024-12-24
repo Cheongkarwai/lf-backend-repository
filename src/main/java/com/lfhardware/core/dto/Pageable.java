@@ -1,8 +1,7 @@
-package com.lfhardware.shared;
+package com.lfhardware.core.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 
 import java.util.List;
 import java.util.Objects;

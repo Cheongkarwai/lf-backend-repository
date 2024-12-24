@@ -1,4 +1,4 @@
 package com.lfhardware.stock.api;
 
-public class StockHandler {
+public class StockApi {
 }

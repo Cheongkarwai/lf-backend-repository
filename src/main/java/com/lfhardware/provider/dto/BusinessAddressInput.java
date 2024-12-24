@@ -1,9 +1,7 @@
 package com.lfhardware.provider.dto;
 
-import com.lfhardware.shared.BaseAddress;
-import lombok.AllArgsConstructor;
+import com.lfhardware.core.dto.BaseAddress;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter

@@ -1,17 +1,14 @@
 package com.lfhardware.review.api;
 
-import com.lfhardware.product.dto.ProductPageRequest;
 import com.lfhardware.review.domain.ReviewInput;
 import com.lfhardware.review.service.IReviewService;
-import com.lfhardware.shared.PageInfo;
-import com.lfhardware.shared.Search;
-import com.lfhardware.shared.Sort;
+import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.repository.Search;
+import com.lfhardware.core.repository.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
-
-import java.util.stream.Collectors;
 
 @Component
 public class ReviewApi {

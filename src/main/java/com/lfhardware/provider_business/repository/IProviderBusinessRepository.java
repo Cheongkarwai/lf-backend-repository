@@ -2,8 +2,7 @@ package com.lfhardware.provider_business.repository;
 
 import com.lfhardware.provider_business.domain.Service;
 import com.lfhardware.provider_business.domain.ServiceCategory;
-import com.lfhardware.provider_business.dto.ServiceGroupByCategoryDTO;
-import com.lfhardware.shared.CrudRepository;
+import com.lfhardware.core.repository.CrudRepository;
 import org.hibernate.reactive.stage.Stage;
 
 import java.util.List;

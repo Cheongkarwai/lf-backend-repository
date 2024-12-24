@@ -5,8 +5,8 @@ import com.lfhardware.appointment.dto.AppointmentCountGroupByDayDTO;
 import com.lfhardware.appointment.domain.AppointmentId;
 import com.lfhardware.appointment.domain.AppointmentStatus;
 import com.lfhardware.provider.dto.ServiceProviderAppointmentCountGroupByDayDTO;
-import com.lfhardware.shared.CrudRepository;
-import com.lfhardware.shared.PageInfo;
+import com.lfhardware.core.repository.CrudRepository;
+import com.lfhardware.core.dto.PageInfo;
 import org.hibernate.reactive.stage.Stage;
 
 import java.time.LocalDateTime;

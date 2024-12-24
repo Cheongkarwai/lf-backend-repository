@@ -3,8 +3,8 @@ package com.lfhardware.auth.api;
 import com.lfhardware.auth.dto.*;
 import com.lfhardware.auth.service.IUserService;
 import com.lfhardware.auth.dto.ServiceProviderAccountDTO;
-import com.lfhardware.shared.ErrorResponse;
-import com.lfhardware.shared.Sort;
+import com.lfhardware.core.dto.ErrorResponse;
+import com.lfhardware.core.repository.Sort;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -27,7 +27,6 @@ import java.util.*;
 public class UserApi {
 
     private final IUserService userService;
-
 
     private final Validator validator;
 
@@ -52,16 +51,14 @@ public class UserApi {
                         .bodyValue(user));
     }
 
-    public Mono<ServerResponse> findUser(ServerRequest serverRequest) {
+    public Mono<ServerResponse> findByUsername(ServerRequest serverRequest) {
         return userService.findByEmailAddress(serverRequest.pathVariable("username"))
                 .flatMap(userDTO -> ServerResponse.ok()
                         .bodyValue(userDTO))
                 .switchIfEmpty(ServerResponse.notFound()
                         .build())
-                .onErrorResume(throwable -> {
-                    return ServerResponse.badRequest()
-                            .build();
-                });
+                .onErrorResume(throwable -> ServerResponse.badRequest()
+                        .build());
     }
 
     public Mono<ServerResponse> findCurrentlyLoggedInUser(ServerRequest serverRequest) {

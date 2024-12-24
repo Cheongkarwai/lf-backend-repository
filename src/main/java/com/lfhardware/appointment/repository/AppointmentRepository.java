@@ -1,12 +1,14 @@
 package com.lfhardware.appointment.repository;
 
-import com.lfhardware.appointment.domain.*;
+import com.lfhardware.appointment.domain.Appointment;
+import com.lfhardware.appointment.domain.AppointmentId;
+import com.lfhardware.appointment.domain.AppointmentStatus;
+import com.lfhardware.appointment.domain.Appointment_;
 import com.lfhardware.appointment.dto.AppointmentCountGroupByDayDTO;
 import com.lfhardware.appointment.repository.predicate.AppointmentPredicateBuilder;
+import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.repository.PageRepository;
 import com.lfhardware.provider.dto.ServiceProviderAppointmentCountGroupByDayDTO;
-import com.lfhardware.shared.PageInfo;
-import com.lfhardware.shared.PageRepository;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.reactive.stage.Stage;
@@ -26,11 +28,8 @@ public class AppointmentRepository extends PageRepository implements IAppointmen
 
     private final Stage.SessionFactory sessionFactory;
 
-    private final EntityManager entityManager;
-
-    public AppointmentRepository(Stage.SessionFactory sessionFactory, EntityManager entityManager) {
+    public AppointmentRepository(Stage.SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
-        this.entityManager = entityManager;
     }
 
     @Override

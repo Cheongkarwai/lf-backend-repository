@@ -1,7 +1,7 @@
 package com.lfhardware.auth.repository;
 
 import com.lfhardware.auth.domain.Role;
-import com.lfhardware.shared.CrudRepository;
+import com.lfhardware.core.repository.CrudRepository;
 import org.hibernate.reactive.stage.Stage;
 
 import java.util.List;

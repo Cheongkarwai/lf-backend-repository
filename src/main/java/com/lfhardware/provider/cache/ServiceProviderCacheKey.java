@@ -1,13 +1,11 @@
 package com.lfhardware.provider.cache;
 
-import com.lfhardware.provider.dto.ServiceProviderPageRequest;
-import com.lfhardware.shared.PageInfo;
+import com.lfhardware.core.dto.PageInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
