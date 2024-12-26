@@ -13,4 +13,8 @@ public interface CityMapper {
     })
     CityDTO mapToCityDTO(City city);
 
+    @Mappings({
+            @Mapping(source = "name",target = "name"),
+    })
+    City mapToCity(CityDTO cityDTO);
 }
