@@ -23,13 +23,13 @@ public class CityRepository implements ICityRepository{
     }
 
     @Override
-    public CompletionStage<City> findById(Stage.Session session, Long aLong) {
-        return null;
+    public CompletionStage<City> findById(Stage.Session session, Long id) {
+        return session.find(City.class, id);
     }
 
     @Override
-    public CompletionStage<Void> save(Stage.Session session, City user) {
-        return null;
+    public CompletionStage<Void> save(Stage.Session session, City city) {
+        return session.persist(city);
     }
 
     @Override
@@ -43,8 +43,8 @@ public class CityRepository implements ICityRepository{
     }
 
     @Override
-    public CompletionStage<Void> deleteById(Stage.Session session, Long aLong) {
-        return null;
+    public CompletionStage<Void> deleteById(Stage.Session session, Long id) {
+        return session.remove(id);
     }
 
 
@@ -65,7 +65,7 @@ public class CityRepository implements ICityRepository{
 
     @Override
     public CompletionStage<Void> delete(Stage.Session session, City obj) {
-        return null;
+        return session.remove(obj);
     }
 
     @Override

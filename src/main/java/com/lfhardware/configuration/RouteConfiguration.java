@@ -136,7 +136,12 @@ public class RouteConfiguration {
         return RouterFunctions.route()
                 .path("/api/v1/cities",
                         builder -> builder.nest(RequestPredicates.accept(MediaType.APPLICATION_JSON),
-                                route -> route.GET(cityApi::findAll)
+                                route -> route
+                                        .GET("/{id}", cityApi::findById)
+                                        .GET(cityApi::findAll)
+                                        .POST(cityApi::save)
+                                        .PUT("/{id}", cityApi::update)
+                                        .DELETE("/{id}", cityApi::delete)
                         ))
 
                 .build();
