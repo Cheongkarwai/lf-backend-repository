@@ -15,7 +15,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-public class CityService {
+public class CityService{
 
     private final ICityRepository cityRepository;
 
