@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.ServerWebInputException;
 import reactor.core.publisher.Mono;
 
 import java.sql.SQLException;
@@ -56,6 +57,11 @@ public class ExceptionHandler implements ErrorWebExceptionHandler {
 
         if(ex instanceof ServiceNotFoundException serviceNotFoundException){
             errorResponse.setCode(serviceNotFoundException.getCode());
+            exchange.getResponse().setStatusCode(HttpStatus.NOT_FOUND);
+        }
+
+        if(ex instanceof ServerWebInputException serverWebInputException){
+            errorResponse.setCode(serverWebInputException.getMessage());
             exchange.getResponse().setStatusCode(HttpStatus.NOT_FOUND);
         }
 
