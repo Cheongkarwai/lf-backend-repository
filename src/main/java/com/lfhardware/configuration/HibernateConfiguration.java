@@ -1,5 +1,6 @@
 package com.lfhardware.configuration;
 
+import io.vertx.core.Vertx;
 import io.vertx.pgclient.PgConnectOptions;
 import jakarta.annotation.PreDestroy;
 import jakarta.persistence.EntityManager;
@@ -31,13 +32,11 @@ public class HibernateConfiguration {
         this.env = env;
     }
 
-//    @Bean
-//    public Stage.SessionFactory sessionFactory(){
-//        try(EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("postgres", hibernateProperties())){
-//            this.sessionFactory = entityManagerFactory.unwrap(Stage.SessionFactory.class);
-//            return sessionFactory;
-//        }
-//    }
+    @Bean
+    public Mutiny.SessionFactory mutinySessionFactory(){
+        EntityManagerFactory emf = new ReactivePersistenceProvider().createEntityManagerFactory("postgres", hibernateProperties());
+        return emf.unwrap(Mutiny.SessionFactory.class);
+    }
 
     @Bean
     public Stage.SessionFactory stageSessionFactory(){
@@ -72,4 +71,8 @@ public class HibernateConfiguration {
 //        this.entityManager.close();
 //    }
 
+    @Bean
+    public Vertx vertx(){
+        return Vertx.vertx();
+    }
 }

@@ -1,30 +1,23 @@
-package com.lfhardware.auth.dto;
+package com.lfhardware.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import com.lfhardware.auth.dto.ProfileDTO;
+import com.lfhardware.auth.dto.RoleDTO;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.keycloak.representations.idm.AbstractUserRepresentation;
-import org.keycloak.representations.idm.UserRepresentation;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
-@Getter
-@Setter
+@EqualsAndHashCode(callSuper = true)
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO extends AbstractUserRepresentation {
-
-//    private String id;
-//
-//    private String username;
-
-//    private String password;
-
-//    private String stripeId;
 
     private ProfileDTO profile;
 
@@ -32,29 +25,25 @@ public class UserDTO extends AbstractUserRepresentation {
 
     @JsonProperty("email_verified")
     @Override
-    public Boolean isEmailVerified(){
+    public Boolean isEmailVerified() {
         return super.emailVerified;
     }
 
     @JsonProperty("first_name")
     @Override
-    public String getFirstName(){
+    public String getFirstName() {
         return super.firstName;
     }
 
     @JsonProperty("last_name")
     @Override
-    public String getLastName(){
+    public String getLastName() {
         return super.lastName;
     }
 
-//    @JsonProperty("first_name")
-//    private String firstName;
-//
-//    @JsonProperty("last_name")
-//    private String lastName;
-
     @JsonProperty("first_time_login")
     private boolean firstTimeLogin;
+
+    private UserType userType;
 
 }

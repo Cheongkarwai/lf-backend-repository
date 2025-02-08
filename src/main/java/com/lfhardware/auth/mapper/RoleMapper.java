@@ -36,7 +36,6 @@ public interface RoleMapper {
     @Mapping(target = "name", source = "authority")
     RoleDTO mapToRoleDTO(GrantedAuthority grantedAuthority);
 
-    @Mapping(target = "name", source = "name")
-    @Mapping(target = "id", source = "id")
-    RoleDTO mapToRoleDTO(RoleRepresentation roleRepresentation);
+    @Mapping(target = ".", source = "roleRepresentation")
+    com.lfhardware.user.dto.RoleDTO mapToRoleDTO(RoleRepresentation roleRepresentation);
 }

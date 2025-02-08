@@ -3,20 +3,14 @@ package com.lfhardware.product.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lfhardware.file.dto.ImageDTO;
 import com.lfhardware.stock.domain.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.http.codec.multipart.Part;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 public class ProductInput {
 
     private String name;

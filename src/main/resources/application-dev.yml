@@ -77,6 +77,7 @@ logging:
 #              enable: true
 keycloak:
   admin:
+    id: 7210e175-30c9-46a1-ab91-c33c87df233e
     server-url: http://localhost:8080
     client-id: lfhardware
     client-secret: sjZNs8sUg71NllmslJGHz346X9RHUcFX

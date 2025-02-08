@@ -1,26 +1,18 @@
 package com.lfhardware.notification.service;
 
 import com.lfhardware.appointment.domain.AppointmentStatus;
-import com.lfhardware.auth.dto.UserDTO;
-import com.lfhardware.auth.service.IUserService;
 import com.lfhardware.notification.dto.NotificationDTO;
 import com.lfhardware.notification.mapper.NotificationMapper;
 import com.lfhardware.notification.repository.INotificationRepository;
-import jakarta.annotation.PostConstruct;
 import lombok.Getter;
-import org.hibernate.SessionFactory;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.http.codec.ServerSentEvent;
-import org.springframework.jmx.export.notification.UnableToSendNotificationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.publisher.SignalType;
 import reactor.core.publisher.Sinks;
 import reactor.util.concurrent.Queues;
 
@@ -28,7 +20,6 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAmount;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -44,17 +35,18 @@ public class NotificationService implements INotificationService {
 
     private final NotificationMapper notificationMapper;
 
-    private final IUserService userService;
+   // private final IUserService userService;
 
 
     public NotificationService(INotificationRepository notificationRepository,
                                Stage.SessionFactory sessionFactory,
-                               NotificationMapper notificationMapper,
-                               IUserService userService) {
+                               NotificationMapper notificationMapper
+                               // IUserService userService
+    ) {
         this.notificationRepository = notificationRepository;
         this.sessionFactory = sessionFactory;
         this.notificationMapper = notificationMapper;
-        this.userService = userService;
+        //this.userService = userService;
         sink = Sinks.many()
                 .multicast()
                 .onBackpressureBuffer(Queues.SMALL_BUFFER_SIZE, false);

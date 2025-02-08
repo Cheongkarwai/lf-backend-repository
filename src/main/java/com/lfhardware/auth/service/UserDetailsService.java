@@ -20,6 +20,7 @@ import com.lfhardware.configuration.KeycloakProperties;
 import com.lfhardware.email.service.IEmailService;
 import com.lfhardware.provider.service.IProviderService;
 import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.user.dto.UserDTO;
 import com.stripe.StripeClient;
 import com.stripe.exception.StripeException;
 import com.stripe.param.CustomerCreateParams;
@@ -45,7 +46,7 @@ import java.util.stream.Stream;
 
 @Service
 @Slf4j
-public class UserDetailsService implements IUserService {
+public class UserDetailsService {
 
     private final ObjectMapper objectMapper;
     private final IUserRepository userRepository;
@@ -69,7 +70,7 @@ public class UserDetailsService implements IUserService {
 
     private CartRepository cartRepository;
 
-    private final Keycloak keycloak;
+    //private final Keycloak keycloak;
 
     private final KeycloakProperties keycloakProperties;
 
@@ -83,7 +84,9 @@ public class UserDetailsService implements IUserService {
                               IProviderService providerService, Stage.SessionFactory sessionFactory,
                               UserRecordMapper userRecordMapper, RoleMapper roleMapper, UserDetailsMapper userDetailsMapper,
                               StripeClient stripeClient, CartRepository cartRepository,
-                              Keycloak keycloak, ICustomerRepository customerRepository,
+
+//                              Keycloak keycloak,
+                              ICustomerRepository customerRepository,
                               AddressMapper addressMapper, KeycloakProperties keycloakProperties) {
         this.objectMapper = objectMapper;
         this.userRepository = userRepository;
@@ -97,13 +100,13 @@ public class UserDetailsService implements IUserService {
         this.userDetailsMapper = userDetailsMapper;
         this.stripeClient = stripeClient;
         this.cartRepository = cartRepository;
-        this.keycloak = keycloak;
+//        this.keycloak = keycloak;
         this.customerRepository = customerRepository;
         this.addressMapper = addressMapper;
         this.keycloakProperties = keycloakProperties;
     }
 
-//    @Override
+//
 //    public Mono<UserDetails> findByUsername(String username) {
 //        return Mono.fromFuture(sessionFactory.withSession(session -> userRepository.findUserRoleById(session, username)
 //                .thenApply(user -> {
@@ -136,12 +139,12 @@ public class UserDetailsService implements IUserService {
                 .build();
     }
 
-    @Override
+
     public Mono<Void> save(UserDTO userDTO) {
         return null;
     }
 
-    @Override
+
     public Mono<UserDTO> save(UserAccountDTO userAccount) {
 
         return Mono.empty();
@@ -208,7 +211,7 @@ public class UserDetailsService implements IUserService {
 //                .map(Tuple2::getT2);
     }
 
-    @Override
+
     public Mono<Void> update(String username, UserProfileDTO userProfileDTO) {
         return Mono.fromCompletionStage(sessionFactory.withTransaction((session, transaction) -> userRepository.findByEmailAddress(session, username)
                 .thenCompose(user -> {
@@ -234,7 +237,7 @@ public class UserDetailsService implements IUserService {
                 })));
     }
 
-    @Override
+
     public Mono<UserDTO> linkSocialAccount(UserAccountDTO userAccountDTO) {
 
 //        Set<String> rolesName = userAccountDTO.getRoles().stream()
@@ -303,100 +306,103 @@ public class UserDetailsService implements IUserService {
     }
 
     public Mono<UserRepresentation> findById(String id) {
-        return Mono.fromCallable(() -> keycloak.realm(this.keycloakProperties.getRealm())
-                .users()
-                .get(id)
-                .toRepresentation());
+//        return Mono.fromCallable(() -> keycloak.realm(this.keycloakProperties.getRealm())
+//                .users()
+//                .get(id)
+//                .toRepresentation());
+        return Mono.empty();
     }
 
     public Mono<Void> updateUserRoleById(String id, List<RoleRepresentation> roleRepresentations) {
-        return Mono.fromRunnable(() -> {
-            keycloak.realm(this.keycloakProperties.getRealm())
-                    .users()
-                    .get(id)
-                    .roles()
-                    .realmLevel()
-                    .add(roleRepresentations);
-        });
+//        return Mono.fromRunnable(() -> {
+//            keycloak.realm(this.keycloakProperties.getRealm())
+//                    .users()
+//                    .get(id)
+//                    .roles()
+//                    .realmLevel()
+//                    .add(roleRepresentations);
+//        });
+        return Mono.empty();
     }
 
     public Mono<Void> update(String id, UserRepresentation userRepresentation) {
-        return Mono.fromRunnable(() -> {
-            keycloak.realm(this.keycloakProperties.getRealm())
-                    .users()
-                    .get(id)
-                    .update(userRepresentation);
-        });
+//        return Mono.fromRunnable(() -> {
+//            keycloak.realm(this.keycloakProperties.getRealm())
+//                    .users()
+//                    .get(id)
+//                    .update(userRepresentation);
+//        });
+        return Mono.empty();
     }
 
-    @Override
-    public Mono<UserDTO> findCurrentlyLoggedInUser() {
-        return ReactiveSecurityContextHolder.getContext()
-                .map(SecurityContext::getAuthentication)
-                .flatMap(authentication -> {
-                    Jwt token = (Jwt) authentication.getPrincipal();
-                    return Mono.fromCallable(() -> {
-                                UserRepresentation userRepresentation = keycloak.realm(this.keycloakProperties.getRealm())
-                                        .users()
-                                        .get(token.getSubject())
-                                        .toRepresentation(true);
-                                UserDTO userDTO = userRecordMapper.mapToUserDTO(userRepresentation);
-                                Map<String, List<String>> userAttributes = userRepresentation.getAttributes();
 
-                                List<String> phoneNumber = userAttributes.get("phone_number");
-                                List<String> addresses = userAttributes.get("address");
-                                List<AddressDTO> addressDTOs = new ArrayList<>();
-                                if (!addresses.isEmpty()) {
-                                    addressDTOs = addresses.stream()
-                                            .map(address -> {
-                                                try {
-                                                    return objectMapper.readValue(address, AddressDTO.class);
-                                                } catch (JsonProcessingException e) {
-                                                    throw new RuntimeException(e);
-                                                }
-                                            })
-                                            .toList();
-                                }
-                                userDTO.setRoles(authentication.getAuthorities()
-                                        .stream()
-                                        .map(roleMapper::mapToRoleDTO)
-                                        .collect(Collectors.toSet()));
-                                userDTO.setEmailVerified(userRepresentation.isEmailVerified());
-                                userDTO.setProfile(ProfileDTO.builder()
-                                        .phoneNumber(!phoneNumber.isEmpty() ? phoneNumber.get(0) : null)
-                                        .emailAddress(userRepresentation.getEmail())
-                                        .address(addressDTOs.get(0))
-                                        .build());
-                                System.out.println(userRepresentation.getUsername());
-                                System.out.println(authentication.getAuthorities());
-                                return userDTO;
-                            })
-                            .flatMap(userDTO -> {
-//                                boolean isCustomer = userDTO.getRoles()
-//                                        .stream()
-//                                        .anyMatch(role -> role.getName()
-//                                                .equals(Role.customer.toString()));
-//                                if (isCustomer) {
-//                                    return Mono.fromCompletionStage(sessionFactory.withSession(session -> customerRepository.findById(session, userDTO.getUid())
-//                                            .thenApply(customer -> {
-//                                                ProfileDTO profile = userDTO.getProfile();
-//                                                profile.setPhoneNumber(customer.getPhoneNumber());
-//                                                AddressDTO addressDTO = addressMapper.mapToAddressDTO(customer.getAddress());
-//                                                profile.setAddress(addressDTO);
-//                                                return userDTO;
-//                                            })));
+//    public Mono<UserDTO> findCurrentlyLoggedInUser() {
+//        return ReactiveSecurityContextHolder.getContext()
+//                .map(SecurityContext::getAuthentication)
+//                .flatMap(authentication -> {
+//                    Jwt token = (Jwt) authentication.getPrincipal();
+//                    return Mono.fromCallable(() -> {
+//                                UserRepresentation userRepresentation = keycloak.realm(this.keycloakProperties.getRealm())
+//                                        .users()
+//                                        .get(token.getSubject())
+//                                        .toRepresentation(true);
+//                                UserDTO userDTO = userRecordMapper.mapToUserDTO(userRepresentation);
+//                                Map<String, List<String>> userAttributes = userRepresentation.getAttributes();
+//
+//                                List<String> phoneNumber = userAttributes.get("phone_number");
+//                                List<String> addresses = userAttributes.get("address");
+//                                List<AddressDTO> addressDTOs = new ArrayList<>();
+//                                if (!addresses.isEmpty()) {
+//                                    addressDTOs = addresses.stream()
+//                                            .map(address -> {
+//                                                try {
+//                                                    return objectMapper.readValue(address, AddressDTO.class);
+//                                                } catch (JsonProcessingException e) {
+//                                                    throw new RuntimeException(e);
+//                                                }
+//                                            })
+//                                            .toList();
 //                                }
-                                return Mono.just(userDTO);
-                            });
-//                    return Mono.empty();
-                });
-    }
+//                                userDTO.setRoles(authentication.getAuthorities()
+//                                        .stream()
+//                                        .map(roleMapper::mapToRoleDTO)
+//                                        .collect(Collectors.toSet()));
+//                                userDTO.setEmailVerified(userRepresentation.isEmailVerified());
+//                                userDTO.setProfile(ProfileDTO.builder()
+//                                        .phoneNumber(!phoneNumber.isEmpty() ? phoneNumber.get(0) : null)
+//                                        .emailAddress(userRepresentation.getEmail())
+//                                        .address(addressDTOs.get(0))
+//                                        .build());
+//                                System.out.println(userRepresentation.getUsername());
+//                                System.out.println(authentication.getAuthorities());
+//                                return userDTO;
+//                            })
+//                            .flatMap(userDTO -> {
+////                                boolean isCustomer = userDTO.getRoles()
+////                                        .stream()
+////                                        .anyMatch(role -> role.getName()
+////                                                .equals(Role.customer.toString()));
+////                                if (isCustomer) {
+////                                    return Mono.fromCompletionStage(sessionFactory.withSession(session -> customerRepository.findById(session, userDTO.getUid())
+////                                            .thenApply(customer -> {
+////                                                ProfileDTO profile = userDTO.getProfile();
+////                                                profile.setPhoneNumber(customer.getPhoneNumber());
+////                                                AddressDTO addressDTO = addressMapper.mapToAddressDTO(customer.getAddress());
+////                                                profile.setAddress(addressDTO);
+////                                                return userDTO;
+////                                            })));
+////                                }
+//                                return Mono.just(userDTO);
+//                            });
+////                    return Mono.empty();
+//                });
+//    }
 
-    @Override
-    public Mono<UserAccountDTO> findUserAccountByUsername(String username) {
-        return Mono.fromCompletionStage(sessionFactory.withSession(session -> userRepository.findById(session, username)
-                .thenApply(userRecordMapper::mapToUserAccountDTO)));
-    }
+
+//    public Mono<UserAccountDTO> findUserAccountByUsername(String username) {
+//        return Mono.fromCompletionStage(sessionFactory.withSession(session -> userRepository.findById(session, username)
+//                .thenApply(userRecordMapper::mapToUserAccountDTO)));
+//    }
 
 
     public Mono<UserDetails> findByUsername(String username) {
@@ -414,7 +420,7 @@ public class UserDetailsService implements IUserService {
 //                .map(userRecordMapper::mapToUserDTO);
     }
 
-    @Override
+
     public Mono<UserRoleDTO> findUserRoleById(String username) {
         return Mono.fromFuture(sessionFactory.withSession(session -> userRepository.findUserRoleById(session, username)
                         .thenApply(user -> Stream.of(user)
@@ -424,12 +430,12 @@ public class UserDetailsService implements IUserService {
                 .toCompletableFuture());
     }
 
-    @Override
+
     public Mono<MailResult> otpLogin(OtpLoginDTO otpLoginDTO) {
         return emailService.sendOneTimeLoginPasscode(otpLoginDTO.getReceiver());
     }
 
-    @Override
+
     public Mono<MailResult> forgotPassword(PasswordRecoveryDTO passwordRecoveryDTO) {
         return Mono.empty();
 //            String resetPasswordLink = FirebaseAuth.getInstance().generatePasswordResetLink(passwordRecoveryDTO.getEmailAddress());
@@ -459,7 +465,7 @@ public class UserDetailsService implements IUserService {
 //                        });
     }
 
-    @Override
+
     public Mono<MailResult> verifyEmail(String email) {
         return Mono.empty();
 //        return Mono.defer(() -> ApiFutureUtil.toMono(FirebaseAuth.getInstance()
@@ -484,7 +490,7 @@ public class UserDetailsService implements IUserService {
 //                });
     }
 
-    @Override
+
     public Mono<Void> saveServiceProviderAccount(ServiceProviderAccountDTO serviceProviderAccountDTO) {
 
         Mono<UserDTO> saveServiceProviderAccountMono = this.save(serviceProviderAccountDTO.getAccount());
@@ -494,7 +500,7 @@ public class UserDetailsService implements IUserService {
         return Mono.empty();
     }
 
-    @Override
+
     public Mono<com.lfhardware.auth.domain.User> changePassword(ChangePasswordDTO changePasswordDTO) {
 
         if (!changePasswordDTO.getPassword()
@@ -519,31 +525,31 @@ public class UserDetailsService implements IUserService {
 
     }
 
-    public Mono<UserDTO> findByEmailAddress(String emailAddress) {
-        return Mono.fromCompletionStage(sessionFactory.withSession(session -> {
-            return userRepository.findById(session, emailAddress)
-                    .thenApply(userRecordMapper::mapToUserDTO);
-        }));
-    }
+//    public Mono<UserDTO> findByEmailAddress(String emailAddress) {
+//        return Mono.fromCompletionStage(sessionFactory.withSession(session -> {
+//            return userRepository.findById(session, emailAddress)
+//                    .thenApply(userRecordMapper::mapToUserDTO);
+//        }));
+//    }
 
-    @Override
-    public Mono<Pageable<UserDTO>> findAll(UserPageRequest userPageRequest) {
 
-        return Mono.fromCallable(() -> {
-
-            UsersResource userResource = keycloak.realm(keycloakProperties.getRealm())
-                    .users();
-
-            List<UserRepresentation> userRepresentations = userResource
-                    .list(userPageRequest.getPage() * userPageRequest.getPageSize(), userPageRequest.getPageSize());
-
-            return new Pageable<>(userRepresentations.stream()
-                    .map(userRecordMapper::mapToUserDTO)
-                    .collect(Collectors.toList()),
-                    userPageRequest.getPageSize(),
-                    userPageRequest.getPage(),
-                    userResource.count());
-        });
+//    public Mono<Pageable<UserDTO>> findAll(UserPageRequest userPageRequest) {
+//
+//        return Mono.fromCallable(() -> {
+//
+//            UsersResource userResource = keycloak.realm(keycloakProperties.getRealm())
+//                    .users();
+//
+//            List<UserRepresentation> userRepresentations = userResource
+//                    .list(userPageRequest.getPage() * userPageRequest.getPageSize(), userPageRequest.getPageSize());
+//
+//            return new Pageable<>(userRepresentations.stream()
+//                    .map(userRecordMapper::mapToUserDTO)
+//                    .collect(Collectors.toList()),
+//                    userPageRequest.getPageSize(),
+//                    userPageRequest.getPage(),
+//                    userResource.count());
+//        });
 
 //        return ReactiveSecurityContextHolder.getContext()
 //                .map(securityContext -> {
@@ -563,34 +569,32 @@ public class UserDetailsService implements IUserService {
 //                });
     }
 
-    @Override
-    public Mono<List<RoleDTO>> findAllRoles() {
-        return ReactiveSecurityContextHolder.getContext()
-                .map(SecurityContext::getAuthentication)
-                .flatMap(authentication -> findAllRolesById(authentication.getName()));
-    }
 
-    @Override
-    public Mono<List<RoleDTO>> findAllRolesById(String id) {
-        return Mono.fromCallable(() -> keycloak.realm(keycloakProperties.getRealm())
-                .users()
-                .get(id)
-                .roles()
-                .realmLevel()
-                .listAll()
-                .stream()
-                .map(roleMapper::mapToRoleDTO)
-                .collect(Collectors.toList()));
-    }
+//    public Mono<List<RoleDTO>> findAllRoles() {
+//        return ReactiveSecurityContextHolder.getContext()
+//                .map(SecurityContext::getAuthentication)
+//                .flatMap(authentication -> findAllRolesById(authentication.getName()));
+//    }
+//
+//
+//    public Mono<List<RoleDTO>> findAllRolesById(String id) {
+//        return Mono.fromCallable(() -> keycloak.realm(keycloakProperties.getRealm())
+//                .users()
+//                .get(id)
+//                .roles()
+//                .realmLevel()
+//                .listAll()
+//                .stream()
+//                .map(roleMapper::mapToRoleDTO)
+//                .collect(Collectors.toList()));
+//    }
 
-    @Override
-    public Mono<Long> count() {
-        return Mono.fromCompletionStage(sessionFactory.withSession(session -> userRepository.count(session, new UserPageRequest())));
-    }
-
-    @Override
-    public Mono<List<DailyUserStat>> findDailyUserCount(Integer days) {
-        return Mono.fromCompletionStage(sessionFactory.withSession(session -> userRepository.countDailyUserGroupByDays(session, days)));
+//    public Mono<Long> count() {
+//        return Mono.fromCompletionStage(sessionFactory.withSession(session -> userRepository.count(session, new UserPageRequest())));
+//    }
+//
+//    public Mono<List<DailyUserStat>> findDailyUserCount(Integer days) {
+//        return Mono.fromCompletionStage(sessionFactory.withSession(session -> userRepository.countDailyUserGroupByDays(session, days)));
 //                .flatMap(dailyUserStats -> {
 //                    LocalDateTime today = LocalDateTime.now();
 //                    LocalDateTime daysBefore = today.minusDays(days);
@@ -635,5 +639,6 @@ public class UserDetailsService implements IUserService {
 //
 //                    return dailyUserStatList;
 //                }).subscribeOn(Schedulers.boundedElastic()));
-    }
-}
+//    }
+//
+//}

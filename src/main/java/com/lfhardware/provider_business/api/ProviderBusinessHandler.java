@@ -17,12 +17,13 @@ public class ProviderBusinessHandler {
 
     private final IProviderBusinessService providerBusinessService;
 
-    private final IFormService formService;
+//    private final IFormService formService;
 
-    public ProviderBusinessHandler(IProviderBusinessService providerBusinessService,
-                                   IFormService formService){
+    public ProviderBusinessHandler(IProviderBusinessService providerBusinessService
+                                  // IFormService formService
+    ){
         this.providerBusinessService = providerBusinessService;
-        this.formService = formService;
+       // this.formService = formService;
     }
 
     /**
@@ -48,22 +49,22 @@ public class ProviderBusinessHandler {
      * @return Mono<ServerResponse>
      *
      */
-    public Mono<ServerResponse> findFormById(ServerRequest serverRequest){
-        return ServerResponse.ok()
-
-                .body(formService.findById(Long.valueOf(serverRequest.pathVariable("id"))),
-                        FormDTO.class);
-    }
-
-    /**
-     * @param serverRequest - request object
-     * @return Mono<ServerResponse>
-     *
-     */
-    public Mono<ServerResponse> saveForm(ServerRequest serverRequest) {
-        return serverRequest.bodyToMono(FormInput.class)
-                .flatMap(formInput -> formService.save(Long.parseLong(serverRequest.pathVariable("id")), formInput))
-                .then(Mono.defer(() -> ServerResponse.noContent()
-                        .build()));
-    }
+//    public Mono<ServerResponse> findFormById(ServerRequest serverRequest){
+//        return ServerResponse.ok()
+//
+//                .body(formService.findById(Long.valueOf(serverRequest.pathVariable("id"))),
+//                        FormDTO.class);
+//    }
+//
+//    /**
+//     * @param serverRequest - request object
+//     * @return Mono<ServerResponse>
+//     *
+//     */
+//    public Mono<ServerResponse> saveForm(ServerRequest serverRequest) {
+//        return serverRequest.bodyToMono(FormInput.class)
+//                .flatMap(formInput -> formService.save(Long.parseLong(serverRequest.pathVariable("id")), formInput))
+//                .then(Mono.defer(() -> ServerResponse.noContent()
+//                        .build()));
+//    }
 }

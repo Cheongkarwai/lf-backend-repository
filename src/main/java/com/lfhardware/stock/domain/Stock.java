@@ -20,7 +20,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tbl_stock")
 @NamedQueries({
         @NamedQuery(name = "Stock.findByProductIdAndSize", query = "SELECT s FROM Stock s WHERE s.product.id = :id AND s.size = :size")
 })

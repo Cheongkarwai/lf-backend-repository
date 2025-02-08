@@ -2,25 +2,20 @@ package com.lfhardware.customer.service;
 
 import com.lfhardware.appointment.domain.AppointmentId;
 import com.lfhardware.appointment.dto.AppointmentDTO;
-import com.lfhardware.auth.domain.Address;
-import com.lfhardware.auth.dto.Role;
-import com.lfhardware.auth.service.IUserService;
-import com.lfhardware.auth.service.RoleService;
-import com.lfhardware.customer.dto.CustomerCountGroupByDayDTO;
-import com.lfhardware.customer.dto.CustomerDTO;
 import com.lfhardware.appointment.mapper.AppointmentMapper;
 import com.lfhardware.appointment.repository.IAppointmentRepository;
-import com.lfhardware.customer.domain.Customer;
+import com.lfhardware.auth.service.RoleService;
+import com.lfhardware.configuration.CacheConfiguration;
+import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.service.CacheService;
 import com.lfhardware.customer.cache.CustomerAppointmentCacheKey;
+import com.lfhardware.customer.dto.CustomerCountGroupByDayDTO;
+import com.lfhardware.customer.dto.CustomerDTO;
 import com.lfhardware.customer.dto.CustomerInfoInput;
 import com.lfhardware.customer.mapper.CustomerMapper;
 import com.lfhardware.customer.repository.ICustomerRepository;
-import com.lfhardware.configuration.CacheConfiguration;
 import com.lfhardware.notification.service.INotificationService;
-import com.lfhardware.core.service.CacheService;
-import com.lfhardware.core.dto.PageInfo;
-import com.lfhardware.core.dto.Pageable;
-import org.hibernate.reactive.mutiny.Mutiny;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.cache.CacheManager;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
@@ -33,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 
 @Service
 public class CustomerService implements ICustomerService {
@@ -47,8 +41,6 @@ public class CustomerService implements ICustomerService {
     private final CustomerMapper customerMapper;
 
     private final AppointmentMapper appointmentMapper;
-
-    private final IUserService userService;
 
     private final RoleService roleService;
 
@@ -67,7 +59,6 @@ public class CustomerService implements ICustomerService {
                            CustomerMapper customerMapper,
                            AppointmentMapper appointmentMapper,
                            CacheManager cacheManager,
-                           IUserService userService,
                            RoleService roleService,
                            INotificationService notificationService,
                            CacheService<CustomerDTO> customerCacheService,
@@ -78,7 +69,6 @@ public class CustomerService implements ICustomerService {
         this.customerMapper = customerMapper;
         this.appointmentMapper = appointmentMapper;
         this.cacheManager = cacheManager;
-        this.userService = userService;
         this.roleService = roleService;
         this.notificationService = notificationService;
         this.customerCacheService = customerCacheService;
@@ -87,37 +77,38 @@ public class CustomerService implements ICustomerService {
 
     @Override
     public Mono<CustomerDTO> findById(String id) {
-        return Mono.fromCompletionStage(sessionFactory.withSession(session -> customerRepository.findById(session, id)
-                        .thenApply(customerMapper::mapToCustomerDTO)))
-                .flatMap(customerDTO -> {
-                    return userService.findById(id)
-                            .map(userRepresentation -> {
-                                customerDTO.setFirstName(userRepresentation.getFirstName());
-                                customerDTO.setLastName(userRepresentation.getLastName());
-                                customerDTO.setEmailAddress(userRepresentation.getEmail());
-                                customerDTO.setEmailVerified(userRepresentation.isEmailVerified());
-                                customerDTO.setEnabled(userRepresentation.isEnabled());
-                                return customerDTO;
-                            });
-                });
+        return Mono.empty();
+//        return Mono.fromCompletionStage(sessionFactory.withSession(session -> customerRepository.findById(session, id)
+//                        .thenApply(customerMapper::mapToCustomerDTO)))
+//                .flatMap(customerDTO -> {
+//                    return userService.findById(id)
+//                            .map(userRepresentation -> {
+//                                customerDTO.setFirstName(userRepresentation.getFirstName());
+//                                customerDTO.setLastName(userRepresentation.getLastName());
+//                                customerDTO.setEmailAddress(userRepresentation.getEmail());
+//                                customerDTO.setEmailVerified(userRepresentation.isEmailVerified());
+//                                customerDTO.setEnabled(userRepresentation.isEnabled());
+//                                return customerDTO;
+//                            });
+//                });
     }
 
 
     @Override
     public Mono<Void> save(CustomerInfoInput customerInfoInput) {
-
-        return ReactiveSecurityContextHolder.getContext()
-                .map(SecurityContext::getAuthentication)
-                .flatMap(authentication -> Mono.fromCallable(() -> {
-                            Customer customer = customerMapper.mapToCustomer(customerInfoInput);
-                            customer.setId(authentication.getName());
-                            return customer;
-                        })
-                        .flatMap(customer -> Mono.fromCompletionStage(sessionFactory.withTransaction(session ->
-                                customerRepository.save(session, customer))))
-                        .then(roleService.findByName(Role.customer.name())
-                                .flatMap(roleRepresentations -> userService.updateUserRoleById(authentication.getName(), roleRepresentations))
-                                .then(notificationService.sendProfileUpdatedNotification(authentication.getName()))));
+        return Mono.empty();
+//        return ReactiveSecurityContextHolder.getContext()
+//                .map(SecurityContext::getAuthentication)
+//                .flatMap(authentication -> Mono.fromCallable(() -> {
+//                            Customer customer = customerMapper.mapToCustomer(customerInfoInput);
+//                            customer.setId(authentication.getName());
+//                            return customer;
+//                        })
+//                        .flatMap(customer -> Mono.fromCompletionStage(sessionFactory.withTransaction(session ->
+//                                customerRepository.save(session, customer))))
+//                        .then(roleService.findByName(Role.customer.name())
+//                                .flatMap(roleRepresentations -> userService.updateUserRoleById(authentication.getName(), roleRepresentations))
+//                                .then(notificationService.sendProfileUpdatedNotification(authentication.getName()))));
     }
 
     @Override
@@ -154,35 +145,36 @@ public class CustomerService implements ICustomerService {
 
     @Override
     public Mono<Pageable<CustomerDTO>> findAll(PageInfo pageRequest) {
-        return customerCacheService.getCachedPageable(pageRequest)
-                .switchIfEmpty(Mono.defer(() -> Mono.fromCompletionStage(sessionFactory.withSession(session -> customerRepository.findAll(session, pageRequest)
-                                .thenApply(customers -> {
-                                    return customers.stream()
-                                            .map(customerMapper::mapToCustomerDTO)
-                                            .collect(Collectors.toList());
-                                })))
-                        .flatMapIterable(customerDTOS -> customerDTOS)
-                        .flatMap(customerDTO -> {
-                            return userService.findById(customerDTO.getId())
-                                    .map(user -> {
-                                        customerDTO.setFirstName(user.getFirstName());
-                                        customerDTO.setLastName(user.getLastName());
-                                        return customerDTO;
-                                    });
-                        })
-                        .collectList()
-                        .flatMap(customerDTOS -> {
-                            return Mono.fromCompletionStage(sessionFactory.withSession(session -> {
-                                return customerRepository.count(session, pageRequest)
-                                        .thenApply(totalElements -> {
-                                            return new Pageable<>(customerDTOS,
-                                                    pageRequest.getPageSize(),
-                                                    pageRequest.getPage(),
-                                                    totalElements.intValue());
-                                        });
-                            }));
-                        })
-                        .flatMap(customerDTOPageable -> customerCacheService.updateCachedPageable(pageRequest, customerDTOPageable))));
+        return Mono.empty();
+//        return customerCacheService.getCachedPageable(pageRequest)
+//                .switchIfEmpty(Mono.defer(() -> Mono.fromCompletionStage(sessionFactory.withSession(session -> customerRepository.findAll(session, pageRequest)
+//                                .thenApply(customers -> {
+//                                    return customers.stream()
+//                                            .map(customerMapper::mapToCustomerDTO)
+//                                            .collect(Collectors.toList());
+//                                })))
+//                        .flatMapIterable(customerDTOS -> customerDTOS)
+//                        .flatMap(customerDTO -> {
+//                            return userService.findById(customerDTO.getId())
+//                                    .map(user -> {
+//                                        customerDTO.setFirstName(user.getFirstName());
+//                                        customerDTO.setLastName(user.getLastName());
+//                                        return customerDTO;
+//                                    });
+//                        })
+//                        .collectList()
+//                        .flatMap(customerDTOS -> {
+//                            return Mono.fromCompletionStage(sessionFactory.withSession(session -> {
+//                                return customerRepository.count(session, pageRequest)
+//                                        .thenApply(totalElements -> {
+//                                            return new Pageable<>(customerDTOS,
+//                                                    pageRequest.getPageSize(),
+//                                                    pageRequest.getPage(),
+//                                                    totalElements.intValue());
+//                                        });
+//                            }));
+//                        })
+//                        .flatMap(customerDTOPageable -> customerCacheService.updateCachedPageable(pageRequest, customerDTOPageable))));
     }
 
     @Override
@@ -237,33 +229,34 @@ public class CustomerService implements ICustomerService {
     }
 
     public Mono<Void> update(String id, CustomerInfoInput customerInfoInput) {
-        return Mono.fromCompletionStage(sessionFactory.withTransaction((session, transaction) -> customerRepository.findById(session, id)
-                        .thenCompose(customer -> {
-                            Address customerAddress = customer.getAddress();
-                            customerAddress.setAddressLine1(customerInfoInput.getAddress()
-                                    .getAddressLine1());
-                            customerAddress.setAddressLine2(customerInfoInput.getAddress()
-                                    .getAddressLine2());
-                            customerAddress.setCity(customerInfoInput.getAddress()
-                                    .getCity());
-                            customerAddress.setState(customerInfoInput.getAddress()
-                                    .getState());
-                            customerAddress.setZipcode(customerInfoInput.getAddress()
-                                    .getZipcode());
-                            customer.setPhoneNumber(customerInfoInput.getPhoneNumber());
-                            customer.setAddress(customerAddress);
-                            return customerRepository.save(session, customer);
-                        })
-                        .thenAccept((e) -> customerCacheService.removeAll())))
-                .then(Mono.defer(() -> userService.findById(id)
-                        .flatMap(userRepresentation -> {
-                            userRepresentation.setFirstName(customerInfoInput.getFirstName());
-                            userRepresentation.setLastName(customerInfoInput.getLastName());
-                            userRepresentation.setEmail(customerInfoInput.getEmailAddress());
-                            userRepresentation.setEmailVerified(customerInfoInput.isEmailVerified());
-                            userRepresentation.setEnabled(customerInfoInput.isEnabled());
-                            return userService.update(id, userRepresentation);
-                        })));
+        return Mono.empty();
+//        return Mono.fromCompletionStage(sessionFactory.withTransaction((session, transaction) -> customerRepository.findById(session, id)
+//                        .thenCompose(customer -> {
+//                            Address customerAddress = customer.getAddress();
+//                            customerAddress.setAddressLine1(customerInfoInput.getAddress()
+//                                    .getAddressLine1());
+//                            customerAddress.setAddressLine2(customerInfoInput.getAddress()
+//                                    .getAddressLine2());
+//                            customerAddress.setCity(customerInfoInput.getAddress()
+//                                    .getCity());
+//                            customerAddress.setState(customerInfoInput.getAddress()
+//                                    .getState());
+//                            customerAddress.setZipcode(customerInfoInput.getAddress()
+//                                    .getZipcode());
+//                            customer.setPhoneNumber(customerInfoInput.getPhoneNumber());
+//                            customer.setAddress(customerAddress);
+//                            return customerRepository.save(session, customer);
+//                        })
+//                        .thenAccept((e) -> customerCacheService.removeAll())))
+//                .then(Mono.defer(() -> userService.findById(id)
+//                        .flatMap(userRepresentation -> {
+//                            userRepresentation.setFirstName(customerInfoInput.getFirstName());
+//                            userRepresentation.setLastName(customerInfoInput.getLastName());
+//                            userRepresentation.setEmail(customerInfoInput.getEmailAddress());
+//                            userRepresentation.setEmailVerified(customerInfoInput.isEmailVerified());
+//                            userRepresentation.setEnabled(customerInfoInput.isEnabled());
+//                            return userService.update(id, userRepresentation);
+//                        })));
     }
 
     @Override

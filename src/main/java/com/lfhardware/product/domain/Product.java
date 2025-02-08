@@ -4,7 +4,10 @@ package com.lfhardware.product.domain;
 import com.lfhardware.review.domain.Review;
 import com.lfhardware.stock.domain.Stock;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -12,15 +15,12 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 @Entity
-@Table(name = "tbl_product")
 @NamedEntityGraphs({
-        @NamedEntityGraph(name = "ProductDetails",attributeNodes = {
+        @NamedEntityGraph(name = "ProductDetails", attributeNodes = {
                 @NamedAttributeNode("category"),
                 @NamedAttributeNode("brand"),
                 @NamedAttributeNode("stocks"),
@@ -29,15 +29,18 @@ import java.util.Set;
         })
 })
 @NamedQueries({
-        @NamedQuery(name="ProductDetails.findById",query = "FROM Product u WHERE u.id = :id"),
-        @NamedQuery(name= "Product.findByName", query = "FROM Product u WHERE u.name = :name")
+        @NamedQuery(name = "ProductDetails.findById", query = "FROM Product u WHERE u.id = :id"),
+        @NamedQuery(name = "Product.findByName", query = "FROM Product u WHERE u.name = :name")
 //        @NamedQuery(name = "ProductLeftJoinStock", query = "FROM Product p LEFT JOIN FETCH Stock s ON p.stocks = s.product")
 })
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     private String name;
 
@@ -61,7 +64,7 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "product", cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
+    @OneToMany(mappedBy = "product", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private Set<Stock> stocks = new HashSet<>();
 
     @OneToMany(mappedBy = "product", cascade = {CascadeType.PERSIST})
@@ -70,14 +73,14 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = {CascadeType.PERSIST})
     private Set<Review> reviews = new HashSet<>();
 
-    public void setStocks(Set<Stock> stocks){
+    public void setStocks(Set<Stock> stocks) {
         this.stocks.addAll(stocks);
-        stocks.forEach(e-> e.setProduct(this));
+        stocks.forEach(e -> e.setProduct(this));
     }
 
-    public void setProductImages(Set<ProductImage> productImages){
+    public void setProductImages(Set<ProductImage> productImages) {
         this.productImages.addAll(productImages);
-        productImages.forEach(e-> e.setProduct(this));
+        productImages.forEach(e -> e.setProduct(this));
     }
 
     public void addReview(Review review) {

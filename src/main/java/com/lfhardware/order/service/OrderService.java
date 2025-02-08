@@ -1,8 +1,7 @@
 package com.lfhardware.order.service;
 
-import com.lfhardware.auth.dto.Role;
-import com.lfhardware.auth.service.IUserService;
 import com.lfhardware.cart.repository.ICartDetailsRepository;
+import com.lfhardware.core.dto.Pageable;
 import com.lfhardware.file.service.FileService;
 import com.lfhardware.notification.service.INotificationService;
 import com.lfhardware.order.domain.DeliveryStatus;
@@ -13,28 +12,21 @@ import com.lfhardware.order.mapper.OrderDetailsMapper;
 import com.lfhardware.order.mapper.OrderMapper;
 import com.lfhardware.order.repository.IOrderDetailsRepository;
 import com.lfhardware.order.repository.IOrderRepository;
-import com.lfhardware.core.dto.Pageable;
 import com.lfhardware.shipment.dto.order.OrderBulkDTO;
 import com.lfhardware.shipment.service.IShipmentService;
 import com.lfhardware.stock.repository.IStockRepository;
 import com.lfhardware.stock.service.IStockService;
-import org.hibernate.reactive.mutiny.Mutiny;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.ReactiveSecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletionStage;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService implements IOrderService {
@@ -53,8 +45,6 @@ public class OrderService implements IOrderService {
 
     private final OrderDetailsMapper orderDetailsMapper;
 
-    private final IUserService userService;
-
     private final IStockService stockService;
 
     private final INotificationService notificationService;
@@ -69,7 +59,7 @@ public class OrderService implements IOrderService {
     public OrderService(IOrderRepository orderRepository, IOrderDetailsRepository orderDetailsRepository,
                         IStockRepository stockRepository, ICartDetailsRepository cartDetailsRepository, Stage.SessionFactory sessionFactory,
                         OrderMapper orderMapper, OrderDetailsMapper orderDetailsMapper,
-                        IUserService userService, IStockService stockService, INotificationService notificationService,
+                         IStockService stockService, INotificationService notificationService,
                         @Qualifier("PDFService") FileService pdfService, @Qualifier("CSVService") FileService csvService,
                         IShipmentService shipmentService) {
         this.orderRepository = orderRepository;
@@ -79,7 +69,6 @@ public class OrderService implements IOrderService {
         this.sessionFactory = sessionFactory;
         this.orderMapper = orderMapper;
         this.orderDetailsMapper = orderDetailsMapper;
-        this.userService = userService;
         this.stockService = stockService;
         this.notificationService = notificationService;
         this.pdfService = pdfService;
@@ -144,41 +133,43 @@ public class OrderService implements IOrderService {
 
     @Override
     public Mono<Pageable<OrderDTO>> findAll(OrderPageRequest pageRequest) {
-        return ReactiveSecurityContextHolder.getContext().map(securityContext -> (Jwt) securityContext.getAuthentication().getPrincipal())
-                .flatMap(jwt -> userService.findById(jwt.getSubject())).flatMap(userDTO -> {
-                    CompletionStage<Pageable<OrderDTO>> pageableCompletionStage = sessionFactory.withSession(session -> orderRepository.findAllByUsername(session, pageRequest, userDTO.getUsername()))
-                            .thenCombine(sessionFactory.withSession(session -> orderRepository.count(session, pageRequest, userDTO.getUsername())),
-                                    (orders, totalElements) -> new Pageable<>(orders.stream().map(orderMapper::mapToOrderDTO).collect(Collectors.toList()), pageRequest.getPageSize(), pageRequest.getPage(), totalElements.intValue()));
-
-                    if (userDTO.getRealmRoles().stream().anyMatch(roleDTO -> roleDTO.equals(Role.administrator.toString()))) {
-                        pageableCompletionStage = sessionFactory.withSession(session -> orderRepository.findAll(session, pageRequest))
-                                .thenCombine(sessionFactory.withSession(session -> orderRepository.count(session, pageRequest)),
-                                        (orders, totalElements) -> new Pageable<>(orders.stream().map(orderMapper::mapToOrderDTO).collect(Collectors.toList()), pageRequest.getPageSize(), pageRequest.getPage(), totalElements.intValue()));
-                    }
-
-                    return Mono.fromCompletionStage(pageableCompletionStage);
-                });
+        return Mono.empty();
+//        return ReactiveSecurityContextHolder.getContext().map(securityContext -> (Jwt) securityContext.getAuthentication().getPrincipal())
+//                .flatMap(jwt -> userService.findById(jwt.getSubject())).flatMap(userDTO -> {
+//                    CompletionStage<Pageable<OrderDTO>> pageableCompletionStage = sessionFactory.withSession(session -> orderRepository.findAllByUsername(session, pageRequest, userDTO.getUsername()))
+//                            .thenCombine(sessionFactory.withSession(session -> orderRepository.count(session, pageRequest, userDTO.getUsername())),
+//                                    (orders, totalElements) -> new Pageable<>(orders.stream().map(orderMapper::mapToOrderDTO).collect(Collectors.toList()), pageRequest.getPageSize(), pageRequest.getPage(), totalElements.intValue()));
+//
+//                    if (userDTO.getRealmRoles().stream().anyMatch(roleDTO -> roleDTO.equals(Role.administrator.toString()))) {
+//                        pageableCompletionStage = sessionFactory.withSession(session -> orderRepository.findAll(session, pageRequest))
+//                                .thenCombine(sessionFactory.withSession(session -> orderRepository.count(session, pageRequest)),
+//                                        (orders, totalElements) -> new Pageable<>(orders.stream().map(orderMapper::mapToOrderDTO).collect(Collectors.toList()), pageRequest.getPageSize(), pageRequest.getPage(), totalElements.intValue()));
+//                    }
+//
+//                    return Mono.fromCompletionStage(pageableCompletionStage);
+//                });
     }
 
     @Override
     public Mono<Pageable<OrderProductDTO>> findAllOrdersProduct(OrderPageRequest pageRequest) {
-        return ReactiveSecurityContextHolder.getContext().map(securityContext -> (Jwt) securityContext.getAuthentication().getPrincipal())
-                .flatMap(jwt -> userService.findById(jwt.getSubject())).flatMap(userDTO -> {
-                    CompletionStage<Pageable<OrderProductDTO>> pageableCompletionStage = sessionFactory.withSession(session -> orderRepository.findAllOrdersProduct(session, pageRequest, userDTO.getUsername()))
-                            .thenCombine(sessionFactory.withSession(session -> orderRepository.countOrdersProduct(session, pageRequest, userDTO.getUsername())),
-                                    (orders, totalElements) -> new Pageable<>(orders.stream().map(orderDetailsMapper::mapToOrderProductDTO).collect(Collectors.toList()), pageRequest.getPageSize(), pageRequest.getPage(), totalElements.intValue()));
-
-                    if (userDTO.getRealmRoles().stream().anyMatch(roleDTO -> roleDTO.equals(Role.administrator.toString()))) {
-                        pageableCompletionStage = sessionFactory.withSession(session -> orderRepository.findAllOrdersProduct(session, pageRequest, ""))
-                                .thenCombine(sessionFactory.withSession(session -> orderRepository.countOrdersProduct(session, pageRequest, "")),
-                                        (orders, totalElements) -> {
-                                            System.out.println(orders);
-                                            return new Pageable<>(orders.stream().map(orderDetailsMapper::mapToOrderProductDTO).collect(Collectors.toList()), pageRequest.getPageSize(), pageRequest.getPage(), totalElements.intValue());
-                                        });
-                    }
-
-                    return Mono.fromCompletionStage(pageableCompletionStage);
-                });
+        return Mono.empty();
+//        return ReactiveSecurityContextHolder.getContext().map(securityContext -> (Jwt) securityContext.getAuthentication().getPrincipal())
+//                .flatMap(jwt -> userService.findById(jwt.getSubject())).flatMap(userDTO -> {
+//                    CompletionStage<Pageable<OrderProductDTO>> pageableCompletionStage = sessionFactory.withSession(session -> orderRepository.findAllOrdersProduct(session, pageRequest, userDTO.getUsername()))
+//                            .thenCombine(sessionFactory.withSession(session -> orderRepository.countOrdersProduct(session, pageRequest, userDTO.getUsername())),
+//                                    (orders, totalElements) -> new Pageable<>(orders.stream().map(orderDetailsMapper::mapToOrderProductDTO).collect(Collectors.toList()), pageRequest.getPageSize(), pageRequest.getPage(), totalElements.intValue()));
+//
+//                    if (userDTO.getRealmRoles().stream().anyMatch(roleDTO -> roleDTO.equals(Role.administrator.toString()))) {
+//                        pageableCompletionStage = sessionFactory.withSession(session -> orderRepository.findAllOrdersProduct(session, pageRequest, ""))
+//                                .thenCombine(sessionFactory.withSession(session -> orderRepository.countOrdersProduct(session, pageRequest, "")),
+//                                        (orders, totalElements) -> {
+//                                            System.out.println(orders);
+//                                            return new Pageable<>(orders.stream().map(orderDetailsMapper::mapToOrderProductDTO).collect(Collectors.toList()), pageRequest.getPageSize(), pageRequest.getPage(), totalElements.intValue());
+//                                        });
+//                    }
+//
+//                    return Mono.fromCompletionStage(pageableCompletionStage);
+//                });
     }
 
     @PreAuthorize("hasRole('ADMINISTRATOR')")
@@ -262,20 +253,21 @@ public class OrderService implements IOrderService {
 
     @Override
     public Mono<byte[]> exportCsv(Long id) {
-        return ReactiveSecurityContextHolder.getContext().map(securityContext -> (Jwt) securityContext.getAuthentication().getPrincipal())
-                .flatMap(jwt -> userService.findById(jwt.getSubject()))
-                .flatMap(userDTO -> {
-                    if (userDTO.getRealmRoles().stream().anyMatch(roleDTO -> roleDTO.equals(Role.administrator.toString()))) {
-
-                        OrderPageRequest orderPageRequest = new OrderPageRequest();
-                        orderPageRequest.setPage(0);
-                        orderPageRequest.setPageSize(Integer.MAX_VALUE);
-
-                        return Mono.fromCompletionStage(sessionFactory.withSession(session -> orderRepository.findAll(session, orderPageRequest)
-                                .thenApply(orders -> orders.stream().map(orderDetailsMapper::mapToOrderDetailsDTO).collect(Collectors.toList()))));
-                    }
-                    return Mono.error(new AccessDeniedException("Access is denied"));
-                }).flatMap(csvService::exportOrders);
+//        return ReactiveSecurityContextHolder.getContext().map(securityContext -> (Jwt) securityContext.getAuthentication().getPrincipal())
+//                .flatMap(jwt -> userService.findById(jwt.getSubject()))
+//                .flatMap(userDTO -> {
+//                    if (userDTO.getRealmRoles().stream().anyMatch(roleDTO -> roleDTO.equals(Role.administrator.toString()))) {
+//
+//                        OrderPageRequest orderPageRequest = new OrderPageRequest();
+//                        orderPageRequest.setPage(0);
+//                        orderPageRequest.setPageSize(Integer.MAX_VALUE);
+//
+//                        return Mono.fromCompletionStage(sessionFactory.withSession(session -> orderRepository.findAll(session, orderPageRequest)
+//                                .thenApply(orders -> orders.stream().map(orderDetailsMapper::mapToOrderDetailsDTO).collect(Collectors.toList()))));
+//                    }
+//                    return Mono.error(new AccessDeniedException("Access is denied"));
+//                }).flatMap(csvService::exportOrders);
+        return Mono.empty();
     }
 
     @Override

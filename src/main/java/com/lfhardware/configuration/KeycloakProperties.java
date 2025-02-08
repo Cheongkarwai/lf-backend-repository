@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "keycloak.admin")
 public class KeycloakProperties {
 
+    private String id;
+
     private String grantType;
 
     private String username;

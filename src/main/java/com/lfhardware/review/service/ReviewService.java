@@ -42,11 +42,12 @@ public class ReviewService implements IReviewService {
     public Mono<Void> save(ReviewInput reviewInput){
 
         Review review = reviewMapper.mapToReview(reviewInput);
-
-        return Mono.fromCompletionStage(sessionFactory.withSession(session -> productRepository.findById(session, reviewInput.getProductId())
-                .thenCompose(product->{
-                    product.addReview(review);
-                    return productRepository.save(session, product);
-                })));
+//
+//        return Mono.fromCompletionStage(sessionFactory.withSession(session -> productRepository.findById(session, reviewInput.getProductId())
+//                .thenCompose(product->{
+//                    product.addReview(review);
+//                    return productRepository.save(session, product);
+//                })));
+        return Mono.empty();
     }
 }

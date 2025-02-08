@@ -1,11 +1,7 @@
 package com.lfhardware.auth.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.lfhardware.user.dto.UserDTO;
 import lombok.*;
-import org.keycloak.representations.idm.UserRepresentation;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter

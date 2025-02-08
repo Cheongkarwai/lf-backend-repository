@@ -2,9 +2,7 @@ package com.lfhardware.account.service;
 
 import com.lfhardware.account.dto.ResetPasswordInput;
 import com.lfhardware.account.dto.UserCredentialsDTO;
-import com.lfhardware.auth.dto.Role;
-import com.lfhardware.auth.dto.RoleDTO;
-import com.lfhardware.auth.dto.UserDTO;
+import com.lfhardware.user.dto.UserDTO;
 import com.lfhardware.auth.dto.UserProfileDTO;
 import com.lfhardware.keycloak.rest.account.dto.OTPQrCodeDTO;
 import com.lfhardware.keycloak.rest.account.dto.OtpDTO;

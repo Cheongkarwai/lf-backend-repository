@@ -1,6 +1,7 @@
 package com.lfhardware.configuration;
 
 import com.lfhardware.auth.dto.Role;
+import com.lfhardware.keycloak.KeycloakReactivePolicyEnforcerFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -51,14 +53,14 @@ public class SecurityConfiguration {
             "/api/v1/service-providers/details/{id}", "/api/v1/service-providers/{id}/reviews", "/api/v1/users/me/username"};
 
     private static final Map<HttpMethod, String[]> ADMIN_ROUTE =
-            Map.of(HttpMethod.POST, new String[]
-                    {"/api/v1/service-providers/{id}/status"});
+            Map.of(HttpMethod.POST, new String[]{"/api/v1/service-providers/{id}/status"});
 
     private static final Map<HttpMethod, String[]> SERVICE_PROVIDER_ROUTE =
             Map.of(HttpMethod.POST, new String[] {});
 
     @Bean
-    SecurityWebFilterChain securityFilterChain(ServerHttpSecurity httpSecurity){
+    SecurityWebFilterChain securityFilterChain(ServerHttpSecurity httpSecurity,
+                                               KeycloakReactivePolicyEnforcerFilter keycloakReactivePolicyEnforcerFilter){
         XorServerCsrfTokenRequestAttributeHandler delegate = new XorServerCsrfTokenRequestAttributeHandler();
         // Use only the handle() method of XorServerCsrfTokenRequestAttributeHandler and the
         // default implementation of resolveCsrfTokenValue() from ServerCsrfTokenRequestHandler
@@ -71,17 +73,19 @@ public class SecurityConfiguration {
                        // .requireCsrfProtectionMatcher(new NegatedServerWebExchangeMatcher(exchange -> ServerWebExchangeMatchers.pathMatchers("/api/v1/payments/webhook").matches(exchange)))
                         //.csrfTokenRequestHandler(requestHandler)
                 )
-                .cors(corsSpec -> corsSpec.configurationSource(corsConfigurationSource()))
+                //.cors(corsSpec -> corsSpec.configurationSource(corsConfigurationSource()))
+                .cors(corsSpec -> corsSpec.disable())
                 .requestCache(requestCacheSpec -> requestCacheSpec.requestCache(NoOpServerRequestCache.getInstance()))
                 //.cors(cors-> cors.configurationSource(corsConfigurationSource()))
                 .authorizeExchange(authorizeExchangeSpec -> authorizeExchangeSpec
                         .pathMatchers(PUBLIC_ROUTE).permitAll()
                         .pathMatchers(HttpMethod.POST, ADMIN_ROUTE.get(HttpMethod.POST))
                         .hasRole(Role.administrator.name())
-                        .pathMatchers(HttpMethod.POST)
-                        .hasAnyRole(Role.administrator.name(), Role.service_provider.name())
+                        //.pathMatchers(HttpMethod.POST)
+//                        .hasAnyRole(Role.administrator.name(), Role.service_provider.name())
                         .anyExchange()
                         .authenticated())
+                .addFilterAt(keycloakReactivePolicyEnforcerFilter, SecurityWebFiltersOrder.AUTHORIZATION)
 //                .oauth2Login()
 //
 //                .and()

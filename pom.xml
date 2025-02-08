@@ -5,11 +5,11 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.0</version>
+        <version>3.4.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.lf_prototype</groupId>
-    <artifactId>lf_prototype</artifactId>
+    <artifactId>e-commerce</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>lf_prototype</name>
     <description>lf_prototype</description>
@@ -28,8 +28,8 @@
         <opencsv.version>5.9</opencsv.version>
         <guava.version>33.1.0-jre</guava.version>
         <aws.sdk.version>1.12.688</aws.sdk.version>
-        <spring-cloud.version>2022.0.3</spring-cloud.version>
-        <keycloak.version>24.0.1</keycloak.version>
+        <spring-cloud.version>2024.0.0</spring-cloud.version>
+        <keycloak.version>26.0.7</keycloak.version>
         <stripe-java.version>24.16.0</stripe-java.version>
     </properties>
     <dependencies>
@@ -193,17 +193,22 @@
             <artifactId>postgresql</artifactId>
             <version>42.7.3</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.casbin/casbin-spring-boot-starter -->
-        <dependency>
-            <groupId>org.casbin</groupId>
-            <artifactId>casbin-spring-boot-starter</artifactId>
-            <version>1.2.0</version>
-        </dependency>
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.casbin/casbin-spring-boot-starter &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.casbin</groupId>-->
+<!--            <artifactId>casbin-spring-boot-starter</artifactId>-->
+<!--            <version>1.2.0</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-admin-client</artifactId>
-            <version>${keycloak.version}</version>
+            <version>24.0.1</version>
         </dependency>
+            <dependency>
+                <groupId>org.keycloak</groupId>
+                <artifactId>keycloak-authz-client</artifactId>
+                <version>26.0.3</version>
+            </dependency>
         <dependency>
             <!-- Include the sdk as a dependency -->
             <groupId>com.microsoft.graph</groupId>
@@ -222,6 +227,42 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.smallrye.reactive</groupId>
+            <artifactId>mutiny-reactor</artifactId>
+            <version>2.7.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.smallrye.reactive/mutiny-zero-flow-adapters -->
+        <dependency>
+            <groupId>io.smallrye.reactive</groupId>
+            <artifactId>mutiny-zero-flow-adapters</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-stream</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-stream-test-binder</artifactId>
+            <scope>test</scope>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-stream-binder-kafka-streams</artifactId>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-stream-binder-kafka-reactive</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.projectreactor.kafka</groupId>
+            <artifactId>reactor-kafka</artifactId>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
@@ -238,11 +279,6 @@
                 <version>${spring-cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.smallrye.reactive</groupId>
-                <artifactId>mutiny-reactor</artifactId>
-                <version>1.7.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

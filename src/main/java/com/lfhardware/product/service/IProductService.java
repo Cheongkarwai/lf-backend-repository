@@ -1,14 +1,17 @@
 package com.lfhardware.product.service;
 
 import com.lfhardware.product.dto.*;
-import com.lfhardware.core.dto.Pageable;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface IProductService {
 
-    Mono<Pageable<ProductDTO>> findAll(ProductPageRequest productPageRequest);
+    Flux<ProductDTO> findAll(ProductPageRequest productPageRequest);
+
+    Mono<Long> count(ProductPageRequest productPageRequest);
 
 //    Mono<Pageable<ProductDTO>> findAllWithAvailableStock(ProductPageRequest productPageRequest);
 
@@ -46,13 +49,13 @@ public interface IProductService {
     //                    return Mono.just(productPageable);
     //                }))).log();
     //    }
-    Mono<ProductDTO> findById(Long id);
+    Mono<ProductDTO> findById(UUID id);
 
     //Mono<Void> save(Product product);
 
-    Mono<Void> save(ProductInput productInput);
+    Mono<ProductDTO> save(ProductInput productInput);
 
-    Mono<Void> updateById(Long id, ProductInput productInput);
+    Mono<Void> updateById(UUID id, ProductInput productInput);
 
 
     Mono<List<CategoryDTO>> findAllProductCategory();
@@ -61,5 +64,7 @@ public interface IProductService {
 
     Mono<ProductDTO> findByName(String name);
 
-    Mono<Void> deleteById(Long id);
+    Mono<Void> deleteById(UUID id);
+
+    Mono<Void> rollback(UUID id);
 }

@@ -1,35 +1,35 @@
 package com.lfhardware.product.repository;
 
 
-import com.lfhardware.product.domain.*;
-import com.lfhardware.product.dto.ProductPageRequest;
 import com.lfhardware.core.repository.SortOrder;
+import com.lfhardware.product.domain.Brand_;
+import com.lfhardware.product.domain.Category_;
+import com.lfhardware.product.domain.Product;
+import com.lfhardware.product.domain.Product_;
+import com.lfhardware.product.dto.ProductPageRequest;
 import com.lfhardware.stock.domain.Stock;
 import com.lfhardware.stock.domain.Stock_;
+import io.smallrye.mutiny.Uni;
 import jakarta.persistence.criteria.*;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.reactive.stage.Stage;
+import org.hibernate.reactive.mutiny.Mutiny;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.CompletionStage;
+import java.util.*;
 
 @Repository
 @Slf4j
 public class ProductRepository implements IProductRepository {
 
-    private Stage.SessionFactory sessionFactory;
+    private final Mutiny.SessionFactory sessionFactory;
 
-    public ProductRepository(Stage.SessionFactory sessionFactory) {
+    public ProductRepository(Mutiny.SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
 
     @Override
-    public CompletionStage<List<Product>> findAll(Stage.Session session, ProductPageRequest pageInfo) {
+    public Uni<List<Product>> findAll(Mutiny.Session session, ProductPageRequest pageInfo) {
         CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<Product> cq = criteriaBuilder.createQuery(Product.class);
         Root<Product> root = cq.from(Product.class);
@@ -96,7 +96,7 @@ public class ProductRepository implements IProductRepository {
     }
 
     @Override
-    public CompletionStage<Long> count(Stage.Session session, ProductPageRequest pageInfo) {
+    public Uni<Long> count(Mutiny.Session session, ProductPageRequest pageInfo) {
         CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<Long> cq = criteriaBuilder.createQuery(Long.class);
         Root<Product> root = cq.from(Product.class);
@@ -148,7 +148,7 @@ public class ProductRepository implements IProductRepository {
 
 
 //    @Override
-//    public CompletionStage<List<Product>> findAllRightJoinStock(Stage.Session session, ProductPageRequest pageInfo) {
+//    public Uni<List<Product>> findAllRightJoinStock(Mutiny.Session session, ProductPageRequest pageInfo) {
 //        CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();
 //        CriteriaQuery<Product> cq = criteriaBuilder.createQuery(Product.class);
 //        Root<Product> root = cq.from(Product.class);
@@ -204,7 +204,7 @@ public class ProductRepository implements IProductRepository {
 //    }
 //
 //    @Override
-//    public CompletionStage<Long> countRightJoinStock(Stage.Session session, ProductPageRequest pageInfo){
+//    public Uni<Long> countRightJoinStock(Mutiny.Session session, ProductPageRequest pageInfo){
 //        CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();
 //        CriteriaQuery<Long> cq = criteriaBuilder.createQuery(Long.class);
 //        Root<Product> root = cq.from(Product.class);
@@ -246,17 +246,17 @@ public class ProductRepository implements IProductRepository {
 
 
     @Override
-    public CompletionStage<List<Product>> findAll(Stage.Session session) {
+    public Uni<List<Product>> findAll(Mutiny.Session session) {
         return null;
     }
 
     @Override
-    public CompletionStage<Product> findById(Stage.Session session, Long id) {
+    public Uni<Product> findById(Mutiny.Session session, UUID id) {
         return session.find(session.getEntityGraph(Product.class, "ProductDetails"), id);
     }
 
     @Override
-    public CompletionStage<Product> findByName(Stage.Session session, String name) {
+    public Uni<Product> findByName(Mutiny.Session session, String name) {
         return session.createNamedQuery("Product.findByName", Product.class)
                 .setParameter("name", name)
                 .setPlan(session.getEntityGraph(Product.class, "ProductDetails"))
@@ -264,53 +264,53 @@ public class ProductRepository implements IProductRepository {
     }
 
     @Override
-    public CompletionStage<Void> save(Stage.Session session, Product obj) {
+    public Uni<Void> save(Mutiny.Session session, Product obj) {
         return session.persist(obj);
     }
 
     @Override
-    public CompletionStage<List<Product>> findAllByIds(Stage.Session session, List<Long> ids) {
+    public Uni<List<Product>> findAllByIds(Mutiny.Session session, List<UUID> ids) {
         return null;
     }
 
     @Override
-    public CompletionStage<Product> merge(Stage.Session session, Product obj) {
+    public Uni<Product> merge(Mutiny.Session session, Product obj) {
         return session.merge(obj);
     }
 
     @Override
-    public CompletionStage<Void> deleteById(Stage.Session session, Long id) {
+    public Uni<Integer> deleteById(Mutiny.Session session, UUID id) {
         CriteriaBuilder cb = sessionFactory.getCriteriaBuilder();
         CriteriaDelete<Product> cd = cb.createCriteriaDelete(Product.class);
         Root<Product> root = cd.from(Product.class);
         cd.where(cb.equal(root.get(Product_.ID), id));
         return session.createQuery(cd)
-                .executeUpdate().thenAccept(e-> System.out.println("Hi"));
+                .executeUpdate();
     }
 
 
     @Override
-    public Product loadReferenceById(Stage.Session session, Long id) {
+    public Product loadReferenceById(Mutiny.Session session, UUID id) {
         return session.getReference(Product.class, id);
     }
 
     @Override
-    public CompletionStage<Void> saveAll(Stage.Session session, Collection<Product> objs) {
+    public Uni<Void> saveAll(Mutiny.Session session, Collection<Product> objs) {
         return null;
     }
 
     @Override
-    public CompletionStage<Void> deleteAll(Stage.Session session, List<Product> objs) {
+    public Uni<Void> deleteAll(Mutiny.Session session, List<Product> objs) {
         return null;
     }
 
     @Override
-    public CompletionStage<Void> delete(Stage.Session session, Product obj) {
-        return null;
+    public Uni<Void> delete(Mutiny.Session session, Product obj) {
+        return session.remove(obj);
     }
 
     @Override
-    public CompletionStage<Integer> deleteAllByIds(Stage.Session session, List<Long> longs) {
+    public Uni<Integer> deleteAllByIds(Mutiny.Session session, List<UUID> ids) {
         return null;
     }
 }

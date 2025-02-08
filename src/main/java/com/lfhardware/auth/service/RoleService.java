@@ -26,16 +26,18 @@ public class RoleService {
 
     private final RoleMapper roleMapper;
 
-    private final Keycloak keycloak;
+//    private final Keycloak keycloak;
 
     private final KeycloakProperties keycloakProperties;
 
     public RoleService(IRoleRepository roleRepository, Stage.SessionFactory sessionFactory,
-                       RoleMapper roleMapper, Keycloak keycloak, KeycloakProperties keycloakProperties) {
+                       RoleMapper roleMapper,
+//                       Keycloak keycloak,
+                       KeycloakProperties keycloakProperties) {
         this.roleRepository = roleRepository;
         this.sessionFactory = sessionFactory;
         this.roleMapper = roleMapper;
-        this.keycloak = keycloak;
+//        this.keycloak = keycloak;
         this.keycloakProperties = keycloakProperties;
     }
 
@@ -47,13 +49,14 @@ public class RoleService {
     }
 
     public Mono<List<RoleRepresentation>> findByName(String name) {
-        return Mono.fromCallable(() -> keycloak.realm(this.keycloakProperties.getRealm())
-                .roles()
-                .list()
-                .stream()
-                .filter(roleRepresentation -> roleRepresentation.getName()
-                        .equals(name))
-                .collect(Collectors.toList()));
+//        return Mono.fromCallable(() -> keycloak.realm(this.keycloakProperties.getRealm())
+//                .roles()
+//                .list()
+//                .stream()
+//                .filter(roleRepresentation -> roleRepresentation.getName()
+//                        .equals(name))
+//                .collect(Collectors.toList()));
+        return Mono.empty();
     }
 
 

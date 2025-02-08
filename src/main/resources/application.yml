@@ -12,15 +12,16 @@ omise:
 
 logging:
   level:
+    kafka: DEBUG
     reactor:
       core:
         publisher: DEBUG
-    org:
-      hibernate:
-          type:
-            descriptor:
-              sql:
-                BasicBinder: TRACE
+#    org:
+#      hibernate:
+#          SQL: DEBUG
+#          type:
+#            descriptor:
+#              sql: TRACE
       springframework:
                 security: DEBUG
                 web: DEBUG
@@ -48,7 +49,7 @@ logging:
 #          starttls:
 #              enable: true
 spring:
-#  security:
+  #  security:
 #    oauth2:
 #      resourceserver:
 #        jwt:
@@ -58,3 +59,17 @@ spring:
     active: dev
   session:
     timeout: 10m
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: http://localhost:9092
+      default-binder: reactorKafka
+      bindings:
+        productCreatedInput-in-0:
+          destination: product.created
+          group: product
+          content-type: application/json
+        productCreatedOutput-out-0:
+          destination: product.created
+          group: product

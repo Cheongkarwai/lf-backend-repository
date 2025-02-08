@@ -24,7 +24,7 @@ public class CacheConfiguration {
 
     public static final String serviceCache = "serviceCache";
 
-    public static final String productCache = "productCache";
+    public static final String productCache = "products";
 
     public static final String categoryCache = "categoryCache";
 

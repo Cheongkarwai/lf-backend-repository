@@ -1,15 +1,8 @@
 package com.lfhardware.auth.mapper;
 
-import com.lfhardware.auth.domain.Address;
 import com.lfhardware.auth.domain.Profile;
 import com.lfhardware.auth.domain.User;
 import com.lfhardware.auth.dto.UserAccountDTO;
-import com.lfhardware.auth.dto.UserDTO;
-import com.lfhardware.auth.dto.UserRoleDTO;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.Mappings;
 
 public class UserMapper{
 
