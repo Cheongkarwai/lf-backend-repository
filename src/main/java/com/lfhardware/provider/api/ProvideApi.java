@@ -3,13 +3,12 @@ package com.lfhardware.provider.api;
 import com.lfhardware.appointment.domain.AppointmentId;
 import com.lfhardware.appointment.domain.AppointmentStatus;
 import com.lfhardware.core.dto.ErrorResponse;
-import com.lfhardware.core.dto.PageInfo;
-import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.dto.PageRequest;
+import com.lfhardware.core.dto.Page;
 import com.lfhardware.core.repository.PageQueryParameterBuilder;
 import com.lfhardware.core.repository.Search;
 import com.lfhardware.core.repository.Sort;
 import com.lfhardware.form.dto.FormDTO;
-import com.lfhardware.form.service.IFormService;
 import com.lfhardware.provider.domain.Status;
 import com.lfhardware.provider.dto.*;
 import com.lfhardware.provider.service.IProviderService;
@@ -50,7 +49,7 @@ public class ProvideApi {
      */
     public Mono<ServerResponse> findAll(ServerRequest serverRequest) {
 
-        PageInfo pageRequest = PageQueryParameterBuilder.buildPageRequest(serverRequest);
+        PageRequest pageRequest = PageQueryParameterBuilder.buildPageRequest(serverRequest);
 
         Double rating = null;
         Optional<String> ratingOptional = serverRequest.queryParam("rating");
@@ -126,7 +125,7 @@ public class ProvideApi {
                 .body(providerService.findDetailsById(serverRequest.pathVariable("id")), ServiceProviderDetailsDTO.class)
                 .onErrorResume(throwable -> ServerResponse.badRequest()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(new ErrorResponse(throwable.getMessage(), serverRequest.path())));
+                        .bodyValue(ErrorResponse.builder().message(throwable.getMessage()).path(serverRequest.path())));
     }
 
     public Mono<ServerResponse> patch(ServerRequest serverRequest) {
@@ -193,11 +192,11 @@ public class ProvideApi {
     public Mono<ServerResponse> findCurrentProviderAppointments(ServerRequest serverRequest) {
 
         //Handle Page
-        PageInfo pageRequest = PageQueryParameterBuilder.buildPageRequest(serverRequest);
+        PageRequest pageRequest = PageQueryParameterBuilder.buildPageRequest(serverRequest);
 
         return ServerResponse.ok()
                 .body(providerService.findAllCurrentProviderAppointments(pageRequest, serverRequest.queryParams()
-                        .get("status")), Pageable.class);
+                        .get("status")), Page.class);
     }
 
     /**
@@ -233,14 +232,14 @@ public class ProvideApi {
      */
     public Mono<ServerResponse> findServiceProviderReviewsById(ServerRequest serverRequest) {
 
-        PageInfo pageRequest = PageQueryParameterBuilder.buildPageRequest(serverRequest);
+        PageRequest pageRequest = PageQueryParameterBuilder.buildPageRequest(serverRequest);
         String rating = serverRequest.queryParam("rating")
                 .orElse(null);
         return ServerResponse.ok()
                 .body(providerService.findAllServiceProviderReviewsById(serverRequest.pathVariable("id"),
                                 pageRequest,
                                 Objects.nonNull(rating) ? Double.parseDouble(rating) : null),
-                        Pageable.class);
+                        Page.class);
     }
 
     /**

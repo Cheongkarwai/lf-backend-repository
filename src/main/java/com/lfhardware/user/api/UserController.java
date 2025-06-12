@@ -70,4 +70,9 @@ public class UserController {
                                              @RequestParam(required = false) Boolean deep) {
         return keycloakAuthorizationAdapter.findResourceSet(uri,matchingUri);
     }
+
+    @PostMapping("/{id}/mobile-number/validate")
+    public Mono<Boolean> validateMobileNumber(@RequestBody String mobileNumber){
+        return Mono.just(true);
+    }
 }

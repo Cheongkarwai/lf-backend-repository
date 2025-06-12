@@ -1,6 +1,6 @@
 package com.lfhardware.customer.cache;
 
-import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.PageRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class CustomerAppointmentCacheKey {
 
-    private PageInfo pageRequest;
+    private PageRequest pageRequest;
 
     private String customerId;
 

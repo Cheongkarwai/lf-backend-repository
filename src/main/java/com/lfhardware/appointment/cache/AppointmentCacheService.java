@@ -3,7 +3,7 @@ package com.lfhardware.appointment.cache;
 import com.lfhardware.appointment.dto.AppointmentDTO;
 import com.lfhardware.configuration.CacheConfiguration;
 import com.lfhardware.core.service.CacheService;
-import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.dto.Page;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
@@ -38,9 +38,9 @@ public class AppointmentCacheService implements CacheService<AppointmentDTO> {
     }
 
     @Override
-    public Mono<Pageable<AppointmentDTO>> getCachedPageable(Object key) {
+    public Mono<Page<AppointmentDTO>> getCachedPageable(Object key) {
         return Mono.fromCallable(()-> Objects.requireNonNull(cacheManager.getCache(ID))
-                .get(key, (Callable<Pageable<AppointmentDTO>>) Pageable::new))
+                .get(key, (Callable<Page<AppointmentDTO>>) Page::new))
                 .flatMap(cache -> CollectionUtils.isNotEmpty(cache.getItems()) ?
                         Mono.just(cache) : Mono.empty());
     }
@@ -66,7 +66,7 @@ public class AppointmentCacheService implements CacheService<AppointmentDTO> {
     }
 
     @Override
-    public Mono<Pageable<AppointmentDTO>> updateCachedPageable(Object key, Pageable<AppointmentDTO> pageable) {
+    public Mono<Page<AppointmentDTO>> updateCachedPageable(Object key, Page<AppointmentDTO> pageable) {
         return Mono.fromCallable(()->{
             Objects.requireNonNull(cacheManager.getCache(ID))
                     .put(key, pageable);

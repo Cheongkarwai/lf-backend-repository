@@ -4,16 +4,14 @@ package com.lfhardware.product.domain;
 import com.lfhardware.review.domain.Review;
 import com.lfhardware.stock.domain.Stock;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.redis.core.RedisHash;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -36,10 +34,9 @@ import java.util.UUID;
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
-
+public class Product extends BaseEntity{
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+//    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     private String name;
@@ -47,14 +44,6 @@ public class Product {
     private BigDecimal price;
 
     private String description;
-
-    @Column(name = "modified_at")
-    @UpdateTimestamp
-    private LocalDateTime modifiedAt;
-
-    @Column(name = "created_at")
-    @CreationTimestamp
-    private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id")
@@ -73,18 +62,25 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = {CascadeType.PERSIST})
     private Set<Review> reviews = new HashSet<>();
 
+
     public void setStocks(Set<Stock> stocks) {
-        this.stocks.addAll(stocks);
-        stocks.forEach(e -> e.setProduct(this));
+        if(Objects.nonNull(stocks)){
+            this.stocks.addAll(stocks);
+            stocks.forEach(e -> e.setProduct(this));
+        }
     }
 
     public void setProductImages(Set<ProductImage> productImages) {
-        this.productImages.addAll(productImages);
-        productImages.forEach(e -> e.setProduct(this));
+        if(Objects.nonNull(productImages)) {
+            this.productImages.addAll(productImages);
+            productImages.forEach(e -> e.setProduct(this));
+        }
     }
 
     public void addReview(Review review) {
-        review.setProduct(this);
-        this.reviews.add(review);
+        if(Objects.nonNull(review)) {
+            review.setProduct(this);
+            this.reviews.add(review);
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.lfhardware.product.service;
 
+import com.lfhardware.core.dto.PageRequest;
+import com.lfhardware.core.repository.Search;
 import com.lfhardware.product.dto.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -9,9 +11,9 @@ import java.util.UUID;
 
 public interface IProductService {
 
-    Flux<ProductDTO> findAll(ProductPageRequest productPageRequest);
+    Flux<ProductDTO> findAll(PageRequest pageRequest, Search searchCriteria, ProductFilterCriteria filterCriteria);
 
-    Mono<Long> count(ProductPageRequest productPageRequest);
+    Mono<Long> count(Search searchCriteria, ProductFilterCriteria filterCriteria);
 
 //    Mono<Pageable<ProductDTO>> findAllWithAvailableStock(ProductPageRequest productPageRequest);
 

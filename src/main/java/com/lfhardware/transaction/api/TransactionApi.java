@@ -1,7 +1,7 @@
 package com.lfhardware.transaction.api;
 
-import com.lfhardware.core.dto.PageInfo;
-import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.dto.PageRequest;
+import com.lfhardware.core.dto.Page;
 import com.lfhardware.core.repository.Search;
 import com.lfhardware.core.repository.Sort;
 import com.lfhardware.transaction.dto.TransactionDTO;
@@ -28,13 +28,13 @@ public class TransactionApi {
             search = new Search(request.queryParams().get("search"), request.queryParam("keyword").orElse(""));
         }
 
-        PageInfo pageRequest = new PageInfo(
+        PageRequest pageRequest = new PageRequest(
                 Integer.parseInt(request.queryParam("page_size").orElse("3")),
                 Integer.parseInt(request.queryParam("page").orElse("0")),
                 new Sort(request.queryParam("sort").orElse("")),
                 search);
 
-        return ServerResponse.ok().body(transactionService.findAll(pageRequest), Pageable.class);
+        return ServerResponse.ok().body(transactionService.findAll(pageRequest), Page.class);
     }
 
     public Mono<ServerResponse> findById(ServerRequest serverRequest){

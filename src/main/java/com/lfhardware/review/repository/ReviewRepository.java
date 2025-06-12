@@ -1,12 +1,11 @@
 package com.lfhardware.review.repository;
 
 import com.lfhardware.review.domain.Review;
-import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.PageRequest;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import org.hibernate.SessionFactory;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.stereotype.Repository;
 
@@ -79,7 +78,7 @@ public class ReviewRepository implements IReviewRepository{
     }
 
     @Override
-    public CompletionStage<List<Review>> findAll(Stage.Session session, PageInfo pageInfo) {
+    public CompletionStage<List<Review>> findAll(Stage.Session session, PageRequest pageRequest) {
         CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<Review> cq = criteriaBuilder.createQuery(Review.class);
         Root<Review> root = cq.from(Review.class);
@@ -98,13 +97,13 @@ public class ReviewRepository implements IReviewRepository{
 
         cq.select(root).where(predicates.toArray(Predicate[]::new));
 
-        return session.createQuery(cq).setFirstResult(pageInfo.getPage() * pageInfo.getPageSize())
-                .setMaxResults(pageInfo.getPageSize())
+        return session.createQuery(cq).setFirstResult(pageRequest.getPageNo() * pageRequest.getPageSize())
+                .setMaxResults(pageRequest.getPageSize())
                 .getResultList();
     }
 
     @Override
-    public CompletionStage<Long> count(Stage.Session session, PageInfo pageInfo) {
+    public CompletionStage<Long> count(Stage.Session session, PageRequest pageRequest) {
         CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<Long> cq = criteriaBuilder.createQuery(Long.class);
         Root<Review> root = cq.from(Review.class);

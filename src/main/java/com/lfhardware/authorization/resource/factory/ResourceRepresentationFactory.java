@@ -5,7 +5,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.Set;
 
-public interface ResourceRepresentationFactory<T> {
+public interface ResourceRepresentationFactory {
 
-    ResourceRepresentation createResourceRepresentation(Jwt resourceOwnerToken, T resource, Set<String> scopes);
+    ResourceRepresentation createResourceRepresentation(Jwt resourceOwnerToken, String id, String name, Set<String> scopes);
 }

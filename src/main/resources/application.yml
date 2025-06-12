@@ -9,9 +9,28 @@ omise:
   public-key: pkey_test_5x9z9ovaogftf7hp4nf
   secret-key: skey_test_5xa1l9s31xhmncsoq1d
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
 
 logging:
   level:
+    org.axonframework:
+              extensions:
+                kafka:
+                  eventhandling:
+                      tokenstore.TokenStoreState: INFO
+    org.springframework.data.redis: DEBUG
+    com:
+      squareup.okhttp3: DEBUG
+      splunk.logging: DEBUG
+      github:
+        benmanes:
+                  caffeine: DEBUG
+    org.springdoc: DEBUG
     kafka: DEBUG
     reactor:
       core:
@@ -23,13 +42,13 @@ logging:
 #            descriptor:
 #              sql: TRACE
       springframework:
+                cloud.stream:
+                        binder: DEBUG
+                        binder.kafka: DEBUG
                 security: DEBUG
                 web: DEBUG
                 cache: DEBUG
-    com:
-      github:
-        benmanes:
-          caffeine: DEBUG
+
 #                mail: DEBUG
 #      hibernate: DEBUG
 
@@ -48,6 +67,11 @@ logging:
 #          auth: true
 #          starttls:
 #              enable: true
+axoniq:
+  console:
+    application-name: E-Commerce
+    credentials: 98f81701-0:40393ee520864d15828837ff592c9193
+    dlq-mode: FULL
 spring:
   #  security:
 #    oauth2:
@@ -63,13 +87,64 @@ spring:
     stream:
       kafka:
         binder:
-          brokers: http://localhost:9092
+          brokers: ${KAFKA_URL}
       default-binder: reactorKafka
       bindings:
-        productCreatedInput-in-0:
-          destination: product.created
-          group: product
+        productInput-in-0:
+          destination: product
           content-type: application/json
-        productCreatedOutput-out-0:
-          destination: product.created
-          group: product
+  application:
+    name: test
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: test
+  kafka:
+    consumer:
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+      bootstrap-servers: ${KAFKA_URL}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      bootstrap-servers: ${KAFKA_URL}
+
+springdoc:
+  enable-hateoas: false
+axon:
+  eventhandling:
+    processors:
+      product:
+        mode: tracking
+  axonserver:
+    servers: localhost:8124
+  kafka:
+    bootstrap-servers: ${KAFKA_URL}
+    client-id: kafka-axon-example
+    default-topic: axon-events
+    properties:
+      security.protocol: PLAINTEXT
+
+    publisher:
+      confirmation-mode: transactional
+
+    producer:
+      transaction-id-prefix: kafka-sample
+      retries: 3
+      event-processor-mode: subscribing
+    # For additional unnamed properties, add them to the `properties` map like so
+      properties:
+        enable.idempotence: true
+
+    fetcher:
+      poll-timeout: 3000
+
+    consumer:
+      enable-auto-commit: true
+      auto-commit-interval: 3000
+      event-processor-mode: tracking
+    # For additional unnamed properties, add them to the `properties` map like so
+#      properties:
+#        some-key: [some-value]
+

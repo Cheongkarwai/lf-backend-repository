@@ -28,8 +28,8 @@ import com.lfhardware.provider.repository.IServiceProviderReviewRepository;
 import com.lfhardware.provider_business.dto.ServiceDTO;
 import com.lfhardware.provider_business.mapper.ServiceDetailsMapper;
 import com.lfhardware.provider_business.repository.IProviderBusinessRepository;
-import com.lfhardware.core.dto.PageInfo;
-import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.dto.PageRequest;
+import com.lfhardware.core.dto.Page;
 import com.lfhardware.state.domain.State;
 import com.lfhardware.state.repository.IStateRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -147,7 +147,7 @@ public class ProviderService implements IProviderService {
     }
 
     @Override
-    public Mono<Pageable<ServiceProviderDTO>> findAll(PageInfo pageRequest, List<String> status, List<String> states, Double rating,
+    public Mono<Page<ServiceProviderDTO>> findAll(PageRequest pageRequest, List<String> status, List<String> states, Double rating,
                                                       String serviceName) {
 
         ServiceProviderCacheKey serviceProviderCacheKey = new ServiceProviderCacheKey(pageRequest, status, states, rating, serviceName);
@@ -169,26 +169,27 @@ public class ProviderService implements IProviderService {
                                 .thenCombine(sessionFactory.withSession(session ->
                                         providerRepository.count(session, pageRequest, status,
                                                 states, rating, serviceName)), ((serviceProviders, totalElements) ->
-                                        new Pageable<>(serviceProviders, pageRequest.getPageSize(), pageRequest.getPage(), totalElements.intValue()))))
+                                        new Page<>(serviceProviders, pageRequest.getPageNo(), pageRequest.getPageSize(), totalElements.intValue()))))
                         .flatMap(serviceProviderDTOPageable -> serviceProviderCacheService.updateCachedPageable(serviceProviderCacheKey, serviceProviderDTOPageable))));
     }
 
     @Override
-    public Mono<Pageable<ServiceProviderDetailsDTO>> findAllDetails(ServiceProviderPageRequest serviceProviderRequest) {
-        return Mono.fromCompletionStage(sessionFactory.withSession(session ->
-                        providerRepository.findAll(session, serviceProviderRequest, List.of(), List.of(), null, null))
-                .thenCombine(sessionFactory.withSession(session -> providerRepository.count(session, serviceProviderRequest, List.of(), List.of(),
-                        null, null)), ((serviceProviders, totalElements) -> new Pageable<>(serviceProviders.stream()
-                        .map(serviceProvider ->{
-                            ServiceProviderDetailsDTO serviceProviderDTO = serviceProviderMapper.mapToServiceProviderDetailsDTO(serviceProvider);
-                            ContactInfoDTO contactInfo = new ContactInfoDTO();
-                            contactInfo.setEmailAddress(serviceProvider.getEmailAddress());
-                            contactInfo.setPhoneNumber(serviceProvider.getPhoneNumber());
-                            contactInfo.setFaxNo(serviceProvider.getFaxNo());
-                            serviceProviderDTO.setContactInfo(contactInfo);
-                            return serviceProviderDTO;
-                        })
-                        .collect(Collectors.toList()), serviceProviderRequest.getPageSize(), serviceProviderRequest.getPage(), totalElements.intValue()))));
+    public Mono<Page<ServiceProviderDetailsDTO>> findAllDetails(ServiceProviderPageRequest serviceProviderRequest) {
+//        return Mono.fromCompletionStage(sessionFactory.withSession(session ->
+//                        providerRepository.findAll(session, serviceProviderRequest, List.of(), List.of(), null, null))
+//                .thenCombine(sessionFactory.withSession(session -> providerRepository.count(session, serviceProviderRequest, List.of(), List.of(),
+//                        null, null)), ((serviceProviders, totalElements) -> new Page<>(serviceProviders.stream()
+//                        .map(serviceProvider ->{
+//                            ServiceProviderDetailsDTO serviceProviderDTO = serviceProviderMapper.mapToServiceProviderDetailsDTO(serviceProvider);
+//                            ContactInfoDTO contactInfo = new ContactInfoDTO();
+//                            contactInfo.setEmailAddress(serviceProvider.getEmailAddress());
+//                            contactInfo.setPhoneNumber(serviceProvider.getPhoneNumber());
+//                            contactInfo.setFaxNo(serviceProvider.getFaxNo());
+//                            serviceProviderDTO.setContactInfo(contactInfo);
+//                            return serviceProviderDTO;
+//                        })
+//                        .collect(Collectors.toList()), serviceProviderRequest.getPageSize(), serviceProviderRequest.getPage(), totalElements.intValue()))));
+        return Mono.empty();
     }
 
     @Override
@@ -250,29 +251,30 @@ public class ProviderService implements IProviderService {
                         })));
     }
 
-    public Mono<Pageable<AppointmentDTO>> findAllCurrentProviderAppointments(PageInfo pageRequest, List<String> status) {
+    public Mono<Page<AppointmentDTO>> findAllCurrentProviderAppointments(PageRequest pageRequest, List<String> status) {
 
-        return ReactiveSecurityContextHolder.getContext()
-                .map(SecurityContext::getAuthentication)
-                .flatMap(authentication -> {
-                    ServiceProviderAppointmentCacheKey cacheKey = new ServiceProviderAppointmentCacheKey(authentication.getName(), status, pageRequest);
-
-                    return appointmentCacheService.getCachedPageable(cacheKey)
-                            .switchIfEmpty(Mono.defer(() -> {
-                                return Mono.fromCompletionStage(sessionFactory.withSession(session ->
-                                                        appointmentRepository.findAllByServiceProviderId(session, pageRequest, authentication.getName(), status)
-                                                                .thenApply(appointments -> appointments.stream()
-                                                                        .map(appointmentMapper::mapToAppointmentDTO)
-                                                                        .collect(Collectors.toList())))
-                                                .thenCombine(sessionFactory.withSession(appointmentSession ->
-                                                                appointmentRepository.countByServiceProviderId(appointmentSession, pageRequest, authentication.getName(), status)),
-                                                        ((appointments, totalElements) -> new Pageable<>(
-                                                                appointments,
-                                                                pageRequest.getPageSize(),
-                                                                pageRequest.getPage(), totalElements.intValue()))))
-                                        .flatMap(appointmentDTOPageable -> appointmentCacheService.updateCachedPageable(cacheKey, appointmentDTOPageable));
-                            }));
-                });
+//        return ReactiveSecurityContextHolder.getContext()
+//                .map(SecurityContext::getAuthentication)
+//                .flatMap(authentication -> {
+//                    ServiceProviderAppointmentCacheKey cacheKey = new ServiceProviderAppointmentCacheKey(authentication.getName(), status, pageRequest);
+//
+//                    return appointmentCacheService.getCachedPageable(cacheKey)
+//                            .switchIfEmpty(Mono.defer(() -> {
+//                                return Mono.fromCompletionStage(sessionFactory.withSession(session ->
+//                                                        appointmentRepository.findAllByServiceProviderId(session, pageRequest, authentication.getName(), status)
+//                                                                .thenApply(appointments -> appointments.stream()
+//                                                                        .map(appointmentMapper::mapToAppointmentDTO)
+//                                                                        .collect(Collectors.toList())))
+//                                                .thenCombine(sessionFactory.withSession(appointmentSession ->
+//                                                                appointmentRepository.countByServiceProviderId(appointmentSession, pageRequest, authentication.getName(), status)),
+//                                                        ((appointments, totalElements) -> new Page<>(
+//                                                                appointments,
+//                                                                pageRequest.getPageSize(),
+//                                                                pageRequest.getPage(), totalElements.intValue()))))
+//                                        .flatMap(appointmentDTOPageable -> appointmentCacheService.updateCachedPageable(cacheKey, appointmentDTOPageable));
+//                            }));
+//                });
+        return Mono.empty();
     }
 
     @Override
@@ -286,50 +288,51 @@ public class ProviderService implements IProviderService {
     }
 
     @Override
-    public Mono<Pageable<ServiceProviderReviewDTO>> findAllServiceProviderReviewsById(String id, PageInfo pageInfo, Double rating) {
+    public Mono<Page<ServiceProviderReviewDTO>> findAllServiceProviderReviewsById(String id, PageRequest pageRequest, Double rating) {
 
         ServiceProviderReviewCacheKey cacheKey = new ServiceProviderReviewCacheKey();
         cacheKey.setServiceProviderId(id);
-        cacheKey.setPageInfo(pageInfo);
+        cacheKey.setPageRequest(pageRequest);
         cacheKey.setRating(rating);
 
-        return serviceProviderReviewCacheService.getCachedPageable(cacheKey)
-                .switchIfEmpty(Mono.defer(() ->
-                        Mono.fromCompletionStage(sessionFactory.withSession(session -> serviceProviderReviewRepository.findAllReviewByServiceProviderId(session, pageInfo, id, rating)
-                                                .thenApply(reviews -> reviews.stream()
-                                                        .map(serviceProviderReviewMapper::mapToServiceProviderReviewDTO)
-                                                        .collect(Collectors.toList())))
-                                        .thenCombine(sessionFactory.withSession(session -> serviceProviderReviewRepository.countByServiceProviderId(session, id, rating)),
-                                                (reviews, totalElements) -> new Pageable<>(reviews,
-                                                        pageInfo.getPageSize(),
-                                                        pageInfo.getPage(),
-                                                        totalElements.intValue())))
-                                .flatMap(serviceProviderReviewDTOPageable -> {
-                                    return Mono.just(serviceProviderReviewDTOPageable)
-                                            .flatMap(pageable -> {
-                                                return Flux.fromIterable(pageable.getItems())
-                                                        .flatMap(serviceProviderReviewDTO -> {
-                                                            //Find customer details by service provider review customer
-                                                            Mono<UserRepresentation> userRepresentationMono = accountService.findById(serviceProviderReviewDTO.getCustomer()
-                                                                    .getId());
-
-                                                            return userRepresentationMono.map(userRepresentation -> {
-                                                                CustomerDTO customerDTO = serviceProviderReviewDTO.getCustomer();
-                                                                if (customerDTO != null) {
-                                                                    customerDTO.setFirstName(userRepresentation.getFirstName());
-                                                                    customerDTO.setLastName(userRepresentation.getLastName());
-                                                                }
-                                                                return serviceProviderReviewDTO;
-                                                            });
-                                                        })
-                                                        .collectList();
-                                            })
-                                            .map(serviceProviderReviewDTOS -> {
-                                                serviceProviderReviewDTOPageable.setItems(serviceProviderReviewDTOS);
-                                                return serviceProviderReviewDTOPageable;
-                                            });
-                                })
-                                .flatMap(serviceProviderReviewDTOPageable -> serviceProviderReviewCacheService.updateCachedPageable(cacheKey, serviceProviderReviewDTOPageable))));
+//        return serviceProviderReviewCacheService.getCachedPageable(cacheKey)
+//                .switchIfEmpty(Mono.defer(() ->
+//                        Mono.fromCompletionStage(sessionFactory.withSession(session -> serviceProviderReviewRepository.findAllReviewByServiceProviderId(session, pageRequest, id, rating)
+//                                                .thenApply(reviews -> reviews.stream()
+//                                                        .map(serviceProviderReviewMapper::mapToServiceProviderReviewDTO)
+//                                                        .collect(Collectors.toList())))
+//                                        .thenCombine(sessionFactory.withSession(session -> serviceProviderReviewRepository.countByServiceProviderId(session, id, rating)),
+//                                                (reviews, totalElements) -> new Page<>(reviews,
+//                                                        pageRequest.getPageSize(),
+//                                                        pageRequest.getPage(),
+//                                                        totalElements.intValue())))
+//                                .flatMap(serviceProviderReviewDTOPageable -> {
+//                                    return Mono.just(serviceProviderReviewDTOPageable)
+//                                            .flatMap(pageable -> {
+//                                                return Flux.fromIterable(pageable.getItems())
+//                                                        .flatMap(serviceProviderReviewDTO -> {
+//                                                            //Find customer details by service provider review customer
+//                                                            Mono<UserRepresentation> userRepresentationMono = accountService.findById(serviceProviderReviewDTO.getCustomer()
+//                                                                    .getId());
+//
+//                                                            return userRepresentationMono.map(userRepresentation -> {
+//                                                                CustomerDTO customerDTO = serviceProviderReviewDTO.getCustomer();
+//                                                                if (customerDTO != null) {
+//                                                                    customerDTO.setFirstName(userRepresentation.getFirstName());
+//                                                                    customerDTO.setLastName(userRepresentation.getLastName());
+//                                                                }
+//                                                                return serviceProviderReviewDTO;
+//                                                            });
+//                                                        })
+//                                                        .collectList();
+//                                            })
+//                                            .map(serviceProviderReviewDTOS -> {
+//                                                serviceProviderReviewDTOPageable.setItems(serviceProviderReviewDTOS);
+//                                                return serviceProviderReviewDTOPageable;
+//                                            });
+//                                })
+//                                .flatMap(serviceProviderReviewDTOPageable -> serviceProviderReviewCacheService.updateCachedPageable(cacheKey, serviceProviderReviewDTOPageable))));
+        return Mono.empty();
     }
 
     @Override

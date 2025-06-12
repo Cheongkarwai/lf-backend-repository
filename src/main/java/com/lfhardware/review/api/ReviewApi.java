@@ -2,7 +2,7 @@ package com.lfhardware.review.api;
 
 import com.lfhardware.review.domain.ReviewInput;
 import com.lfhardware.review.service.IReviewService;
-import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.PageRequest;
 import com.lfhardware.core.repository.Search;
 import com.lfhardware.core.repository.Sort;
 import org.springframework.stereotype.Component;
@@ -32,13 +32,13 @@ public class ReviewApi {
             search = new Search(serverRequest.queryParams().get("search"), serverRequest.queryParam("keyword").orElse(""));
         }
 
-        PageInfo pageInfo = new PageInfo(
+        PageRequest pageRequest = new PageRequest(
                 Integer.parseInt(serverRequest.queryParam("page_size").orElse("3")),
                 Integer.parseInt(serverRequest.queryParam("page").orElse("0")),
                 new Sort(serverRequest.queryParam("sort").orElse("")),
                 search);
 
-        return ServerResponse.ok().bodyValue(reviewService.findAll(pageInfo));
+        return ServerResponse.ok().bodyValue(reviewService.findAll(pageRequest));
     }
 
     /**

@@ -3,11 +3,10 @@ package com.lfhardware.provider.repository;
 import com.lfhardware.provider.domain.*;
 import com.lfhardware.provider.dto.ServiceProviderCountGroupByDayDTO;
 import com.lfhardware.provider.repository.predicate.ProviderPredicateBuilder;
-import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.PageRequest;
 import com.lfhardware.core.repository.PageRepository;
 import jakarta.persistence.criteria.*;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.reactive.mutiny.Mutiny;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
@@ -99,7 +98,7 @@ public class ProviderRepository extends PageRepository implements IProviderRepos
     }
 
     @Override
-    public CompletionStage<List<ServiceProvider>> findAll(Stage.Session session, PageInfo pageRequest, List<String> status,
+    public CompletionStage<List<ServiceProvider>> findAll(Stage.Session session, PageRequest pageRequest, List<String> status,
                                                           List<String> states, Double rating, String serviceName) {
         CriteriaBuilder cb = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<ServiceProvider> cq = cb.createQuery(ServiceProvider.class);
@@ -126,14 +125,14 @@ public class ProviderRepository extends PageRepository implements IProviderRepos
 
         cq.where(predicates.toArray(Predicate[]::new));
         cq.select(root);
-        return session.createQuery(cq).setFirstResult(pageRequest.getPage() * pageRequest.getPageSize())
+        return session.createQuery(cq).setFirstResult(pageRequest.getPageNo() * pageRequest.getPageSize())
                 .setMaxResults(pageRequest.getPageSize())
                 .getResultList();
     }
 
     @Override
-    public CompletionStage<Long> count(Stage.Session session, PageInfo pageRequest, List<String> status,
-                                       List<String> states,  Double rating, String serviceName) {
+    public CompletionStage<Long> count(Stage.Session session, PageRequest pageRequest, List<String> status,
+                                       List<String> states, Double rating, String serviceName) {
         CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<Long> cq = criteriaBuilder.createQuery(Long.class);
         Root<ServiceProvider> root = cq.from(ServiceProvider.class);

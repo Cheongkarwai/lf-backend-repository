@@ -1,7 +1,7 @@
 package com.lfhardware.order.service;
 
 import com.lfhardware.order.dto.*;
-import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.dto.Page;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -11,9 +11,9 @@ public interface IOrderService {
 
     Mono<OrderDetailsDTO> create(OrderInput orderInput);
 
-    Mono<Pageable<OrderDTO>> findAll(OrderPageRequest pageInfo);
+    Mono<Page<OrderDTO>> findAll(OrderPageRequest pageInfo);
 
-    Mono<Pageable<OrderProductDTO>> findAllOrdersProduct(OrderPageRequest pageRequest);
+    Mono<Page<OrderProductDTO>> findAllOrdersProduct(OrderPageRequest pageRequest);
 
     Mono<OrderDetailsDTO> findById(Long id);
 

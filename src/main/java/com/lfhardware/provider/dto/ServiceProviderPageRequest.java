@@ -1,6 +1,6 @@
 package com.lfhardware.provider.dto;
 
-import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.PageRequest;
 import com.lfhardware.core.repository.Search;
 import com.lfhardware.core.repository.Sort;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ServiceProviderPageRequest extends PageInfo {
+public class ServiceProviderPageRequest {
 
     private BigDecimal minPrice;
 
@@ -30,10 +30,17 @@ public class ServiceProviderPageRequest extends PageInfo {
 
     private String status;
 
+    private int pageSize;
+
+    private int page;
+
+    private Sort sort;
+
+    private Search search;
+
 
     public ServiceProviderPageRequest(int pageSize, int page, Sort sort, Search search, BigDecimal minPrice, BigDecimal maxPrice,
                                       Double rating, String serviceName, List<String> states, String status) {
-        super(pageSize, page, sort, search);
         this.minPrice = minPrice;
         this.maxPrice = maxPrice;
         this.rating = rating;
@@ -43,7 +50,10 @@ public class ServiceProviderPageRequest extends PageInfo {
     }
 
     public ServiceProviderPageRequest(int pageSize, int page, Sort sort, Search search) {
-        super(pageSize, page, sort, search);
+        this.pageSize = pageSize;
+        this.page = page;
+        this.sort = sort;
+        this.search = search;
     }
 
     @Override

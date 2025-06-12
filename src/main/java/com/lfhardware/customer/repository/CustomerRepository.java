@@ -2,10 +2,9 @@ package com.lfhardware.customer.repository;
 
 import com.lfhardware.customer.domain.Customer;
 import com.lfhardware.customer.dto.CustomerCountGroupByDayDTO;
-import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.PageRequest;
 import com.lfhardware.core.repository.PageRepository;
 import jakarta.persistence.criteria.*;
-import org.hibernate.reactive.mutiny.Mutiny;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.stereotype.Repository;
 
@@ -82,7 +81,7 @@ public class CustomerRepository extends PageRepository implements ICustomerRepos
     }
 
     @Override
-    public CompletionStage<List<Customer>> findAll(Stage.Session session, PageInfo pageRequest) {
+    public CompletionStage<List<Customer>> findAll(Stage.Session session, PageRequest pageRequest) {
 
         CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<Customer> cq = criteriaBuilder.createQuery(Customer.class);
@@ -92,13 +91,13 @@ public class CustomerRepository extends PageRepository implements ICustomerRepos
 
         cq.where(predicates.toArray(Predicate[]::new));
         cq.select(root);
-        return session.createQuery(cq).setFirstResult(pageRequest.getPage() * pageRequest.getPageSize())
+        return session.createQuery(cq).setFirstResult(pageRequest.getPageNo() * pageRequest.getPageSize())
                 .setMaxResults(pageRequest.getPageSize())
                 .getResultList();
     }
 
     @Override
-    public CompletionStage<Long> count(Stage.Session session, PageInfo pageRequest) {
+    public CompletionStage<Long> count(Stage.Session session, PageRequest pageRequest) {
 
         CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<Long> cq = criteriaBuilder.createQuery(Long.class);

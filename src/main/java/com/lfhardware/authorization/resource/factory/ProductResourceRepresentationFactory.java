@@ -1,7 +1,6 @@
 package com.lfhardware.authorization.resource.factory;
 
 import com.lfhardware.authorization.resource.dto.ResourceType;
-import com.lfhardware.product.dto.ProductDTO;
 import org.keycloak.representations.idm.authorization.ResourceRepresentation;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
@@ -9,15 +8,15 @@ import org.springframework.stereotype.Component;
 import java.util.Set;
 
 @Component
-public class ProductResourceRepresentationFactory extends AbstractResourceRepresentationFactory<ProductDTO> {
+public class ProductResourceRepresentationFactory extends AbstractResourceRepresentationFactory {
 
     @Override
-    public ResourceRepresentation createResourceRepresentation(Jwt jwt, ProductDTO product, Set<String> scopes) {
-        String uri = "/api/v1/products/" + product.getId();
+    public ResourceRepresentation createResourceRepresentation(Jwt jwt, String id, String name, Set<String> scopes) {
+        String uri = "/api/v1/products/" + id;
         return initializeBaseRepresentation(
                 jwt,
-                String.valueOf(product.getId()),
-                product.getName(),
+                String.valueOf(id),
+                name,
                 ResourceType.PRODUCT,
                 Set.of(uri),
                 scopes

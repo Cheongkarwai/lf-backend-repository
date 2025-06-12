@@ -6,7 +6,7 @@ import com.lfhardware.appointment.domain.AppointmentStatus;
 import com.lfhardware.appointment.domain.Appointment_;
 import com.lfhardware.appointment.dto.AppointmentCountGroupByDayDTO;
 import com.lfhardware.appointment.repository.predicate.AppointmentPredicateBuilder;
-import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.PageRequest;
 import com.lfhardware.core.repository.PageRepository;
 import com.lfhardware.provider.dto.ServiceProviderAppointmentCountGroupByDayDTO;
 import jakarta.persistence.criteria.*;
@@ -97,7 +97,7 @@ public class AppointmentRepository extends PageRepository implements IAppointmen
     }
 
     @Override
-    public CompletionStage<List<Appointment>> findAll(Stage.Session session, PageInfo pageRequest, List<String> status) {
+    public CompletionStage<List<Appointment>> findAll(Stage.Session session, PageRequest pageRequest, List<String> status) {
         CriteriaBuilder cb = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<Appointment> cq = cb.createQuery(Appointment.class);
         Root<Appointment> root = cq.from(Appointment.class);
@@ -113,13 +113,13 @@ public class AppointmentRepository extends PageRepository implements IAppointmen
         cq.select(root);
 
         return session.createQuery(cq)
-                .setFirstResult(pageRequest.getPage() * pageRequest.getPageSize())
+                .setFirstResult(pageRequest.getPageNo() * pageRequest.getPageSize())
                 .setMaxResults(pageRequest.getPageSize())
                 .getResultList();
     }
 
     @Override
-    public CompletionStage<Long> count(Stage.Session session, PageInfo pageRequest, List<String> status) {
+    public CompletionStage<Long> count(Stage.Session session, PageRequest pageRequest, List<String> status) {
         CriteriaBuilder cb = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
         Root<Appointment> root = cq.from(Appointment.class);
@@ -138,7 +138,7 @@ public class AppointmentRepository extends PageRepository implements IAppointmen
     }
 
     @Override
-    public CompletionStage<List<Appointment>> findAllByServiceProviderId(Stage.Session session, PageInfo pageRequest, String serviceProviderId
+    public CompletionStage<List<Appointment>> findAllByServiceProviderId(Stage.Session session, PageRequest pageRequest, String serviceProviderId
             , List<String> status) {
         CriteriaBuilder cb = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<Appointment> cq = cb.createQuery(Appointment.class);
@@ -160,14 +160,14 @@ public class AppointmentRepository extends PageRepository implements IAppointmen
         cq.select(root);
 
         return session.createQuery(cq)
-                .setFirstResult(pageRequest.getPage() * pageRequest.getPageSize())
+                .setFirstResult(pageRequest.getPageNo() * pageRequest.getPageSize())
                 .setMaxResults(pageRequest.getPageSize())
                 .getResultList();
 
     }
 
     @Override
-    public CompletionStage<Long> countByServiceProviderId(Stage.Session session, PageInfo pageRequest, String serviceProviderId, List<String> status) {
+    public CompletionStage<Long> countByServiceProviderId(Stage.Session session, PageRequest pageRequest, String serviceProviderId, List<String> status) {
         CriteriaBuilder cb = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
         Root<Appointment> root = cq.from(Appointment.class);
@@ -188,7 +188,7 @@ public class AppointmentRepository extends PageRepository implements IAppointmen
 
 
     @Override
-    public CompletionStage<List<Appointment>> findAllByCustomerId(Stage.Session session, PageInfo pageRequest, String customerId) {
+    public CompletionStage<List<Appointment>> findAllByCustomerId(Stage.Session session, PageRequest pageRequest, String customerId) {
         CriteriaBuilder cb = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<Appointment> cq = cb.createQuery(Appointment.class);
         Root<Appointment> root = cq.from(Appointment.class);
@@ -204,13 +204,13 @@ public class AppointmentRepository extends PageRepository implements IAppointmen
         cq.select(root);
 
         return session.createQuery(cq)
-                .setFirstResult(pageRequest.getPage() * pageRequest.getPageSize())
+                .setFirstResult(pageRequest.getPageNo() * pageRequest.getPageSize())
                 .setMaxResults(pageRequest.getPageSize())
                 .getResultList();
     }
 
     @Override
-    public CompletionStage<Long> countByCustomerId(Stage.Session session, PageInfo pageRequest, String customerId) {
+    public CompletionStage<Long> countByCustomerId(Stage.Session session, PageRequest pageRequest, String customerId) {
         CriteriaBuilder cb = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
         Root<Appointment> root = cq.from(Appointment.class);
@@ -230,7 +230,7 @@ public class AppointmentRepository extends PageRepository implements IAppointmen
     }
 
     @Override
-    public CompletionStage<List<Appointment>> findAllByCustomerIdAndBookingDateAndStatus(Stage.Session session, PageInfo pageRequest, String customerId, LocalDateTime bookingDatetime,
+    public CompletionStage<List<Appointment>> findAllByCustomerIdAndBookingDateAndStatus(Stage.Session session, PageRequest pageRequest, String customerId, LocalDateTime bookingDatetime,
                                                                                          List<String> status) {
 
         CriteriaBuilder cb = sessionFactory.getCriteriaBuilder();
@@ -255,12 +255,12 @@ public class AppointmentRepository extends PageRepository implements IAppointmen
         cq.select(root);
 
         return session.createQuery(cq)
-                .setFirstResult(pageRequest.getPage() * pageRequest.getPageSize())
+                .setFirstResult(pageRequest.getPageNo() * pageRequest.getPageSize())
                 .setMaxResults(pageRequest.getPageSize())
                 .getResultList();
     }
 
-    public CompletionStage<Long> countByCustomerIdAndBookingDateAndStatus(Stage.Session session, PageInfo pageRequest, String customerId, LocalDateTime bookingDateTime,
+    public CompletionStage<Long> countByCustomerIdAndBookingDateAndStatus(Stage.Session session, PageRequest pageRequest, String customerId, LocalDateTime bookingDateTime,
                                                                           List<String> status) {
         CriteriaBuilder cb = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);

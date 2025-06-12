@@ -1,6 +1,6 @@
 package com.lfhardware.provider.dto;
 
-import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.PageRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,19 +19,19 @@ public class ServiceProviderAppointmentCacheKey {
 
     private List<String> status;
 
-    private PageInfo pageInfo;
+    private PageRequest pageRequest;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ServiceProviderAppointmentCacheKey that = (ServiceProviderAppointmentCacheKey) o;
-        return Objects.equals(serviceProviderId, that.serviceProviderId) && Objects.equals(status, that.status) && Objects.equals(pageInfo, that.pageInfo);
+        return Objects.equals(serviceProviderId, that.serviceProviderId) && Objects.equals(status, that.status) && Objects.equals(pageRequest, that.pageRequest);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(serviceProviderId, status, pageInfo);
+        return Objects.hash(serviceProviderId, status, pageRequest);
     }
 
 }

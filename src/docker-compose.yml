@@ -1,15 +1,60 @@
 services:
   zookeeper:
-    image: wurstmeister/zookeeper
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2181:2181"
-  kafka:
-    image: wurstmeister/kafka
+
+  kafka1:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka1
+    depends_on:
+      - zookeeper
     ports:
       - "9092:9092"
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
+      KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,INTERNAL://kafka1:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  kafka2:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka2
+    depends_on:
+      - zookeeper
+    ports:
+      - "9093:9092"
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9093,INTERNAL://kafka2:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  kafka3:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka3
+    depends_on:
+      - zookeeper
+    ports:
+      - "9094:9092"
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9094,INTERNAL://kafka3:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+
+    # Define a Docker network for inter-container communication
   keycloak:
     image: quay.io/keycloak/keycloak:26.1
     ports:
@@ -18,7 +63,7 @@ services:
       KC_DB_URL_HOST: 192.168.0.233 # Accesses the host Postgres
       KC_DB_URL_PORT: 5432
       KC_DB: postgres
-     # KC_DB_URL: jdbc:postgresql://localhost:5432/keycloak
+      # KC_DB_URL: jdbc:postgresql://localhost:5432/keycloak
       KC_DB_USERNAME: postgres
       KC_DB_PASSWORD: root
       KC_DB_URL_DATABASE: keycloak
@@ -32,3 +77,55 @@ services:
       KC_LOG_LEVEL: info
     command:
       - start-dev
+  redis:
+    image: "redis/redis-stack:latest"
+    container_name: redis_container
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data:/data
+    environment:
+      - REDIS_ARGS=--requirepass test --appendonly yes
+    restart: always
+  axonserver-1:
+    image: axoniq/axonserver:latest
+    pull_policy: always
+    hostname: axonserver-1
+    environment:
+      - axoniq_console_authentication=98f81701-0-asc:7d7991c2bd6c4825ae2f63af897d1d4d
+    ports:
+      - '8024:8024'
+      - '8124:8124'
+      - '8224:8224'
+    networks:
+      - axon-server
+#  axonserver-2:
+#      image: axoniq/axonserver:latest-jdk-17
+#      pull_policy: always
+#      hostname: axonserver-2
+#      environment:
+#        - axoniq_console_authentication=98f81701-0-asc:7d7991c2bd6c4825ae2f63af897d1d4d
+#      ports:
+#        - '8025:8024'
+#        - '8125:8124'
+#        - '8225:8224'
+#      networks:
+#        - axon-server
+#
+#  axonserver-3:
+#      image: axoniq/axonserver:latest-jdk-17
+#      pull_policy: always
+#      hostname: axonserver-3
+#      environment:
+#        - axoniq_console_authentication=98f81701-0-asc:7d7991c2bd6c4825ae2f63af897d1d4d
+#      ports:
+#        - '8026:8024'
+#        - '8126:8124'
+#        - '8226:8224'
+#      networks:
+#        - axon-server
+#
+networks:
+  axon-server:
+  kafka_network:
+    driver: bridge

@@ -1,6 +1,6 @@
 package com.lfhardware.provider.cache;
 
-import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.PageRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +29,7 @@ public class ServiceProviderCacheKey {
         return Objects.hash(pageRequest, status, states, rating, serviceName);
     }
 
-    private PageInfo pageRequest;
+    private PageRequest pageRequest;
 
     private List<String> status;
 

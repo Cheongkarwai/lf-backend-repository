@@ -1,12 +1,14 @@
 package com.lfhardware.product.repository;
 
 
+import com.lfhardware.core.dto.PageRequest;
+import com.lfhardware.core.repository.Search;
 import com.lfhardware.core.repository.SortOrder;
 import com.lfhardware.product.domain.Brand_;
 import com.lfhardware.product.domain.Category_;
 import com.lfhardware.product.domain.Product;
 import com.lfhardware.product.domain.Product_;
-import com.lfhardware.product.dto.ProductPageRequest;
+import com.lfhardware.product.dto.ProductFilterCriteria;
 import com.lfhardware.stock.domain.Stock;
 import com.lfhardware.stock.domain.Stock_;
 import io.smallrye.mutiny.Uni;
@@ -29,7 +31,7 @@ public class ProductRepository implements IProductRepository {
 
 
     @Override
-    public Uni<List<Product>> findAll(Mutiny.Session session, ProductPageRequest pageInfo) {
+    public Uni<List<Product>> findAll(Mutiny.Session session, PageRequest pageRequest, Search searchRequest, ProductFilterCriteria filterCriteria) {
         CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<Product> cq = criteriaBuilder.createQuery(Product.class);
         Root<Product> root = cq.from(Product.class);
@@ -40,63 +42,62 @@ public class ProductRepository implements IProductRepository {
         root.fetch(Product_.REVIEWS, JoinType.LEFT);
 
         //Sorting
-        if (pageInfo.getSort().getName() != null && pageInfo.getSort().getOrder() != null) {
-            if (pageInfo.getSort().getOrder().equals(SortOrder.ASC)) {
-                cq.orderBy(criteriaBuilder.asc(root.get(pageInfo.getSort().getName())));
+        if (pageRequest.getSort().getName() != null && pageRequest.getSort().getOrder() != null) {
+            if (pageRequest.getSort().getOrder().equals(SortOrder.ASC)) {
+                cq.orderBy(criteriaBuilder.asc(root.get(pageRequest.getSort().getName())));
             } else {
-                cq.orderBy(criteriaBuilder.desc(root.get(pageInfo.getSort().getName())));
+                cq.orderBy(criteriaBuilder.desc(root.get(pageRequest.getSort().getName())));
             }
         }
 
         //Search
         List<Predicate> predicates = new ArrayList<>();
-        if (Objects.nonNull(pageInfo.getSearch())) {
-            predicates.add(criteriaBuilder.or(
-                    criteriaBuilder.like(root.get(Product_.ID).as(String.class), "%" + pageInfo.getSearch() + "%"),
-                    criteriaBuilder.like(root.get(Product_.NAME).as(String.class), "%" + pageInfo.getSearch() + "%"),
-                    criteriaBuilder.like(root.get(Product_.DESCRIPTION), "%" + pageInfo.getSearch() + "%")
-            ));
-        }
-
-        //Filter by categories
-        if (!pageInfo.getCategoryIds().isEmpty()) {
-            log.info("Category ids are not empty");
-            Path<Object> path = root.get(Product_.CATEGORY).get(Category_.ID);
-            CriteriaBuilder.In<Object> in = criteriaBuilder.in(path);
-            for (Long categoryId : pageInfo.getCategoryIds()) {
-                in.value(categoryId);
+        if (Objects.nonNull(searchRequest) && searchRequest.getAttributes() != null && !searchRequest.getAttributes().isEmpty() && searchRequest.getKeyword() != null && !searchRequest.getKeyword().isEmpty()) {
+            for(String attribute : searchRequest.getAttributes()){
+                predicates.add(criteriaBuilder.or(criteriaBuilder.like(root.get(attribute).as(String.class), "%"+ searchRequest.getKeyword() +"%")));
             }
-            predicates.add(in);
         }
 
-        if (!pageInfo.getBrandIds().isEmpty()) {
-            Path<Object> path = root.get(Product_.BRAND).get(Brand_.ID);
-            CriteriaBuilder.In<Object> in = criteriaBuilder.in(path);
-            for (Long brandId : pageInfo.getBrandIds()) {
-                in.value(brandId);
+        if(Objects.nonNull(filterCriteria)){
+            //Filter by categories
+            if (!filterCriteria.getCategoryIds().isEmpty()) {
+                Path<Object> path = root.get(Product_.CATEGORY).get(Category_.ID);
+                CriteriaBuilder.In<Object> in = criteriaBuilder.in(path);
+                for (Long categoryId : filterCriteria.getCategoryIds()) {
+                    in.value(categoryId);
+                }
+                predicates.add(in);
             }
-            predicates.add(in);
-        }
 
-        //Create a left join when quantity is specified
-        if (pageInfo.getMinQuantity() != null) {
-            Join<Product, Stock> join = root.join(Product_.STOCKS, JoinType.LEFT);
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(join.get(Stock_.QUANTITY), pageInfo.getMinQuantity()));
+            if (!filterCriteria.getBrandIds().isEmpty()) {
+                Path<Object> path = root.get(Product_.BRAND).get(Brand_.ID);
+                CriteriaBuilder.In<Object> in = criteriaBuilder.in(path);
+                for (Long brandId : filterCriteria.getBrandIds()) {
+                    in.value(brandId);
+                }
+                predicates.add(in);
+            }
+
+            //Create a left join when quantity is specified
+            if (filterCriteria.getQuantity() != null) {
+                Join<Product, Stock> join = root.join(Product_.STOCKS, JoinType.LEFT);
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(join.get(Stock_.QUANTITY), filterCriteria.getQuantity()));
+            }
         }
 
         cq.where(predicates.toArray(new Predicate[0]));
 
         cq.select(root);
         return session.createQuery(cq)
-                .setFirstResult(pageInfo.getPage() * pageInfo.getPageSize())
-                .setMaxResults(pageInfo.getPageSize())
+                .setFirstResult(pageRequest.getPageNo() * pageRequest.getPageSize())
+                .setMaxResults(pageRequest.getPageSize())
                 .getResultList();
 
 
     }
 
     @Override
-    public Uni<Long> count(Mutiny.Session session, ProductPageRequest pageInfo) {
+    public Uni<Long> count(Mutiny.Session session, Search searchRequest, ProductFilterCriteria filterCriteria) {
         CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<Long> cq = criteriaBuilder.createQuery(Long.class);
         Root<Product> root = cq.from(Product.class);
@@ -108,35 +109,36 @@ public class ProductRepository implements IProductRepository {
         //Search
         List<Predicate> predicates = new ArrayList<>();
 
-        if (Objects.nonNull(pageInfo.getSearch())) {
-            predicates.add(criteriaBuilder.or(
-                    criteriaBuilder.like(root.get(Product_.ID).as(String.class), "%" + pageInfo.getSearch() + "%"),
-                    criteriaBuilder.like(root.get(Product_.NAME).as(String.class), "%" + pageInfo.getSearch() + "%")
-            ));
-        }
-
-        if (!pageInfo.getCategoryIds().isEmpty()) {
-            log.info("Category ids are not empty");
-            Path<Object> path = root.get(Product_.CATEGORY).get(Category_.ID);
-            CriteriaBuilder.In<Object> in = criteriaBuilder.in(path);
-            for (Long categoryId : pageInfo.getCategoryIds()) {
-                in.value(categoryId);
+        if (Objects.nonNull(searchRequest) && searchRequest.getAttributes() != null && !searchRequest.getAttributes().isEmpty() && searchRequest.getKeyword() != null && !searchRequest.getKeyword().isEmpty()) {
+            for(String attribute : searchRequest.getAttributes()){
+                predicates.add(criteriaBuilder.or(criteriaBuilder.like(root.get(attribute).as(String.class), "%"+ searchRequest.getKeyword() +"%")));
             }
-            predicates.add(in);
         }
 
-        if (!pageInfo.getBrandIds().isEmpty()) {
-            Path<Object> path = root.get(Product_.BRAND).get(Brand_.ID);
-            CriteriaBuilder.In<Object> in = criteriaBuilder.in(path);
-            for (Long brandId : pageInfo.getBrandIds()) {
-                in.value(brandId);
+        if(Objects.nonNull(filterCriteria)){
+            if (!filterCriteria.getCategoryIds().isEmpty()) {
+                log.info("Category ids are not empty");
+                Path<Object> path = root.get(Product_.CATEGORY).get(Category_.ID);
+                CriteriaBuilder.In<Object> in = criteriaBuilder.in(path);
+                for (Long categoryId : filterCriteria.getCategoryIds()) {
+                    in.value(categoryId);
+                }
+                predicates.add(in);
             }
-            predicates.add(in);
-        }
 
-        if (pageInfo.getMinQuantity() != null) {
-            Join<Product, Stock> join = root.join(Product_.STOCKS, JoinType.LEFT);
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(join.get(Stock_.QUANTITY), pageInfo.getMinQuantity()));
+            if (!filterCriteria.getBrandIds().isEmpty()) {
+                Path<Object> path = root.get(Product_.BRAND).get(Brand_.ID);
+                CriteriaBuilder.In<Object> in = criteriaBuilder.in(path);
+                for (Long brandId : filterCriteria.getBrandIds()) {
+                    in.value(brandId);
+                }
+                predicates.add(in);
+            }
+
+            if (filterCriteria.getQuantity() != null) {
+                Join<Product, Stock> join = root.join(Product_.STOCKS, JoinType.LEFT);
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(join.get(Stock_.QUANTITY), filterCriteria.getQuantity()));
+            }
         }
 
         cq.where(predicates.toArray(new Predicate[0]));

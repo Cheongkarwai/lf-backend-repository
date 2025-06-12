@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.stripe.StripeClient;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.netty.handler.codec.base64.Base64Decoder;
 import io.netty.handler.codec.base64.Base64Encoder;
+import io.opentelemetry.api.metrics.MeterProvider;
 import org.apache.commons.codec.binary.Base32;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
@@ -29,6 +31,7 @@ import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.result.method.annotation.ArgumentResolverConfigurer;
 
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
@@ -45,16 +48,6 @@ public class WebConfiguration implements WebFluxConfigurer {
     }
 
 
-//    @Bean
-//    public XmlMapper xmlMapper(){
-//        return XmlMapper.builder().addModule(new JavaTimeModule()).build();
-//    }
-//
-//    @Override
-//    public void configureHttpMessageCodecs(ServerCodecConfigurer configurer) {
-//        configurer.defaultCodecs().jaxb2Encoder(new Jaxb2XmlEncoder());
-//        configurer.defaultCodecs().jaxb2Decoder(new Jaxb2XmlDecoder());
-//    }
 
     public void configureHttpMessageCodecs(ServerCodecConfigurer configurer) {
         configurer.defaultCodecs().jackson2JsonEncoder(
@@ -65,6 +58,17 @@ public class WebConfiguration implements WebFluxConfigurer {
                 new Jackson2JsonDecoder(objectMapper)
         );
     }
+
+    @Bean
+    public PageRequestParameterMethodArgumentResolver pageRequestParameterMethodArgumentResolver(){
+        return new PageRequestParameterMethodArgumentResolver();
+    }
+
+    @Override
+    public void configureArgumentResolvers(ArgumentResolverConfigurer configurer) {
+        configurer.addCustomResolver(pageRequestParameterMethodArgumentResolver());
+    }
+
 
     //    @Bean
 //    HandlerMethodArgumentResolver reactivePageableHandlerMethodArgumentResolver() {
@@ -116,6 +120,5 @@ public class WebConfiguration implements WebFluxConfigurer {
 //          return Mono.error(ex);
 //        };
 //    }
-
 
 }

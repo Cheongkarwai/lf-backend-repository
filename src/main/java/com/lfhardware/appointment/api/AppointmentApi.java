@@ -6,7 +6,7 @@ import com.lfhardware.appointment.dto.AppointmentFeesInput;
 import com.lfhardware.appointment.dto.AppointmentInput;
 import com.lfhardware.appointment.dto.AppointmentStatusInput;
 import com.lfhardware.appointment.service.IAppointmentService;
-import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.PageRequest;
 import com.lfhardware.core.repository.PageQueryParameterBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -37,7 +37,7 @@ public class AppointmentApi {
      */
     public Mono<ServerResponse> findAll(ServerRequest serverRequest) {
 
-        PageInfo pageRequest = PageQueryParameterBuilder.buildPageRequest(serverRequest);
+        PageRequest pageRequest = PageQueryParameterBuilder.buildPageRequest(serverRequest);
 
         List<String> status = serverRequest.queryParams().get("status");
 

@@ -22,10 +22,6 @@ import java.util.Properties;
 @Configuration
 public class HibernateConfiguration {
 
-//    private Stage.SessionFactory sessionFactory;
-//
-//    private EntityManager entityManager;
-
     private final Environment env;
 
     public HibernateConfiguration(Environment env){

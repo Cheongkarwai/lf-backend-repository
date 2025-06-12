@@ -1,13 +1,12 @@
 package com.lfhardware.transaction.service;
 
 import com.lfhardware.charges.repository.ITransactionRepository;
-import com.lfhardware.core.dto.PageInfo;
-import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.dto.Page;
+import com.lfhardware.core.dto.PageRequest;
 import com.lfhardware.transaction.dto.TransactionDTO;
 
 import com.lfhardware.transaction.mapper.TransactionMapper;
 import com.stripe.StripeClient;
-import com.stripe.model.Charge;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -36,12 +35,12 @@ public class TransactionService implements ITransactionService {
     }
 
     @Override
-    public Mono<Pageable<TransactionDTO>> findAll(PageInfo pageRequest) {
+    public Mono<Page<TransactionDTO>> findAll(PageRequest pageRequest) {
         return Mono.fromCompletionStage(sessionFactory.withSession(session -> transactionRepository.findAll(session, pageRequest))
                 .thenCombine(sessionFactory.withSession(session -> transactionRepository.count(session, pageRequest)),
-                        (transactions, totalRecords) -> new Pageable<>(
+                        (transactions, totalRecords) -> new Page<>(
                                 transactions.stream().map(transactionMapper::mapToTransactionDTO).collect(Collectors.toList()),
-                                pageRequest.getPageSize(), pageRequest.getPage(), totalRecords.intValue())));
+                                pageRequest.getPageSize(), pageRequest.getPageNo(), totalRecords.intValue())));
     }
 
     @Override
@@ -53,7 +52,8 @@ public class TransactionService implements ITransactionService {
 
     @Override
     public Mono<Long> count() {
-        return Mono.fromCompletionStage(sessionFactory.withSession(session -> transactionRepository.count(session, new PageInfo())));
+        //return Mono.fromCompletionStage(sessionFactory.withSession(session -> transactionRepository.count(session, new PageRequest())));
+        return Mono.empty();
     }
 
 

@@ -94,6 +94,9 @@ spring:
         jwt:
           jwk-set-uri: ${keycloak.admin.server-url}/realms/LFHardware/protocol/openid-connect/certs
           issuer-uri: ${keycloak.admin.server-url}/realms/LFHardware
+  jpa:
+    hibernate:
+      ddl-auto: update
 totp:
   issuer:
   secret-key: TEZIQVJEV0FSRTIx

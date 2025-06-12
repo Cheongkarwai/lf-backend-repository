@@ -1,6 +1,6 @@
 package com.lfhardware.provider.cache;
 
-import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.PageRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class PageableCacheKey {
 
-    private PageInfo pageInfo;
+    private PageRequest pageRequest;
 
 
     @Override
@@ -22,11 +22,11 @@ public class PageableCacheKey {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PageableCacheKey that = (PageableCacheKey) o;
-        return Objects.equals(pageInfo, that.pageInfo);
+        return Objects.equals(pageRequest, that.pageRequest);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(pageInfo);
+        return Objects.hash(pageRequest);
     }
 }

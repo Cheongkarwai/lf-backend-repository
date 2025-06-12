@@ -50,10 +50,11 @@ import java.util.stream.Collectors;
 public class SecurityConfiguration {
 
     private static final String [] PUBLIC_ROUTE = {"/", "/api/v1/payments/webhook", "/api/v1/services", "/api/v1/service-providers" ,
-            "/api/v1/service-providers/details/{id}", "/api/v1/service-providers/{id}/reviews", "/api/v1/users/me/username"};
+            "/api/v1/service-providers/details/{id}", "/api/v1/service-providers/{id}/reviews", "/api/v1/users/me/username",
+            "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**", "/swagger-resources", "/api-docs/**", "/test", "/api/v1/products"};
 
     private static final Map<HttpMethod, String[]> ADMIN_ROUTE =
-            Map.of(HttpMethod.POST, new String[]{"/api/v1/service-providers/{id}/status"});
+            Map.of(HttpMethod.POST, new String[]{"/api/v1/service-providers/{id}/status", "/api/v1/products"});
 
     private static final Map<HttpMethod, String[]> SERVICE_PROVIDER_ROUTE =
             Map.of(HttpMethod.POST, new String[] {});
@@ -66,26 +67,24 @@ public class SecurityConfiguration {
         // default implementation of resolveCsrfTokenValue() from ServerCsrfTokenRequestHandler
         ServerCsrfTokenRequestHandler requestHandler = delegate::handle;
         return httpSecurity
-                .csrf(csrfSpec -> csrfSpec
-                                .disable()
+                .csrf(ServerHttpSecurity.CsrfSpec::disable
                         //.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse()
 
                        // .requireCsrfProtectionMatcher(new NegatedServerWebExchangeMatcher(exchange -> ServerWebExchangeMatchers.pathMatchers("/api/v1/payments/webhook").matches(exchange)))
                         //.csrfTokenRequestHandler(requestHandler)
                 )
                 //.cors(corsSpec -> corsSpec.configurationSource(corsConfigurationSource()))
-                .cors(corsSpec -> corsSpec.disable())
+                .cors(ServerHttpSecurity.CorsSpec::disable)
                 .requestCache(requestCacheSpec -> requestCacheSpec.requestCache(NoOpServerRequestCache.getInstance()))
                 //.cors(cors-> cors.configurationSource(corsConfigurationSource()))
                 .authorizeExchange(authorizeExchangeSpec -> authorizeExchangeSpec
-                        .pathMatchers(PUBLIC_ROUTE).permitAll()
-                        .pathMatchers(HttpMethod.POST, ADMIN_ROUTE.get(HttpMethod.POST))
-                        .hasRole(Role.administrator.name())
-                        //.pathMatchers(HttpMethod.POST)
+                                .anyExchange().permitAll()
+//                        .pathMatchers(HttpMethod.POST, ADMIN_ROUTE.get(HttpMethod.POST))
+//                        .hasRole(Role.administrator.name())
+//                        .pathMatchers(HttpMethod.POST)
 //                        .hasAnyRole(Role.administrator.name(), Role.service_provider.name())
-                        .anyExchange()
-                        .authenticated())
-                .addFilterAt(keycloakReactivePolicyEnforcerFilter, SecurityWebFiltersOrder.AUTHORIZATION)
+                        )
+               // .addFilterAt(keycloakReactivePolicyEnforcerFilter, SecurityWebFiltersOrder.AUTHORIZATION)
 //                .oauth2Login()
 //
 //                .and()
@@ -100,7 +99,7 @@ public class SecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(List.of("http://localhost:8090", "http://localhost:4200", "http://localhost:8090"));
+        configuration.setAllowedOrigins(List.of("http://localhost:8090", "http://localhost:4200", "http://localhost:8081"));
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.addExposedHeader(HttpHeaders.CONTENT_DISPOSITION);

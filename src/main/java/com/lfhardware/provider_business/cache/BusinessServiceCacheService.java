@@ -5,7 +5,7 @@ import com.lfhardware.configuration.CacheConfiguration;
 import com.lfhardware.provider_business.dto.ServiceDTO;
 import com.lfhardware.provider_business.dto.ServiceGroupByCategoryDTO;
 import com.lfhardware.core.service.CacheService;
-import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.dto.Page;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
@@ -43,9 +43,9 @@ public class BusinessServiceCacheService implements CacheService<ServiceDTO> {
     }
 
     @Override
-    public Mono<Pageable<ServiceDTO>> getCachedPageable(Object key) {
+    public Mono<Page<ServiceDTO>> getCachedPageable(Object key) {
         return Mono.fromCallable(()-> Objects.requireNonNull(cacheManager.getCache(ID))
-                .get(key, (Callable<Pageable<ServiceDTO>>) Pageable::new))
+                .get(key, (Callable<Page<ServiceDTO>>) Page::new))
                 .flatMap(cache -> CollectionUtils.isNotEmpty(cache.getItems()) ?
                         Mono.just(cache) : Mono.empty());
     }
@@ -71,7 +71,7 @@ public class BusinessServiceCacheService implements CacheService<ServiceDTO> {
     }
 
     @Override
-    public Mono<Pageable<ServiceDTO>> updateCachedPageable(Object key, Pageable<ServiceDTO> pageable) {
+    public Mono<Page<ServiceDTO>> updateCachedPageable(Object key, Page<ServiceDTO> pageable) {
         return Mono.fromCallable(()->{
             Objects.requireNonNull(cacheManager.getCache(ID))
                     .put(key, pageable);

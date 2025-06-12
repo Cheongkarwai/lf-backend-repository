@@ -7,8 +7,8 @@ import com.lfhardware.form.dto.FormDTO;
 import com.lfhardware.provider.domain.Status;
 import com.lfhardware.provider.dto.*;
 import com.lfhardware.provider_business.dto.ServiceDTO;
-import com.lfhardware.core.dto.PageInfo;
-import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.dto.PageRequest;
+import com.lfhardware.core.dto.Page;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -18,10 +18,10 @@ public interface IProviderService {
 
     Mono<Void> save(ServiceProviderOnboardInput serviceProviderInput);
 
-    Mono<Pageable<ServiceProviderDTO>> findAll(PageInfo pageRequest, List<String> status, List<String> states, Double rating,
+    Mono<Page<ServiceProviderDTO>> findAll(PageRequest pageRequest, List<String> status, List<String> states, Double rating,
                                                String serviceName);
 
-    Mono<Pageable<ServiceProviderDetailsDTO>> findAllDetails(ServiceProviderPageRequest serviceProviderRequest);
+    Mono<Page<ServiceProviderDetailsDTO>> findAllDetails(ServiceProviderPageRequest serviceProviderRequest);
 
     Mono<ServiceProviderDetailsDTO> findDetailsById(String id);
 
@@ -33,11 +33,11 @@ public interface IProviderService {
 
     Mono<FormDTO> findCurrentProviderForm(Long serviceId);
 
-    Mono<Pageable<AppointmentDTO>> findAllCurrentProviderAppointments(PageInfo pageInfo, List<String> status);
+    Mono<Page<AppointmentDTO>> findAllCurrentProviderAppointments(PageRequest pageRequest, List<String> status);
 
     Mono<ServiceProviderDTO> findCurrentServiceProviderByUserId();
 
-    Mono<Pageable<ServiceProviderReviewDTO>> findAllServiceProviderReviewsById(String id, PageInfo pageInfo, Double rating);
+    Mono<Page<ServiceProviderReviewDTO>> findAllServiceProviderReviewsById(String id, PageRequest pageRequest, Double rating);
 
     Mono<Long> countServiceProviderReviewsById(String id);
 

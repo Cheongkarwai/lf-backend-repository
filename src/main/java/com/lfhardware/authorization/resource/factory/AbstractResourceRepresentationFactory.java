@@ -5,7 +5,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.Set;
 
-public abstract class AbstractResourceRepresentationFactory<T> implements ResourceRepresentationFactory<T> {
+public abstract class AbstractResourceRepresentationFactory implements ResourceRepresentationFactory {
 
     protected ResourceRepresentation initializeBaseRepresentation(Jwt jwt, String id, String name, String type, Set<String> uris,
                                                                   Set<String> scopes) {

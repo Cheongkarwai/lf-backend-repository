@@ -6,8 +6,8 @@ import com.lfhardware.appointment.mapper.AppointmentMapper;
 import com.lfhardware.appointment.repository.IAppointmentRepository;
 import com.lfhardware.auth.service.RoleService;
 import com.lfhardware.configuration.CacheConfiguration;
-import com.lfhardware.core.dto.PageInfo;
-import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.dto.PageRequest;
+import com.lfhardware.core.dto.Page;
 import com.lfhardware.core.service.CacheService;
 import com.lfhardware.customer.cache.CustomerAppointmentCacheKey;
 import com.lfhardware.customer.dto.CustomerCountGroupByDayDTO;
@@ -120,31 +120,32 @@ public class CustomerService implements ICustomerService {
     }
 
     @Override
-    public Mono<Pageable<AppointmentDTO>> findAllCurrentCustomerAppointments(PageInfo pageRequest, LocalDateTime bookingDateTime, List<String> status) {
+    public Mono<Page<AppointmentDTO>> findAllCurrentCustomerAppointments(PageRequest pageRequest, LocalDateTime bookingDateTime, List<String> status) {
 
-        return ReactiveSecurityContextHolder.getContext()
-                .map(SecurityContext::getAuthentication)
-                .flatMap(authentication -> {
-                    CustomerAppointmentCacheKey customerAppointmentCacheKey = new CustomerAppointmentCacheKey(pageRequest, authentication.getName(), bookingDateTime, status);
-                    return appointmentCacheService.getCachedPageable(customerAppointmentCacheKey)
-                            .switchIfEmpty(Mono.defer(() -> Mono.fromCompletionStage(sessionFactory.withSession(session ->
-                                                    appointmentRepository.findAllByCustomerIdAndBookingDateAndStatus(session, pageRequest, authentication.getName(), bookingDateTime, status)
-                                            )
-                                            .thenCombine(sessionFactory.withSession(appointmentSession -> appointmentRepository.countByCustomerIdAndBookingDateAndStatus(appointmentSession,
-                                                            pageRequest, authentication.getName(), bookingDateTime, status)),
-                                                    ((appointments, totalElements) -> new Pageable<>(
-                                                            appointments.stream()
-                                                                    .map(appointmentMapper::mapToAppointmentDTO)
-                                                                    .toList(),
-                                                            pageRequest.getPageSize(),
-                                                            pageRequest.getPage(), totalElements.intValue()))))
-                                    .flatMap(appointmentDTOPageable -> appointmentCacheService.updateCachedPageable(customerAppointmentCacheKey, appointmentDTOPageable))));
-                });
+//        return ReactiveSecurityContextHolder.getContext()
+//                .map(SecurityContext::getAuthentication)
+//                .flatMap(authentication -> {
+//                    CustomerAppointmentCacheKey customerAppointmentCacheKey = new CustomerAppointmentCacheKey(pageRequest, authentication.getName(), bookingDateTime, status);
+//                    return appointmentCacheService.getCachedPageable(customerAppointmentCacheKey)
+//                            .switchIfEmpty(Mono.defer(() -> Mono.fromCompletionStage(sessionFactory.withSession(session ->
+//                                                    appointmentRepository.findAllByCustomerIdAndBookingDateAndStatus(session, pageRequest, authentication.getName(), bookingDateTime, status)
+//                                            )
+//                                            .thenCombine(sessionFactory.withSession(appointmentSession -> appointmentRepository.countByCustomerIdAndBookingDateAndStatus(appointmentSession,
+//                                                            pageRequest, authentication.getName(), bookingDateTime, status)),
+//                                                    ((appointments, totalElements) -> new Page<>(
+//                                                            appointments.stream()
+//                                                                    .map(appointmentMapper::mapToAppointmentDTO)
+//                                                                    .toList(),
+//                                                            pageRequest.getPageSize(),
+//                                                            pageRequest.getPage(), totalElements.intValue()))))
+//                                    .flatMap(appointmentDTOPageable -> appointmentCacheService.updateCachedPageable(customerAppointmentCacheKey, appointmentDTOPageable))));
+//                });
+        return null;
 
     }
 
     @Override
-    public Mono<Pageable<CustomerDTO>> findAll(PageInfo pageRequest) {
+    public Mono<Page<CustomerDTO>> findAll(PageRequest pageRequest) {
         return Mono.empty();
 //        return customerCacheService.getCachedPageable(pageRequest)
 //                .switchIfEmpty(Mono.defer(() -> Mono.fromCompletionStage(sessionFactory.withSession(session -> customerRepository.findAll(session, pageRequest)
@@ -178,35 +179,35 @@ public class CustomerService implements ICustomerService {
     }
 
     @Override
-    public Mono<Pageable<AppointmentDTO>> findAllAppointmentsByCustomerId(PageInfo pageRequest, String customerId) {
-
-        CustomerAppointmentCacheKey customerAppointmentCacheKey = new CustomerAppointmentCacheKey(pageRequest, customerId, null, null);
-
-        return Mono.justOrEmpty(Objects.requireNonNull(cacheManager.getCache(CacheConfiguration.customerAppointmentCache))
-                        .get(customerAppointmentCacheKey, (Callable<List<AppointmentDTO>>) ArrayList::new))
-                .flatMap(cacheAppointments -> !cacheAppointments.isEmpty() ?
-                        Mono.just(cacheAppointments)
-                                .flatMap(appointments -> Mono.fromCompletionStage(sessionFactory.withSession(session -> appointmentRepository.countByCustomerId(session, pageRequest, customerId)
-                                        .thenApply(totalElements -> new Pageable<>(
-                                                appointments,
-                                                pageRequest.getPageSize(),
-                                                pageRequest.getPage(), totalElements.intValue()))))) : Mono.empty())
-
-                .switchIfEmpty(Mono.defer(() -> Mono.fromCompletionStage(sessionFactory.withSession(session ->
-                                appointmentRepository.findAllByCustomerId(session, pageRequest, customerId))
-                        .thenCombine(sessionFactory.withSession(appointmentSession -> appointmentRepository.countByCustomerId(appointmentSession, pageRequest, customerId)),
-                                ((appointments, totalElements) -> {
-                                    System.out.println(totalElements);
-                                    List<AppointmentDTO> appointmentDTOS = appointments.stream()
-                                            .map(appointmentMapper::mapToAppointmentDTO)
-                                            .toList();
-                                    Objects.requireNonNull(cacheManager.getCache(CacheConfiguration.customerAppointmentCache))
-                                            .putIfAbsent(customerAppointmentCacheKey, appointmentDTOS);
-                                    return new Pageable<>(
-                                            appointmentDTOS,
-                                            pageRequest.getPageSize(),
-                                            pageRequest.getPage(), totalElements.intValue());
-                                })))));
+    public Mono<Page<AppointmentDTO>> findAllAppointmentsByCustomerId(PageRequest pageRequest, String customerId) {
+        return Mono.empty();
+//        CustomerAppointmentCacheKey customerAppointmentCacheKey = new CustomerAppointmentCacheKey(pageRequest, customerId, null, null);
+//
+//        return Mono.justOrEmpty(Objects.requireNonNull(cacheManager.getCache(CacheConfiguration.customerAppointmentCache))
+//                        .get(customerAppointmentCacheKey, (Callable<List<AppointmentDTO>>) ArrayList::new))
+//                .flatMap(cacheAppointments -> !cacheAppointments.isEmpty() ?
+//                        Mono.just(cacheAppointments)
+//                                .flatMap(appointments -> Mono.fromCompletionStage(sessionFactory.withSession(session -> appointmentRepository.countByCustomerId(session, pageRequest, customerId)
+//                                        .thenApply(totalElements -> new Page<>(
+//                                                appointments,
+//                                                pageRequest.getPageSize(),
+//                                                pageRequest.getPage(), totalElements.intValue()))))) : Mono.empty())
+//
+//                .switchIfEmpty(Mono.defer(() -> Mono.fromCompletionStage(sessionFactory.withSession(session ->
+//                                appointmentRepository.findAllByCustomerId(session, pageRequest, customerId))
+//                        .thenCombine(sessionFactory.withSession(appointmentSession -> appointmentRepository.countByCustomerId(appointmentSession, pageRequest, customerId)),
+//                                ((appointments, totalElements) -> {
+//                                    System.out.println(totalElements);
+//                                    List<AppointmentDTO> appointmentDTOS = appointments.stream()
+//                                            .map(appointmentMapper::mapToAppointmentDTO)
+//                                            .toList();
+//                                    Objects.requireNonNull(cacheManager.getCache(CacheConfiguration.customerAppointmentCache))
+//                                            .putIfAbsent(customerAppointmentCacheKey, appointmentDTOS);
+//                                    return new Page<>(
+//                                            appointmentDTOS,
+//                                            pageRequest.getPageSize(),
+//                                            pageRequest.getPage(), totalElements.intValue());
+//                                })))));
     }
 
     @Override

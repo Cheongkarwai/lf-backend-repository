@@ -1,9 +1,10 @@
 package com.lfhardware.customer.cache;
 
 import com.lfhardware.configuration.CacheConfiguration;
+import com.lfhardware.core.dto.Page;
 import com.lfhardware.customer.dto.CustomerDTO;
 import com.lfhardware.core.service.CacheService;
-import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.dto.Page;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
@@ -34,9 +35,9 @@ public class CustomerCacheService implements CacheService<CustomerDTO> {
     }
 
     @Override
-    public Mono<Pageable<CustomerDTO>> getCachedPageable(Object key) {
+    public Mono<Page<CustomerDTO>> getCachedPageable(Object key) {
         return Mono.fromCallable(()-> Objects.requireNonNull(cacheManager.getCache(ID))
-                        .get(key, (Callable<Pageable<CustomerDTO>>) Pageable::new))
+                        .get(key, (Callable<Page<CustomerDTO>>) Page::new))
                 .flatMap(cache -> {
                     System.out.println(cache.getItems());
                     return CollectionUtils.isNotEmpty(cache.getItems()) ?
@@ -55,7 +56,7 @@ public class CustomerCacheService implements CacheService<CustomerDTO> {
     }
 
     @Override
-    public Mono<Pageable<CustomerDTO>> updateCachedPageable(Object key, Pageable<CustomerDTO> pageable) {
+    public Mono<Page<CustomerDTO>> updateCachedPageable(Object key, Page<CustomerDTO> pageable) {
         return Mono.fromCallable(() -> {
             Objects.requireNonNull(cacheManager.getCache(ID))
                     .put(key, pageable);

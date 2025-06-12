@@ -6,8 +6,8 @@ import com.lfhardware.review.domain.ReviewInput;
 import com.lfhardware.review.dto.ReviewDTO;
 import com.lfhardware.review.mapper.ReviewMapper;
 import com.lfhardware.review.repository.IReviewRepository;
-import com.lfhardware.core.dto.PageInfo;
-import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.dto.PageRequest;
+import com.lfhardware.core.dto.Page;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -33,9 +33,9 @@ public class ReviewService implements IReviewService {
     }
 
     @Override
-    public Mono<Pageable<ReviewDTO>> findAll(PageInfo pageInfo) {
+    public Mono<Page<ReviewDTO>> findAll(PageRequest pageRequest) {
         return Mono.fromCompletionStage(sessionFactory.withSession(session -> reviewRepository.findAll(session, null))
-                .thenCombine(sessionFactory.withSession(session -> reviewRepository.count(session, null)), (items, totalElements) -> new Pageable<ReviewDTO>(items.stream().map(reviewMapper::mapToReviewDTO).collect(Collectors.toList()), pageInfo.getPageSize(), pageInfo.getPage(), totalElements.intValue())));
+                .thenCombine(sessionFactory.withSession(session -> reviewRepository.count(session, null)), (items, totalElements) -> new Page<ReviewDTO>(items.stream().map(reviewMapper::mapToReviewDTO).collect(Collectors.toList()), pageRequest.getPageSize(), pageRequest.getPageNo(), totalElements.intValue())));
     }
 
     @Override

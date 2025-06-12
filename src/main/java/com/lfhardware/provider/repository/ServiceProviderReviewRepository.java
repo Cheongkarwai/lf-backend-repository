@@ -2,13 +2,12 @@ package com.lfhardware.provider.repository;
 
 import com.lfhardware.provider.domain.*;
 import com.lfhardware.provider.dto.ServiceProviderReviewCountGroupByRatingDTO;
-import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.PageRequest;
 import com.lfhardware.core.repository.PageRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import org.hibernate.query.Query;
 import org.hibernate.reactive.stage.Stage;
 import org.springframework.stereotype.Repository;
 
@@ -86,7 +85,7 @@ public class ServiceProviderReviewRepository extends PageRepository implements I
     }
 
     @Override
-    public CompletionStage<List<ServiceProviderReview>> findAllReviewByServiceProviderId(Stage.Session session, PageInfo pageRequest, String id, Double rating) {
+    public CompletionStage<List<ServiceProviderReview>> findAllReviewByServiceProviderId(Stage.Session session, PageRequest pageRequest, String id, Double rating) {
 
         CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<ServiceProviderReview> cq = criteriaBuilder.createQuery(ServiceProviderReview.class);
@@ -118,7 +117,7 @@ public class ServiceProviderReviewRepository extends PageRepository implements I
         cq.where(predicates.toArray(Predicate[]::new));
         cq.select(root);
         return session.createQuery(cq)
-                .setFirstResult(pageRequest.getPage() * pageRequest.getPageSize())
+                .setFirstResult(pageRequest.getPageNo() * pageRequest.getPageSize())
                 .setMaxResults(pageRequest.getPageSize())
                 .getResultList();
     }

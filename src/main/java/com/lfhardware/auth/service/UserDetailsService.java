@@ -19,7 +19,7 @@ import com.lfhardware.cart.repository.CartRepository;
 import com.lfhardware.configuration.KeycloakProperties;
 import com.lfhardware.email.service.IEmailService;
 import com.lfhardware.provider.service.IProviderService;
-import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.dto.Page;
 import com.lfhardware.user.dto.UserDTO;
 import com.stripe.StripeClient;
 import com.stripe.exception.StripeException;

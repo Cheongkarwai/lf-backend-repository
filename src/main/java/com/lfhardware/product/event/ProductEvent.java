@@ -12,4 +12,10 @@ public class ProductEvent {
     private ProductDTO productDTO;
 
     private Jwt jwt;
+
+    private EventType eventType;
+
+    public enum EventType {
+        CREATED, DELETED
+    }
 }

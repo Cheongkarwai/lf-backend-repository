@@ -17,6 +17,7 @@ import java.util.Set;
 @Table(name = "tbl_brand")
 public class Brand extends BasicNamedAttribute {
 
+
     @OneToMany(mappedBy = "brand")
     private Set<Product> products;
 }

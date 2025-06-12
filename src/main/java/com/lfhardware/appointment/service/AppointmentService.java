@@ -23,8 +23,8 @@ import com.lfhardware.provider.repository.IProviderRepository;
 import com.lfhardware.provider_business.repository.IProviderBusinessRepository;
 import com.lfhardware.core.service.CacheService;
 import com.lfhardware.core.dto.Currency;
-import com.lfhardware.core.dto.PageInfo;
-import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.dto.PageRequest;
+import com.lfhardware.core.dto.Page;
 import com.stripe.model.Charge;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.reactive.stage.Stage;
@@ -91,7 +91,7 @@ public class AppointmentService implements IAppointmentService {
     }
 
     @Override
-    public Mono<Pageable<AppointmentDTO>> findAll(PageInfo pageRequest, List<String> status) {
+    public Mono<Page<AppointmentDTO>> findAll(PageRequest pageRequest, List<String> status) {
         AppointmentCacheKey appointmentCacheKey = new AppointmentCacheKey(pageRequest, status);
         return appointmentCacheService.getCachedPageable(appointmentCacheKey)
                 .switchIfEmpty(Mono.defer(() ->
@@ -101,7 +101,7 @@ public class AppointmentService implements IAppointmentService {
                                                                 .map(appointmentMapper::mapToAppointmentDTO)
                                                                 .collect(Collectors.toList())))
                                         .thenCombine(sessionFactory.withSession(session -> appointmentRepository.count(session, pageRequest, status)),
-                                                (appointments, totalElements) -> new Pageable<>(appointments, pageRequest.getPageSize(), pageRequest.getPage(), totalElements.intValue())))
+                                                (appointments, totalElements) -> new Page<>(appointments, pageRequest.getPageSize(), pageRequest.getPageNo(), totalElements.intValue())))
                                 .flatMap(appointmentDTOPageable -> appointmentCacheService.updateCachedPageable(appointmentCacheKey, appointmentDTOPageable))));
     }
 

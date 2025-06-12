@@ -1,10 +1,10 @@
 package com.lfhardware.product.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lfhardware.file.dto.ImageDTO;
-import com.lfhardware.stock.domain.Size;
-import lombok.*;
-import org.springframework.http.codec.multipart.Part;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -13,10 +13,15 @@ import java.util.List;
 @Data
 public class ProductInput {
 
+    @NotNull(message = "{product-name.non-null}")
+    @Length(min = 3)
     private String name;
 
+    @NotNull(message = "{product-description.non-null}")
     private String description;
 
+    @NotNull(message = "{product-price.non-null}")
+    @PositiveOrZero
     private BigDecimal price;
 
     private BrandDTO brand;

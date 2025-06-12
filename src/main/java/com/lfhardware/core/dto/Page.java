@@ -9,7 +9,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Pageable<T> {
+public class Page<T> {
 
     private List<T> items;
 
@@ -27,7 +27,7 @@ public class Pageable<T> {
     @JsonProperty("has_previous_page")
     private boolean hasPreviousPage;
 
-   public Pageable(List<T> items, int size, int currentPage, int totalElements){
+   public Page(List<T> items, int size, int currentPage, int totalElements){
        this.items = items;
        this.size = size;
        this.currentPage = currentPage;
@@ -49,7 +49,7 @@ public class Pageable<T> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Pageable<?> pageable = (Pageable<?>) o;
+        Page<?> pageable = (Page<?>) o;
         return size == pageable.size && currentPage == pageable.currentPage && totalElements == pageable.totalElements && hasNextPage == pageable.hasNextPage && hasPreviousPage == pageable.hasPreviousPage && Objects.equals(items, pageable.items);
     }
 

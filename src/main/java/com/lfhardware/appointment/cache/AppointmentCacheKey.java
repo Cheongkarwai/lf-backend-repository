@@ -1,6 +1,6 @@
 package com.lfhardware.appointment.cache;
 
-import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.PageRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class AppointmentCacheKey {
 
-    private PageInfo pageInfo;
+    private PageRequest pageRequest;
 
     private List<String> status;
 
@@ -24,11 +24,11 @@ public class AppointmentCacheKey {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AppointmentCacheKey that = (AppointmentCacheKey) o;
-        return Objects.equals(pageInfo, that.pageInfo) && Objects.equals(status, that.status);
+        return Objects.equals(pageRequest, that.pageRequest) && Objects.equals(status, that.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(pageInfo, status);
+        return Objects.hash(pageRequest, status);
     }
 }

@@ -1,7 +1,7 @@
 package com.lfhardware.charges.repository;
 
 import com.lfhardware.transaction.domain.Transaction;
-import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.PageRequest;
 import com.lfhardware.transaction.domain.Transaction_;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -82,41 +82,41 @@ public class TransactionRepository implements ITransactionRepository {
     }
 
     @Override
-    public CompletionStage<List<Transaction>> findAll(Stage.Session session, PageInfo pageInfo) {
+    public CompletionStage<List<Transaction>> findAll(Stage.Session session, PageRequest pageRequest) {
         CriteriaBuilder criteriaBuilder = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<Transaction> cq = criteriaBuilder.createQuery(Transaction.class);
         Root<Transaction> root = cq.from(Transaction.class);
 
         List<Predicate> predicates = new ArrayList<>();
 
-        if (Objects.nonNull(pageInfo.getSearch())){
+        if (Objects.nonNull(pageRequest.getSearch())){
             predicates.add(criteriaBuilder.or(
-                    criteriaBuilder.like(root.get(Transaction_.CHARGE_AMOUNT).as(String.class), "%"+pageInfo.getSearch()+"%"),
-                    criteriaBuilder.like(root.get(Transaction_.CREATED_AT).as(String.class), "%"+pageInfo.getSearch()+"%"),
-                    criteriaBuilder.like(root.get(Transaction_.CURRENCY).as(String.class), "%"+pageInfo.getSearch()+"%"),
-                    criteriaBuilder.like(root.get(Transaction_.PAYMENT_METHOD).as(String.class), "%"+pageInfo.getSearch()+"%")
+                    criteriaBuilder.like(root.get(Transaction_.CHARGE_AMOUNT).as(String.class), "%"+ pageRequest.getSearch()+"%"),
+                    criteriaBuilder.like(root.get(Transaction_.CREATED_AT).as(String.class), "%"+ pageRequest.getSearch()+"%"),
+                    criteriaBuilder.like(root.get(Transaction_.CURRENCY).as(String.class), "%"+ pageRequest.getSearch()+"%"),
+                    criteriaBuilder.like(root.get(Transaction_.PAYMENT_METHOD).as(String.class), "%"+ pageRequest.getSearch()+"%")
             ));
         }
 
         cq.select(root).where(predicates.toArray(Predicate[]::new));
-        return session.createQuery(cq).setFirstResult(pageInfo.getPage() * pageInfo.getPageSize())
-                .setMaxResults(pageInfo.getPageSize())
+        return session.createQuery(cq).setFirstResult(pageRequest.getPageNo() * pageRequest.getPageSize())
+                .setMaxResults(pageRequest.getPageSize())
                 .getResultList();
     }
 
     @Override
-    public CompletionStage<Long> count(Stage.Session session, PageInfo pageInfo) {
+    public CompletionStage<Long> count(Stage.Session session, PageRequest pageRequest) {
         CriteriaBuilder cb = sessionFactory.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
         Root<Transaction> root = cq.from(Transaction.class);
         List<Predicate> predicates = new ArrayList<>();
 
-        if (Objects.nonNull(pageInfo.getSearch())) {
+        if (Objects.nonNull(pageRequest.getSearch())) {
             predicates.add(cb.or(
-                    cb.like(root.get(Transaction_.CHARGE_AMOUNT).as(String.class), "%"+ pageInfo.getSearch() +"%"),
-                    cb.like(root.get(Transaction_.CREATED_AT).as(String.class), "%"+pageInfo.getSearch()+"%"),
-                    cb.like(root.get(Transaction_.CURRENCY).as(String.class), "%"+pageInfo.getSearch()+"%"),
-                    cb.like(root.get(Transaction_.PAYMENT_METHOD).as(String.class), "%"+pageInfo.getSearch()+"%")
+                    cb.like(root.get(Transaction_.CHARGE_AMOUNT).as(String.class), "%"+ pageRequest.getSearch() +"%"),
+                    cb.like(root.get(Transaction_.CREATED_AT).as(String.class), "%"+ pageRequest.getSearch()+"%"),
+                    cb.like(root.get(Transaction_.CURRENCY).as(String.class), "%"+ pageRequest.getSearch()+"%"),
+                    cb.like(root.get(Transaction_.PAYMENT_METHOD).as(String.class), "%"+ pageRequest.getSearch()+"%")
             ));
         }
 

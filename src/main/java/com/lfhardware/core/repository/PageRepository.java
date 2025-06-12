@@ -1,6 +1,6 @@
 package com.lfhardware.core.repository;
 
-import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.PageRequest;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -14,27 +14,28 @@ import java.util.Objects;
 
 public class PageRepository {
 
-    protected List<Predicate> buildPageRequestPredicates(PageInfo pageRequest, CriteriaBuilder cb, Root<?> root, CriteriaQuery<?> cq){
-        List<Predicate> predicates = new ArrayList<>();
-
-        if (Objects.nonNull(pageRequest.getSearch()) && StringUtils.hasText(pageRequest.getSearch()
-                .getKeyword()) && CollectionUtils.isNotEmpty(pageRequest.getSearch()
-                .getAttributes())) {
-
-            predicates.add(PageRequestPredicateBuilder.hasSearch(cb, root, pageRequest.getSearch()
-                    .getKeyword(), pageRequest.getSearch()
-                    .getAttributes()));
-        }
-
-        if (Objects.nonNull(pageRequest.getSort()) && Objects.nonNull(pageRequest.getSort()
-                .getOrder()) && StringUtils.hasText(pageRequest.getSort()
-                .getName())) {
-
-            cq.orderBy(PageRequestPredicateBuilder.hasOrder(pageRequest.getSort()
-                    .getOrder(), cb, root, pageRequest.getSort()
-                    .getName()));
-        }
-
-        return predicates;
+    protected List<Predicate> buildPageRequestPredicates(PageRequest pageRequest, CriteriaBuilder cb, Root<?> root, CriteriaQuery<?> cq){
+//        List<Predicate> predicates = new ArrayList<>();
+//
+//        if (Objects.nonNull(pageRequest.getSearch()) && StringUtils.hasText(pageRequest.getSearch()
+//                .getKeyword()) && CollectionUtils.isNotEmpty(pageRequest.getSearch()
+//                .getAttributes())) {
+//
+//            predicates.add(PageRequestPredicateBuilder.hasSearch(cb, root, pageRequest.getSearch()
+//                    .getKeyword(), pageRequest.getSearch()
+//                    .getAttributes()));
+//        }
+//
+//        if (Objects.nonNull(pageRequest.getSort()) && Objects.nonNull(pageRequest.getSort()
+//                .getOrder()) && StringUtils.hasText(pageRequest.getSort()
+//                .getName())) {
+//
+//            cq.orderBy(PageRequestPredicateBuilder.hasOrder(pageRequest.getSort()
+//                    .getOrder(), cb, root, pageRequest.getSort()
+//                    .getName()));
+//        }
+//
+//        return predicates;
+        return null;
     }
 }

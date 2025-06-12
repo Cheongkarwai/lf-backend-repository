@@ -1,9 +1,12 @@
 package com.lfhardware.core.repository;
 
+import com.lfhardware.core.validation.ValidKeywordAndAttributeList;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
@@ -11,6 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ValidKeywordAndAttributeList
 public class Search {
 
     private List<String> attributes;

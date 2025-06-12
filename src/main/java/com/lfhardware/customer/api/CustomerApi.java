@@ -1,8 +1,8 @@
 package com.lfhardware.customer.api;
 
 import com.lfhardware.appointment.dto.AppointmentDTO;
-import com.lfhardware.core.dto.PageInfo;
-import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.dto.PageRequest;
+import com.lfhardware.core.dto.Page;
 import com.lfhardware.core.repository.PageQueryParameterBuilder;
 import com.lfhardware.core.repository.Sort;
 import com.lfhardware.customer.dto.CustomerDTO;
@@ -46,45 +46,47 @@ public class CustomerApi {
     }
 
     public Mono<ServerResponse> findCurrentCustomerAppointments(ServerRequest serverRequest) {
-        PageInfo pageInfo = new PageInfo();
-        Optional<String> pageOptional = serverRequest.queryParam("page");
-        Optional<String> pageSizeOptional = serverRequest.queryParam("page_size");
-
-        pageInfo.setPage(Integer.parseInt(pageOptional.orElseGet(() -> String.valueOf(0))));
-        pageInfo.setPageSize(Integer.parseInt(pageSizeOptional.orElseGet(() -> String.valueOf(10))));
-
-        LocalDateTime dateTime = serverRequest.queryParam("bookingDateTime")
-                .map(bookingDateTime->{
-                    ZonedDateTime parsedDate = ZonedDateTime.parse(bookingDateTime);
-                    return parsedDate.toLocalDateTime();
-                })
-                .orElse(null);
-
-        List<String> status = serverRequest.queryParams().getOrDefault("status", List.of());
-
-        return ServerResponse.ok()
-                .body(customerService.findAllCurrentCustomerAppointments(pageInfo, dateTime, status), Pageable.class);
+//        PageRequest pageRequest = new PageRequest();
+//        Optional<String> pageOptional = serverRequest.queryParam("page");
+//        Optional<String> pageSizeOptional = serverRequest.queryParam("page_size");
+//
+//        pageRequest.setPage(Integer.parseInt(pageOptional.orElseGet(() -> String.valueOf(0))));
+//        pageRequest.setPageSize(Integer.parseInt(pageSizeOptional.orElseGet(() -> String.valueOf(10))));
+//
+//        LocalDateTime dateTime = serverRequest.queryParam("bookingDateTime")
+//                .map(bookingDateTime->{
+//                    ZonedDateTime parsedDate = ZonedDateTime.parse(bookingDateTime);
+//                    return parsedDate.toLocalDateTime();
+//                })
+//                .orElse(null);
+//
+//        List<String> status = serverRequest.queryParams().getOrDefault("status", List.of());
+//
+//        return ServerResponse.ok()
+//                .body(customerService.findAllCurrentCustomerAppointments(pageRequest, dateTime, status), Page.class);
+        return null;
     }
 
     public Mono<ServerResponse> findAppointmentsByCustomerId(ServerRequest serverRequest){
-        PageInfo pageInfo = new PageInfo();
-        Optional<String> pageOptional = serverRequest.queryParam("page");
-        Optional<String> pageSizeOptional = serverRequest.queryParam("page_size");
-
-        pageInfo.setPage(Integer.parseInt(pageOptional.orElseGet(() -> String.valueOf(0))));
-        pageInfo.setPageSize(Integer.parseInt(pageSizeOptional.orElseGet(() -> String.valueOf(10))));
-        pageInfo.setSort(new Sort(serverRequest.queryParam("sort").orElse("")));
-
-        return ServerResponse.ok()
-                .body(customerService.findAllAppointmentsByCustomerId(pageInfo, serverRequest.pathVariable("id")), Pageable.class);
-    }
-
-    public Mono<ServerResponse> findAll(ServerRequest serverRequest) {
-
-        PageInfo pageRequest = PageQueryParameterBuilder.buildPageRequest(serverRequest);
-
-        return ServerResponse.ok()
-                .body(customerService.findAll(pageRequest), Pageable.class);
+//        PageRequest pageRequest = new PageRequest();
+//        Optional<String> pageOptional = serverRequest.queryParam("page");
+//        Optional<String> pageSizeOptional = serverRequest.queryParam("page_size");
+//
+//        pageRequest.setPage(Integer.parseInt(pageOptional.orElseGet(() -> String.valueOf(0))));
+//        pageRequest.setPageSize(Integer.parseInt(pageSizeOptional.orElseGet(() -> String.valueOf(10))));
+//        pageRequest.setSort(new Sort(serverRequest.queryParam("sort").orElse("")));
+//
+//        return ServerResponse.ok()
+//                .body(customerService.findAllAppointmentsByCustomerId(pageRequest, serverRequest.pathVariable("id")), Page.class);
+//    }
+//
+//    public Mono<ServerResponse> findAll(ServerRequest serverRequest) {
+//
+//        PageRequest pageRequest = PageQueryParameterBuilder.buildPageRequest(serverRequest);
+//
+//        return ServerResponse.ok()
+//                .body(customerService.findAll(pageRequest), Page.class);
+        return null;
     }
 
     public Mono<ServerResponse> findCurrentCustomerAppointmentById(ServerRequest serverRequest){

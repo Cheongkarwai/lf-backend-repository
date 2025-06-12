@@ -13,6 +13,7 @@ public interface MutinyCrudRepository<T, ID> {
 
     Uni<T> findById(Mutiny.Session session, ID id);
 
+
     Uni<Void> save(Mutiny.Session session, T obj);
 
     Uni<List<T>> findAllByIds(Mutiny.Session session, List<ID> ids);

@@ -7,8 +7,8 @@ import com.lfhardware.appointment.dto.AppointmentDTO;
 import com.lfhardware.appointment.dto.AppointmentFeesInput;
 import com.lfhardware.appointment.dto.AppointmentInput;
 import com.lfhardware.appointment.dto.AppointmentStatusInput;
-import com.lfhardware.core.dto.PageInfo;
-import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.dto.PageRequest;
+import com.lfhardware.core.dto.Page;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
@@ -16,7 +16,7 @@ import java.util.List;
 
 public interface IAppointmentService {
 
-    Mono<Pageable<AppointmentDTO>> findAll(PageInfo pageRequest, List<String> status);
+    Mono<Page<AppointmentDTO>> findAll(PageRequest pageRequest, List<String> status);
 
     Mono<String> create(AppointmentInput appointmentInput);
 

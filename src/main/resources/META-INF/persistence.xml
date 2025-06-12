@@ -57,6 +57,8 @@
         <!--Notification-->
         <class>com.lfhardware.notification.domain.Notification</class>
 
+
+
         <properties>
 
             <!-- PostgreSQL -->

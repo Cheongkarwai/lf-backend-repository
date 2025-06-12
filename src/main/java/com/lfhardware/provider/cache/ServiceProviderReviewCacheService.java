@@ -3,7 +3,7 @@ package com.lfhardware.provider.cache;
 import com.lfhardware.core.service.CacheService;
 import com.lfhardware.configuration.CacheConfiguration;
 import com.lfhardware.provider.dto.ServiceProviderReviewDTO;
-import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.dto.Page;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
@@ -40,9 +40,9 @@ public class ServiceProviderReviewCacheService implements CacheService<ServicePr
     }
 
     @Override
-    public Mono<Pageable<ServiceProviderReviewDTO>> getCachedPageable(Object key) {
+    public Mono<Page<ServiceProviderReviewDTO>> getCachedPageable(Object key) {
         return Mono.fromCallable(()-> Objects.requireNonNull(cacheManager.getCache(ID))
-                        .get(key, (Callable<Pageable<ServiceProviderReviewDTO>>) Pageable::new))
+                        .get(key, (Callable<Page<ServiceProviderReviewDTO>>) Page::new))
                 .flatMap(cache -> CollectionUtils.isNotEmpty(cache.getItems()) ?
                         Mono.just(cache) : Mono.empty());
     }
@@ -68,7 +68,7 @@ public class ServiceProviderReviewCacheService implements CacheService<ServicePr
     }
 
     @Override
-    public Mono<Pageable<ServiceProviderReviewDTO>> updateCachedPageable(Object key, Pageable<ServiceProviderReviewDTO> pageable) {
+    public Mono<Page<ServiceProviderReviewDTO>> updateCachedPageable(Object key, Page<ServiceProviderReviewDTO> pageable) {
         return Mono.fromCallable(()->{
             Objects.requireNonNull(cacheManager.getCache(ID))
                     .put(key, pageable);

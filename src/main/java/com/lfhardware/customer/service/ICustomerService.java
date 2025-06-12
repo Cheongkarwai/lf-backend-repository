@@ -4,8 +4,8 @@ import com.lfhardware.appointment.dto.AppointmentDTO;
 import com.lfhardware.customer.dto.CustomerCountGroupByDayDTO;
 import com.lfhardware.customer.dto.CustomerDTO;
 import com.lfhardware.customer.dto.CustomerInfoInput;
-import com.lfhardware.core.dto.PageInfo;
-import com.lfhardware.core.dto.Pageable;
+import com.lfhardware.core.dto.PageRequest;
+import com.lfhardware.core.dto.Page;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
@@ -19,11 +19,11 @@ public interface ICustomerService {
 
     Mono<CustomerDTO> findCurrentlyLoggedInCustomer();
 
-    Mono<Pageable<AppointmentDTO>> findAllCurrentCustomerAppointments(PageInfo pageInfo, LocalDateTime dateTime, List<String> status);
+    Mono<Page<AppointmentDTO>> findAllCurrentCustomerAppointments(PageRequest pageRequest, LocalDateTime dateTime, List<String> status);
 
-    Mono<Pageable<CustomerDTO>> findAll(PageInfo pageRequest);
+    Mono<Page<CustomerDTO>> findAll(PageRequest pageRequest);
 
-    Mono<Pageable<AppointmentDTO>> findAllAppointmentsByCustomerId(PageInfo pageRequest, String customerId);
+    Mono<Page<AppointmentDTO>> findAllAppointmentsByCustomerId(PageRequest pageRequest, String customerId);
 
    Mono<AppointmentDTO> findCurrentCustomerAppointmentById(Long serviceId, String serviceProviderId, LocalDateTime createdAt);
 

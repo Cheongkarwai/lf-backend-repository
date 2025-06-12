@@ -1,7 +1,7 @@
 package com.lfhardware.order.dto;
 
 import com.lfhardware.order.domain.DeliveryStatus;
-import com.lfhardware.core.dto.PageInfo;
+import com.lfhardware.core.dto.PageRequest;
 import com.lfhardware.core.repository.Search;
 import com.lfhardware.core.repository.Sort;
 import lombok.AllArgsConstructor;
@@ -14,13 +14,23 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-public class OrderPageRequest extends PageInfo {
+public class OrderPageRequest {
 
     private DeliveryStatus deliveryStatus;
 
-    public OrderPageRequest(int pageSize, int page, Sort sort, Search search, DeliveryStatus deliveryStatus){
-        super(pageSize, page, sort, search);
+    private int pageSize;
+
+    private int page;
+
+    private Sort sort;
+
+    private Search search;
+
+    public OrderPageRequest(int pageSize, int page, Sort sort, Search search, DeliveryStatus deliveryStatus) {
+        this.pageSize = pageSize;
+        this.page = page;
+        this.sort = sort;
+        this.search = search;
         this.deliveryStatus = deliveryStatus;
     }
 
